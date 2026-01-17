@@ -12,14 +12,14 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
-fun AppointmentsScreen() {
+fun RemindersScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Text(
-            text = "Appointments",
+            text = "Reminders",
             style = MaterialTheme.typography.headlineMedium
         )
     }
@@ -27,8 +27,8 @@ fun AppointmentsScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun AppointmentsScreenPreview() {
+fun RemindersScreenPreview() {
     RXTrackerTheme {
-        AppointmentsScreen()
+        RemindersScreen()
     }
 }

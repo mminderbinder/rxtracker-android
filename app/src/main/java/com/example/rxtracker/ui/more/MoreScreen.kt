@@ -12,14 +12,14 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
-fun RefillsScreen() {
+fun MoreScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Text(
-            text = "Refills",
+            text = "More",
             style = MaterialTheme.typography.headlineMedium
         )
     }
@@ -27,8 +27,8 @@ fun RefillsScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun RefillsScreenPreview() {
+fun MoreScreenPreview() {
     RXTrackerTheme {
-        RefillsScreen()
+        MoreScreen()
     }
 }

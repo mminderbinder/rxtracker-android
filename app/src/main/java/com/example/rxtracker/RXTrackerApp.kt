@@ -1,4 +1,5 @@
 package com.example.rxtracker
 
-class RXTrackerApp {
-}
+import android.app.Application
+
+class RXTrackerApp : Application()

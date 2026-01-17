@@ -1,2 +1,50 @@
 package com.example.rxtracker
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Medication
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.rxtracker.AppDestination.Home
+import com.example.rxtracker.AppDestination.Medications
+import com.example.rxtracker.AppDestination.More
+import com.example.rxtracker.AppDestination.Reminders
+
+
+sealed class AppDestination(
+    val route: String,
+    val title: String,
+    val icon: ImageVector
+) {
+    object Home : AppDestination(
+        route = "home",
+        title = "Home",
+        icon = Icons.Filled.Home
+    )
+
+    object Medications : AppDestination(
+        route = "medications",
+        title = "Meds",
+        icon = Icons.Filled.Medication
+    )
+
+    object Reminders : AppDestination(
+        route = "reminders",
+        title = "Reminders",
+        icon = Icons.Filled.Alarm
+    )
+
+    object More : AppDestination(
+        route = "more",
+        title = "More",
+        icon = Icons.Filled.MoreHoriz
+    )
+}
+
+val bottomNavDestinations = listOf(
+    Home,
+    Medications,
+    Reminders,
+    More
+)

@@ -19,7 +19,7 @@ fun AppointmentsScreen() {
             .padding(16.dp)
     ) {
         Text(
-            text = "Refills",
+            text = "Appointments",
             style = MaterialTheme.typography.headlineMedium
         )
     }

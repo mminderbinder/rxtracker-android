@@ -17,6 +17,7 @@ kotlinxCoroutinesAndroid = "1.10.2"
 roomCompiler = "2.8.4"
 ksp = "2.3.2"
 materialIconsExtended = "1.7.8"
+uiTextGoogleFonts = "1.10.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,6 +51,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomComp
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomCompiler" }
 
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-compose-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 
 
 [plugins]

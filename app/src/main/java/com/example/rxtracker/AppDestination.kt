@@ -15,7 +15,7 @@ import com.example.rxtracker.AppDestination.Reminders
 sealed class AppDestination(
     val route: String,
     val title: String,
-    val icon: ImageVector
+    val icon: ImageVector? = null
 ) {
     object Home : AppDestination(
         route = "home",
@@ -39,6 +39,21 @@ sealed class AppDestination(
         route = "appointments",
         title = "Appointments",
         icon = Icons.Filled.CalendarToday
+    )
+
+    object Settings : AppDestination(
+        route = "settings",
+        title = "Settings"
+    )
+
+    object About : AppDestination(
+        route = "about",
+        title = "About"
+    )
+
+    object PrivacyPolicy : AppDestination(
+        route = "privacy_policy",
+        title = "Privacy Policy"
     )
 }
 

@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -29,6 +28,9 @@ import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
 import com.example.rxtracker.ui.medications.MedicationsScreen
 import com.example.rxtracker.ui.reminders.RemindersScreen
+import com.example.rxtracker.ui.topmenu.about.AboutScreen
+import com.example.rxtracker.ui.topmenu.privacy.PrivacyPolicyScreen
+import com.example.rxtracker.ui.topmenu.settings.SettingsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,42 +38,42 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    var showMenu by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("RXTracker") },
                 actions = {
-                    IconButton(onClick = { showMenu = true }) {
+                    IconButton(onClick = { expanded = true }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
                             contentDescription = "Menu"
                         )
                     }
                     DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
                     ) {
                         DropdownMenuItem(
                             text = { Text(text = "Settings") },
                             onClick = {
-                                showMenu = false
-                                // TODO: Navigate to settings screen
+                                navController.navigate(AppDestination.Settings.route)
+                                expanded = false
                             }
                         )
                         DropdownMenuItem(
                             text = { Text(text = "About") },
                             onClick = {
-                                showMenu = false
-                                // TODO: Navigate to about screen
+                                navController.navigate(AppDestination.About.route)
+                                expanded = false
                             }
                         )
                         DropdownMenuItem(
                             text = { Text(text = "Privacy Policy") },
                             onClick = {
-                                showMenu = false
-                                // TODO: Navigate to privacy policy screen
+                                navController.navigate(AppDestination.PrivacyPolicy.route)
+                                expanded = false
                             }
                         )
                     }
@@ -83,23 +85,16 @@ fun AppNavigation() {
                 bottomNavDestinations.forEach { destination ->
                     NavigationBarItem(
                         icon = {
-                            Icon(
-                                imageVector = destination.icon,
-                                contentDescription = destination.title
-                            )
+                            destination.icon?.let {
+                                Icon(imageVector = it, contentDescription = destination.title)
+                            }
                         },
                         label = { Text(destination.title) },
                         selected = currentDestination?.hierarchy?.any {
                             it.route == destination.route
                         } == true,
                         onClick = {
-                            navController.navigate(destination.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                            navController.navigate(destination.route)
                         }
                     )
                 }
@@ -122,6 +117,15 @@ fun AppNavigation() {
             }
             composable(AppDestination.Appointments.route) {
                 AppointmentsScreen()
+            }
+            composable(AppDestination.Settings.route) {
+                SettingsScreen()
+            }
+            composable(AppDestination.About.route) {
+                AboutScreen()
+            }
+            composable(AppDestination.PrivacyPolicy.route) {
+                PrivacyPolicyScreen()
             }
         }
     }

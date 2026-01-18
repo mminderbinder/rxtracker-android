@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.2"
+agp = "9.0.0"
 kotlin = "2.2.10"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -15,7 +15,7 @@ leakcanaryAndroid = "2.14"
 compose = "2.9.0"
 kotlinxCoroutinesAndroid = "1.10.2"
 roomCompiler = "2.8.4"
-ksp = "2.2.10-2.0.2"
+ksp = "2.3.2"
 materialIconsExtended = "1.7.8"
 
 [libraries]

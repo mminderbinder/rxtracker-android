@@ -25,9 +25,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
 import com.example.rxtracker.ui.medications.MedicationsScreen
-import com.example.rxtracker.ui.more.MoreScreen
 import com.example.rxtracker.ui.reminders.RemindersScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,14 +54,21 @@ fun AppNavigation() {
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Settings") },
+                            text = { Text(text = "Settings") },
                             onClick = {
                                 showMenu = false
                                 // TODO: Navigate to settings screen
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Privacy Policy") },
+                            text = { Text(text = "About") },
+                            onClick = {
+                                showMenu = false
+                                // TODO: Navigate to about screen
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(text = "Privacy Policy") },
                             onClick = {
                                 showMenu = false
                                 // TODO: Navigate to privacy policy screen
@@ -113,8 +120,8 @@ fun AppNavigation() {
             composable(AppDestination.Reminders.route) {
                 RemindersScreen()
             }
-            composable(AppDestination.More.route) {
-                MoreScreen()
+            composable(AppDestination.Appointments.route) {
+                AppointmentsScreen()
             }
         }
     }

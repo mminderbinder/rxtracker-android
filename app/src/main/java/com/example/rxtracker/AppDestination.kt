@@ -2,13 +2,13 @@ package com.example.rxtracker
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Medication
-import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.rxtracker.AppDestination.Appointments
 import com.example.rxtracker.AppDestination.Home
 import com.example.rxtracker.AppDestination.Medications
-import com.example.rxtracker.AppDestination.More
 import com.example.rxtracker.AppDestination.Reminders
 
 
@@ -35,16 +35,17 @@ sealed class AppDestination(
         icon = Icons.Filled.Alarm
     )
 
-    object More : AppDestination(
-        route = "more",
-        title = "More",
-        icon = Icons.Filled.MoreHoriz
+    object Appointments : AppDestination(
+        route = "appointments",
+        title = "Appointments",
+        icon = Icons.Filled.CalendarToday
     )
 }
+
 
 val bottomNavDestinations = listOf(
     Home,
     Medications,
     Reminders,
-    More
+    Appointments
 )

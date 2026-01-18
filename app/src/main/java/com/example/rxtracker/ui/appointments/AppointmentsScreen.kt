@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.more
+package com.example.rxtracker.ui.appointments
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +12,14 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
-fun MoreScreen() {
+fun AppointmentsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Text(
-            text = "More",
+            text = "Refills",
             style = MaterialTheme.typography.headlineMedium
         )
     }
@@ -27,8 +27,8 @@ fun MoreScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun MoreScreenPreview() {
+fun AppointmentsScreenPreview() {
     RXTrackerTheme {
-        MoreScreen()
+        AppointmentsScreen()
     }
 }

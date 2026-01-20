@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.topmenu.settings
+package com.example.rxtracker.ui.menu.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

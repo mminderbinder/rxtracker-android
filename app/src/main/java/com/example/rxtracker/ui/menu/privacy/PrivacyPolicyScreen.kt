@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.topmenu.about
+package com.example.rxtracker.ui.menu.privacy
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +12,14 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
-fun AboutScreen() {
+fun PrivacyPolicyScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Text(
-            text = "About",
+            text = "Privacy Policy",
             style = MaterialTheme.typography.headlineMedium
         )
     }
@@ -27,8 +27,8 @@ fun AboutScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun AboutScreenPreview() {
+fun PrivacyPolicyScreenPreview() {
     RXTrackerTheme {
-        AboutScreen()
+        PrivacyPolicyScreen()
     }
 }

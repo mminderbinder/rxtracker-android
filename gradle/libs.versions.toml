@@ -1,5 +1,6 @@
 [versions]
 agp = "9.0.0"
+converterGson = "3.0.0"
 kotlin = "2.2.10"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -14,6 +15,7 @@ navigationCompose = "2.9.6"
 leakcanaryAndroid = "2.14"
 compose = "2.10.0"
 kotlinxCoroutinesAndroid = "1.10.2"
+retrofit = "3.0.0"
 roomCompiler = "2.8.4"
 ksp = "2.3.4"
 materialIconsExtended = "1.7.8"
@@ -21,6 +23,7 @@ uiTextGoogleFonts = "1.10.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -52,6 +55,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-compose-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 
 [plugins]

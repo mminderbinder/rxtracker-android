@@ -44,7 +44,7 @@ fun CalendarDay(
                 style = MaterialTheme.typography.titleSmall,
             )
             Text(
-                text = DateTimeFormatter.ofPattern("d").format(date),
+                text = DateTimeFormatter.ofPattern("dd").format(date),
                 style = MaterialTheme.typography.titleMedium,
                 color = if (isSelected) {
                     MaterialTheme.colorScheme.primary

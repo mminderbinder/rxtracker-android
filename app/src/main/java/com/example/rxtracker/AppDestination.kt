@@ -55,6 +55,11 @@ sealed class AppDestination(
         route = "privacy_policy",
         title = "Privacy Policy"
     )
+
+    object AddMedication : AppDestination(
+        route = "add_medication",
+        title = "Add Medication"
+    )
 }
 
 

@@ -3,11 +3,15 @@ package com.example.rxtracker.ui.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -21,6 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.getWeekPageTitle
@@ -32,58 +38,79 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    navController: NavController
+) {
     val currentDate = remember { LocalDate.now() }
     val startDate = remember { currentDate.minusDays(500) }
     val endDate = remember { currentDate.plusDays(500) }
     var selection by remember { mutableStateOf(currentDate) }
     val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        val state = rememberWeekCalendarState(
-            startDate = startDate,
-            endDate = endDate,
-            firstVisibleWeekDate = currentDate
-        )
-        val visibleWeek = rememberFirstVisibleWeekAfterScroll(state)
-        TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(),
-            title = { Text(text = getWeekPageTitle(visibleWeek)) },
-            actions = {
-                TextButton(
-                    onClick = {
-                        selection = currentDate
-                        coroutineScope.launch {
-                            state.animateScrollToWeek(currentDate)
+    val state = rememberWeekCalendarState(
+        startDate = startDate,
+        endDate = endDate,
+        firstVisibleWeekDate = currentDate
+    )
+    val visibleWeek = rememberFirstVisibleWeekAfterScroll(state)
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(),
+                title = { Text(text = getWeekPageTitle(visibleWeek)) },
+                actions = {
+                    TextButton(
+                        onClick = {
+                            selection = currentDate
+                            coroutineScope.launch {
+                                state.animateScrollToWeek(currentDate)
+                            }
                         }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Today,
+                            contentDescription = "Scroll to today"
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "Today")
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Today,
-                        contentDescription = "Scroll to today"
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "Today")
                 }
-            }
-        )
-        WeekCalendar(
-            state = state,
-            dayContent = { day ->
-                CalendarDay(
-                    date = day.date,
-                    isSelected = selection == day.date,
-                    onClick = { date ->
-                        if (selection != date) {
-                            selection = date
-                        }
-                    }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate("add_medication")
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add medication"
                 )
-            },
-        )
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues)
+        ) {
+            WeekCalendar(
+                state = state,
+                dayContent = { day ->
+                    CalendarDay(
+                        date = day.date,
+                        isSelected = selection == day.date,
+                        onClick = { date ->
+                            if (selection != date) {
+                                selection = date
+                            }
+                        }
+                    )
+                },
+            )
+        }
     }
 }
 
@@ -91,6 +118,6 @@ fun HomeScreen() {
 @Composable
 fun HomeScreenPreview() {
     RXTrackerTheme {
-        HomeScreen()
+        HomeScreen(navController = rememberNavController())
     }
 }

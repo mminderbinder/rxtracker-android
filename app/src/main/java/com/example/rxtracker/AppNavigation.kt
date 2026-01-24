@@ -26,6 +26,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
+import com.example.rxtracker.ui.medications.AddMedicationScreen
 import com.example.rxtracker.ui.medications.MedicationsScreen
 import com.example.rxtracker.ui.menu.about.AboutScreen
 import com.example.rxtracker.ui.menu.privacy.PrivacyPolicyScreen
@@ -107,7 +108,7 @@ fun AppNavigation() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppDestination.Home.route) {
-                HomeScreen()
+                HomeScreen(navController = navController)
             }
             composable(AppDestination.Medications.route) {
                 MedicationsScreen()
@@ -126,6 +127,9 @@ fun AppNavigation() {
             }
             composable(AppDestination.PrivacyPolicy.route) {
                 PrivacyPolicyScreen()
+            }
+            composable(AppDestination.AddMedication.route) {
+                AddMedicationScreen()
             }
         }
     }

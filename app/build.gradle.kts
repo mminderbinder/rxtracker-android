@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hiltAndroid)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -66,6 +67,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     // LeakCanary
     debugImplementation(libs.leakcanary.android)
+
+    implementation(libs.kotlinx.serialization.json)
 
     // Icons
     implementation(libs.androidx.material.icons.extended)

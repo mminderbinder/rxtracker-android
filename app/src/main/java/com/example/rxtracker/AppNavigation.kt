@@ -82,7 +82,7 @@ fun AppNavigation() {
             )
         },
         bottomBar = {
-            NavigationBar() {
+            NavigationBar {
                 bottomNavDestinations.forEach { destination ->
                     NavigationBarItem(
                         icon = {
@@ -129,7 +129,7 @@ fun AppNavigation() {
                 PrivacyPolicyScreen()
             }
             composable(AppDestination.AddMedication.route) {
-                AddMedicationScreen()
+                AddMedicationScreen(navController = navController)
             }
         }
     }

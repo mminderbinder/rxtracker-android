@@ -15,8 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.rxtracker.navigation.components.MainScaffold
-import com.example.rxtracker.navigation.components.SecondaryScaffold
+import com.example.rxtracker.navigation.topbar.MainScaffold
+import com.example.rxtracker.navigation.topbar.SecondaryScaffold
 import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
 import com.example.rxtracker.ui.medications.AddMedicationScreen

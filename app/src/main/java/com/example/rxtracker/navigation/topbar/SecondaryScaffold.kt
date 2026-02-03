@@ -1,4 +1,4 @@
-package com.example.rxtracker.navigation.components
+package com.example.rxtracker.navigation.topbar
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons

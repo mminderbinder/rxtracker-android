@@ -35,7 +35,7 @@ fun AddMedicationScreen(
                 selectedMedication = medication
             }
         )
-        Spacer(modifier = modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         selectedMedication?.let { medication ->
             Text("Selected: ${medication.name}")

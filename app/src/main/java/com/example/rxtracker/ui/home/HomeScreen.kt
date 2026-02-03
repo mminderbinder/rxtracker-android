@@ -25,8 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.getWeekPageTitle
@@ -39,7 +37,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navController: NavController
+    onNavigateToAddMedication: () -> Unit = {}
 ) {
     val currentDate = remember { LocalDate.now() }
     val startDate = remember { currentDate.minusDays(500) }
@@ -80,9 +78,7 @@ fun HomeScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    navController.navigate("add_medication")
-                }
+                onClick = onNavigateToAddMedication
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -118,6 +114,6 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     RXTrackerTheme {
-        HomeScreen(navController = rememberNavController())
+        HomeScreen(onNavigateToAddMedication = {})
     }
 }

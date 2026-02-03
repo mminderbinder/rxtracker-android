@@ -1,4 +1,4 @@
-package com.example.rxtracker
+package com.example.rxtracker.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
@@ -6,10 +6,10 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.example.rxtracker.AppDestination.Appointments
-import com.example.rxtracker.AppDestination.Home
-import com.example.rxtracker.AppDestination.Medications
-import com.example.rxtracker.AppDestination.Reminders
+import com.example.rxtracker.navigation.AppDestination.Appointments
+import com.example.rxtracker.navigation.AppDestination.Home
+import com.example.rxtracker.navigation.AppDestination.Medications
+import com.example.rxtracker.navigation.AppDestination.Reminders
 
 
 sealed class AppDestination(

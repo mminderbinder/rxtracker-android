@@ -1,6 +1,7 @@
 package com.example.rxtracker.navigation.topbar
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -23,7 +24,10 @@ import com.example.rxtracker.navigation.AppDestination
 @Composable
 fun MainScaffold(
     navController: NavController,
-    title: String = "RXTracker",
+    title: String = "",
+    titleContent: (@Composable () -> Unit)? = null,
+    customActions: @Composable RowScope.() -> Unit = {},
+    floatingActionButton: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -31,8 +35,16 @@ fun MainScaffold(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title) },
+                title = {
+                    if (titleContent != null) {
+                        titleContent()
+                    } else {
+                        Text(title)
+                    }
+                },
                 actions = {
+                    customActions()
+
                     IconButton(onClick = { expanded = true }) {
                         Icon(Icons.Default.MoreVert, contentDescription = "Menu")
                     }
@@ -41,21 +53,21 @@ fun MainScaffold(
                         onDismissRequest = { expanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text(text = "Settings") },
+                            text = { Text("Settings") },
                             onClick = {
                                 navController.navigate(AppDestination.Settings.route)
                                 expanded = false
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text(text = "About") },
+                            text = { Text("About") },
                             onClick = {
                                 navController.navigate(AppDestination.About.route)
                                 expanded = false
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text(text = "Privacy Policy") },
+                            text = { Text("Privacy Policy") },
                             onClick = {
                                 navController.navigate(AppDestination.PrivacyPolicy.route)
                                 expanded = false
@@ -64,7 +76,8 @@ fun MainScaffold(
                     }
                 }
             )
-        }
+        },
+        floatingActionButton = floatingActionButton
     ) { innerPadding ->
         content(innerPadding)
     }

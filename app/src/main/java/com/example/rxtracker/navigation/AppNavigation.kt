@@ -1,7 +1,10 @@
 package com.example.rxtracker.navigation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -71,11 +74,19 @@ fun AppNavigation() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppDestination.Home.route) {
-                HomeScreen(
-                    onNavigateToAddMedication = {
-                        navController.navigate(AppDestination.AddMedication.route)
+                MainScaffold(
+                    navController = navController,
+                    title = "RXTracker",
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = { navController.navigate(AppDestination.AddMedication.route) }
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "Add medication")
+                        }
                     }
-                )
+                ) { padding ->
+                    HomeScreen(modifier = Modifier.padding(padding))
+                }
             }
             composable(AppDestination.Medications.route) {
                 MainScaffold(navController, "Medications") {

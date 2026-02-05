@@ -53,25 +53,14 @@ fun HomeScreen(
     )
 
     val visibleWeek = rememberFirstVisibleWeekAfterScroll(state)
-    var previousWeekStart by remember { mutableStateOf<LocalDate?>(null) }
 
     LaunchedEffect(visibleWeek) {
         val weekContainsToday = visibleWeek.days.any { it.date == currentDate }
-
         selection = if (weekContainsToday) {
             currentDate
         } else {
-            val currentWeekStart = visibleWeek.days.first().date
-            val scrolledForward = previousWeekStart?.let { currentWeekStart > it } ?: false
-
-            if (scrolledForward) {
-                visibleWeek.days.first().date
-            } else {
-                visibleWeek.days.last().date
-            }
+            visibleWeek.days.first().date
         }
-
-        previousWeekStart = visibleWeek.days.first().date
     }
 
     Scaffold(

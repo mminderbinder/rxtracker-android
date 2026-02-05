@@ -2,12 +2,15 @@ package com.example.rxtracker.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
 import com.kizitonwose.calendar.core.Week
 import kotlinx.coroutines.flow.filter
+import java.time.LocalDate
 
 @Composable
 fun rememberFirstVisibleWeekAfterScroll(state: WeekCalendarState): Week {
@@ -19,3 +22,7 @@ fun rememberFirstVisibleWeekAfterScroll(state: WeekCalendarState): Week {
     }
     return visibleWeek.value
 }
+
+
+
+

@@ -17,6 +17,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,7 +51,28 @@ fun HomeScreen(
         endDate = endDate,
         firstVisibleWeekDate = currentDate
     )
+
     val visibleWeek = rememberFirstVisibleWeekAfterScroll(state)
+    var previousWeekStart by remember { mutableStateOf<LocalDate?>(null) }
+
+    LaunchedEffect(visibleWeek) {
+        val weekContainsToday = visibleWeek.days.any { it.date == currentDate }
+
+        selection = if (weekContainsToday) {
+            currentDate
+        } else {
+            val currentWeekStart = visibleWeek.days.first().date
+            val scrolledForward = previousWeekStart?.let { currentWeekStart > it } ?: false
+
+            if (scrolledForward) {
+                visibleWeek.days.first().date
+            } else {
+                visibleWeek.days.last().date
+            }
+        }
+
+        previousWeekStart = visibleWeek.days.first().date
+    }
 
     Scaffold(
         topBar = {

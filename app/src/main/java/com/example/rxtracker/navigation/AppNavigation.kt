@@ -76,7 +76,6 @@ fun AppNavigation() {
             composable(AppDestination.Home.route) {
                 MainScaffold(
                     navController = navController,
-                    title = "RXTracker",
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = { navController.navigate(AppDestination.AddMedication.route) }
@@ -89,17 +88,17 @@ fun AppNavigation() {
                 }
             }
             composable(AppDestination.Medications.route) {
-                MainScaffold(navController, "Medications") {
+                MainScaffold(navController) {
                     MedicationsScreen(modifier = Modifier.padding(it))
                 }
             }
             composable(AppDestination.Reminders.route) {
-                MainScaffold(navController, "Reminders") {
+                MainScaffold(navController) {
                     RemindersScreen(modifier = Modifier.padding(it))
                 }
             }
             composable(AppDestination.Appointments.route) {
-                MainScaffold(navController, "Appointments") {
+                MainScaffold(navController) {
                     AppointmentsScreen(modifier = Modifier.padding(it))
                 }
             }

@@ -10,11 +10,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
@@ -22,8 +25,10 @@ import com.example.rxtracker.navigation.topbar.MainScaffold
 import com.example.rxtracker.navigation.topbar.SecondaryScaffold
 import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
+import com.example.rxtracker.ui.medications.AddFrequencyScreen
 import com.example.rxtracker.ui.medications.AddMedicationScreen
 import com.example.rxtracker.ui.medications.MedicationsScreen
+import com.example.rxtracker.ui.medications.MedicationsViewModel
 import com.example.rxtracker.ui.menu.about.AboutScreen
 import com.example.rxtracker.ui.menu.privacy.PrivacyPolicyScreen
 import com.example.rxtracker.ui.menu.settings.SettingsScreen
@@ -103,23 +108,58 @@ fun AppNavigation() {
                 }
             }
             composable(AppDestination.Settings.route) {
-                SecondaryScaffold(navController, "Settings") {
+                SecondaryScaffold(navController, AppDestination.Settings) {
                     SettingsScreen(modifier = Modifier.padding(it))
                 }
             }
             composable(AppDestination.About.route) {
-                SecondaryScaffold(navController, "About") {
+                SecondaryScaffold(navController, AppDestination.About) {
                     AboutScreen(modifier = Modifier.padding(it))
                 }
             }
             composable(AppDestination.PrivacyPolicy.route) {
-                SecondaryScaffold(navController, "Privacy Policy") {
+                SecondaryScaffold(navController, AppDestination.PrivacyPolicy) {
                     PrivacyPolicyScreen(modifier = Modifier.padding(it))
                 }
             }
-            composable(AppDestination.AddMedication.route) {
-                SecondaryScaffold(navController, "Add Medication") {
-                    AddMedicationScreen(modifier = Modifier.padding(it))
+            navigation(
+                startDestination = AppDestination.AddMedication.route,
+                route = "add_medication_flow"
+            ) {
+                composable(AppDestination.AddMedication.route) { navBackStackEntry ->
+                    val parentEntry = remember(navBackStackEntry) {
+                        navController.getBackStackEntry("add_medication_flow")
+                    }
+                    val viewModel: MedicationsViewModel = viewModel(parentEntry)
+
+                    SecondaryScaffold(navController, AppDestination.AddMedication) {
+                        AddMedicationScreen(
+                            viewModel = viewModel,
+                            onContinue = {
+                                navController.navigate(AppDestination.AddFrequency.route)
+                            },
+                            modifier = Modifier.padding(it)
+                        )
+                    }
+                }
+                composable(AppDestination.AddFrequency.route) { navBackStackEntry ->
+                    val parentEntry = remember(navBackStackEntry) {
+                       navController.getBackStackEntry("add_medication_flow")
+                    }
+                    val viewModel: MedicationsViewModel = viewModel(parentEntry)
+
+                    SecondaryScaffold(navController, AppDestination.AddFrequency) {
+                     AddFrequencyScreen(
+                         viewModel = viewModel,
+                         onContinue = {
+                             // TODO: navigate to next screen or finish flow
+                             // navController.navigate(AppDestination.AddDosage.route)
+                             // OR to complete the flow:
+                             // navController.popBackStack("add_medication_flow", inclusive = true)
+                         },
+                         modifier = Modifier.padding(it)
+                     )
+                    }
                 }
             }
         }

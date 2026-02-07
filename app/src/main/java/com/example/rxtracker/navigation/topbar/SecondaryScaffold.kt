@@ -13,18 +13,19 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Lucide
+import com.example.rxtracker.navigation.AppDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SecondaryScaffold(
     navController: NavController,
-    title: String,
+    destination: AppDestination,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title) },
+                title = { Text(destination.title) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(

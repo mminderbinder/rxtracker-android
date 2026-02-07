@@ -1,5 +1,6 @@
 [versions]
 agp = "9.0.0"
+datetimeWheelPicker = "1.1.0"
 iconsLucide = "1.1.0"
 kotlin = "2.2.10"
 coreKtx = "1.17.0"
@@ -21,9 +22,11 @@ roomCompiler = "2.8.4"
 ksp = "2.3.4"
 uiTextGoogleFonts = "1.10.2"
 kmpWheelPicker = "0.3.0"
+runtime = "1.10.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+datetime-wheel-picker = { module = "io.github.darkokoa:datetime-wheel-picker", version.ref = "datetimeWheelPicker" }
 icons-lucide = { module = "com.composables:icons-lucide", version.ref = "iconsLucide" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -58,6 +61,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 
 androidx-compose-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 swmansion-kmpWheelPicker = { module = "com.swmansion.kmpwheelpicker:kmp-wheel-picker", version.ref = "kmpWheelPicker" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
 
 [plugins]

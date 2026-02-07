@@ -7,7 +7,6 @@ import com.example.rxtracker.navigation.AppDestination.Home
 import com.example.rxtracker.navigation.AppDestination.Medications
 import com.example.rxtracker.navigation.AppDestination.Reminders
 
-
 sealed class AppDestination(
     val route: String,
     val title: String,
@@ -55,6 +54,11 @@ sealed class AppDestination(
     object AddMedication : AppDestination(
         route = "add_medication",
         title = "Add Medication"
+    )
+
+    object AddFrequency : AppDestination(
+        route = "add_frequency",
+        title = "Add Frequency"
     )
 }
 

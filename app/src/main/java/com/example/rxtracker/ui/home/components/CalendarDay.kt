@@ -56,7 +56,7 @@ fun CalendarDay(
         if (isSelected) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(0.8F)
                     .height(5.dp)
                     .background(MaterialTheme.colorScheme.primary)
                     .align(Alignment.BottomCenter),

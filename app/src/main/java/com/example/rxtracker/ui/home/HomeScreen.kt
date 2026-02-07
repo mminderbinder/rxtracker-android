@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.*
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.getWeekPageTitle
@@ -80,7 +79,7 @@ fun HomeScreen(
                     }
                 }
             ) {
-                Icon(Icons.Default.Today, contentDescription = "Scroll to today")
+                Icon(Lucide.CalendarCheck, contentDescription = "Scroll to today")
                 Spacer(modifier = Modifier.width(4.dp))
                 Text("Today")
             }

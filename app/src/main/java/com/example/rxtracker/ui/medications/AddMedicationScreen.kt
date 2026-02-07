@@ -47,7 +47,7 @@ fun AddMedicationScreen(
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun AddMedicationScreenPreview() {
     RXTrackerTheme {

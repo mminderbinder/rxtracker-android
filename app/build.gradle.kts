@@ -65,13 +65,14 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
     // LeakCanary
     debugImplementation(libs.leakcanary.android)
 
     implementation(libs.kotlinx.serialization.json)
 
     // Icons
-    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.icons.lucide)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -95,6 +96,7 @@ dependencies {
     // Calendar
     implementation(libs.compose)
 
-    implementation(libs.icons.lucide)
+    implementation(libs.kotlinx.datetime)
 
+    implementation(libs.swmansion.kmpWheelPicker)
 }

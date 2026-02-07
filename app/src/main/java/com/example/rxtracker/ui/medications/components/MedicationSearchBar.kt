@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -25,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Search
 import com.example.rxtracker.data.Medication
 import com.example.rxtracker.data.MedicationRepository
 import com.example.rxtracker.ui.theme.RXTrackerTheme
@@ -73,7 +73,7 @@ fun MedicationSearchBar(
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Icon(Icons.Default.Search, contentDescription = null)
+                        Icon(imageVector = Lucide.Search, contentDescription = null)
                     }
                 }
             )

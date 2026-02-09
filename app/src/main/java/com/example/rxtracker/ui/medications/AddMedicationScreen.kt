@@ -29,7 +29,6 @@ fun AddMedicationScreen(
     var medicationName by remember { mutableStateOf("") }
     var medicationStrength by remember { mutableStateOf("") }
     var medicationForm by remember { mutableStateOf("") }
-    var medicationSelected by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -41,54 +40,51 @@ fun AddMedicationScreen(
                 medicationName = medication.brand
                 medicationStrength = medication.amount
                 medicationForm = medication.form
-                medicationSelected = true
             }
         )
-        if (medicationSelected) {
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = medicationName,
-                onValueChange = { medicationName = it},
-                label = {Text("Name")},
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
+        OutlinedTextField(
+            value = medicationName,
+            onValueChange = { medicationName = it},
+            label = {Text("Name")},
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
-                value = medicationStrength,
-                onValueChange = {medicationStrength = it},
-                label = {Text("Strength")},
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
+        OutlinedTextField(
+            value = medicationStrength,
+            onValueChange = {medicationStrength = it},
+            label = {Text("Strength")},
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
-                value = medicationForm,
-                onValueChange = {medicationForm = it},
-                label = {Text("Form")},
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
+        OutlinedTextField(
+            value = medicationForm,
+            onValueChange = {medicationForm = it},
+            label = {Text("Form")},
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-            Button(
-                onClick = {
-                    viewModel.updateMedicationInfo(medicationName, medicationStrength, medicationForm)
-                    onContinue()
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = medicationName.isNotBlank() &&
-                        medicationStrength.isNotBlank() &&
-                        medicationForm.isNotBlank()
-            ) {
-                Text("Continue")
-            }
+        Button(
+            onClick = {
+                viewModel.updateMedicationInfo(medicationName, medicationStrength, medicationForm)
+                onContinue()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = medicationName.isNotBlank() &&
+                    medicationStrength.isNotBlank() &&
+                    medicationForm.isNotBlank()
+        ) {
+            Text("Continue")
         }
     }
 }

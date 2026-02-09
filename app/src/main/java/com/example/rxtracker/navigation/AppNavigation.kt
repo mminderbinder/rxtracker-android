@@ -87,7 +87,7 @@ fun AppNavigation() {
                         ) {
                             Icon(imageVector = Lucide.Plus, contentDescription = "Add medication")
                         }
-                    }
+                    },
                 ) { padding ->
                     HomeScreen(modifier = Modifier.padding(padding))
                 }

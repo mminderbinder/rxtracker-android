@@ -31,11 +31,11 @@ fun CyclicDialog(
 ) {
     val intakeState = rememberWheelPickerState(
         itemCount = 30,
-        initialIndex = 20
+        initialIndex = 6
     )
     val pauseState = rememberWheelPickerState(
         itemCount = 30,
-        initialIndex = 6
+        initialIndex = 2
     )
 
     Dialog(onDismissRequest = onDismiss) {
@@ -73,6 +73,7 @@ fun CyclicDialog(
                         ) {
                             DialogWheelPicker(
                                 state = intakeState,
+                                friction = 4f,
                                 itemLabel = { index ->
                                     val days = index + 1
                                     "$days ${if (days == 1) "day" else "days"}"
@@ -99,6 +100,7 @@ fun CyclicDialog(
                         ) {
                             DialogWheelPicker(
                                 state = pauseState,
+                                friction = 4f,
                                 itemLabel = { index ->
                                     val days = index + 1
                                     "$days ${if (days == 1) "day" else "days"}"

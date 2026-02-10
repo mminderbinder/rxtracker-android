@@ -16,13 +16,15 @@ import kotlin.math.abs
 
 @Composable
 fun DialogWheelPicker(
+    modifier: Modifier = Modifier,
     state: WheelPickerState,
     itemLabel: (Int) -> String,
-    modifier: Modifier = Modifier
+    friction: Float = 8f,
 ) {
     WheelPicker(
         state = state,
-        bufferSize = 3,
+        bufferSize = 2,
+        friction = friction,
         modifier = modifier,
         window = {
             Box(

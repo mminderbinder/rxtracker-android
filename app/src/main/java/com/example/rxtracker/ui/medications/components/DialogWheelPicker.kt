@@ -22,7 +22,7 @@ fun DialogWheelPicker(
 ) {
     WheelPicker(
         state = state,
-        bufferSize = 2,
+        bufferSize = 3,
         modifier = modifier,
         window = {
             Box(
@@ -38,7 +38,7 @@ fun DialogWheelPicker(
             modifier = Modifier
                 .padding(16.dp, 8.dp)
                 .graphicsLayer {
-                    alpha = (2 - abs(state.value - index)).coerceIn(0f, 1f)
+                    alpha = (3 - abs(state.value - index)).coerceIn(0f, 1f)
                 },
             color = lerp(
                 MaterialTheme.colorScheme.primary,

@@ -1,6 +1,7 @@
 package com.example.rxtracker.ui.medications.components.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -66,17 +67,21 @@ fun CyclicDialog(
                             style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
-                        DialogWheelPicker(
-                            state = intakeState,
-                            itemLabel = { index ->
-                                val days = index + 1
-                                "$days ${if (days == 1) "day" else "days"}"
-                            },
-                            modifier = Modifier.height(150.dp)
-                        )
+                        Box(
+                            modifier = Modifier.height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            DialogWheelPicker(
+                                state = intakeState,
+                                itemLabel = { index ->
+                                    val days = index + 1
+                                    "$days ${if (days == 1) "day" else "days"}"
+                                }
+                            )
+                        }
                     }
 
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     // Pause days picker
                     Column(
@@ -88,14 +93,18 @@ fun CyclicDialog(
                             style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
-                        DialogWheelPicker(
-                            state = pauseState,
-                            itemLabel = { index ->
-                                val days = index + 1
-                                "$days ${if (days == 1) "day" else "days"}"
-                            },
-                            modifier = Modifier.height(150.dp)
-                        )
+                        Box(
+                            modifier = Modifier.height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            DialogWheelPicker(
+                                state = pauseState,
+                                itemLabel = { index ->
+                                    val days = index + 1
+                                    "$days ${if (days == 1) "day" else "days"}"
+                                }
+                            )
+                        }
                     }
                 }
 

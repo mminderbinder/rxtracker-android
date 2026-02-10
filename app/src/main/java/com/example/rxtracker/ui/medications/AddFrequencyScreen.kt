@@ -11,6 +11,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,18 +19,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.rxtracker.data.models.Frequency
+import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.ui.medications.components.FrequencyOption
+import com.example.rxtracker.ui.medications.components.dialogs.CyclicDialog
+import com.example.rxtracker.ui.medications.components.dialogs.EveryXDaysDialog
+import com.example.rxtracker.ui.medications.components.dialogs.EveryXHoursDialog
+import com.example.rxtracker.ui.medications.components.dialogs.MultipleDailyDialog
+import com.example.rxtracker.ui.medications.components.dialogs.WeekdaysDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
-
-enum class FrequencyType(val label: String) {
-    ONCE_DAILY("Once a day"),
-    MULTIPLE_DAILY("Multiple times a day"),
-    AS_NEEDED("As needed"),
-    EVERY_X_HOURS("Every X hours"),
-    EVERY_X_DAYS("Every X days"),
-    SPECIFIC_WEEKDAYS("Specific weekdays"),
-    CYCLIC("Cyclic (intake days, rest days)")
-}
 
 @Composable
 fun AddFrequencyScreen(
@@ -38,7 +36,20 @@ fun AddFrequencyScreen(
     modifier: Modifier = Modifier,
 ) {
     val medicationData = viewModel.medicationData
-    var selectedFrequency by remember { mutableStateOf<FrequencyType?>(null) }
+    var selectedFrequency by remember { mutableStateOf<Frequency?>(null) }
+    var showDialog by remember { mutableStateOf(false) }
+    var frequencyDetails by remember { mutableStateOf<FrequencyDetails?>(null) }
+
+    LaunchedEffect(selectedFrequency) {
+        showDialog = when (selectedFrequency) {
+            Frequency.MULTIPLE_DAILY,
+            Frequency.EVERY_X_HOURS,
+            Frequency.EVERY_X_DAYS,
+            Frequency.SPECIFIC_WEEKDAYS,
+            Frequency.CYCLIC -> true
+            else -> false
+        }
+    }
 
     Column(
         modifier = modifier
@@ -57,11 +68,18 @@ fun AddFrequencyScreen(
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
-        FrequencyType.entries.forEach { frequencyType ->
+        Frequency.entries.forEach { frequencyType ->
             FrequencyOption(
                 label = frequencyType.label,
                 selected = selectedFrequency == frequencyType,
-                onClick = { selectedFrequency = frequencyType}
+                onClick = {
+                    selectedFrequency = frequencyType
+                    when (frequencyType) {
+                        Frequency.ONCE_DAILY -> frequencyDetails = FrequencyDetails.OnceDaily
+                        Frequency.AS_NEEDED -> frequencyDetails = FrequencyDetails.AsNeeded
+                        else -> {}
+                    }
+                }
             )
             HorizontalDivider()
         }
@@ -69,16 +87,87 @@ fun AddFrequencyScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick =  {
-                // TODO: handle navigation
+            onClick = {
+                selectedFrequency?.let {
+
+                }
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = false
+            enabled = selectedFrequency != null && frequencyDetails != null
         ) {
             Text("Continue")
         }
     }
+    if (showDialog) {
+        when (selectedFrequency) {
+            Frequency.MULTIPLE_DAILY -> {
+                MultipleDailyDialog(
+                    onDismiss = {
+                        showDialog = false
+                        selectedFrequency = null
+                    },
+                    onConfirm = { timesPerDay ->
+                        frequencyDetails = FrequencyDetails.MultipleTimes(timesPerDay)
+                        showDialog = false
+                    }
+                )
+            }
+
+            Frequency.EVERY_X_HOURS -> {
+                EveryXHoursDialog(
+                    onDismiss = {
+                        showDialog = false
+                        selectedFrequency = null
+                    },
+                    onConfirm = { hours ->
+                        frequencyDetails = FrequencyDetails.EveryXHours(hours)
+                        showDialog = false
+                    }
+                )
+            }
+
+            Frequency.EVERY_X_DAYS -> {
+                EveryXDaysDialog(
+                    onDismiss = {
+                        showDialog = false
+                        selectedFrequency = null
+                    },
+                    onConfirm = { days ->
+                        frequencyDetails = FrequencyDetails.EveryXDays(days)
+                        showDialog = false
+                    }
+                )
+            }
+
+            Frequency.SPECIFIC_WEEKDAYS -> {
+                WeekdaysDialog(
+                    onDismiss = {
+                        showDialog = false
+                        selectedFrequency = null
+                    },
+                    onConfirm = { days ->
+                        frequencyDetails = FrequencyDetails.SpecificWeekdays(days)
+                        showDialog = false
+                    }
+                )
+            }
+            Frequency.CYCLIC -> {
+                CyclicDialog(
+                    onDismiss = {
+                        showDialog = false
+                        selectedFrequency = null
+                    },
+                    onConfirm = { intakeDays, pauseDays ->
+                        frequencyDetails = FrequencyDetails.Cyclic(intakeDays, pauseDays)
+                        showDialog = false
+                    }
+                )
+            }
+            else -> {}
+        }
+    }
 }
+
 
 @Suppress("ViewModelConstructorInComposable")
 @Preview(showBackground = true)

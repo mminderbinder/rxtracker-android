@@ -12,7 +12,7 @@ fun EveryXDaysDialog(
     SingleDialog(
         title = "Every how many days?",
         itemCount = 90,
-        initialIndex = 0,
+        initialIndex = 2,
         itemLabel = { index ->
             val days = index + 1
             "$days ${if (days == 1) "day" else "days"}"

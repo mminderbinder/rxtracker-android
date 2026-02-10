@@ -12,7 +12,7 @@ fun EveryXHoursDialog(
     SingleDialog(
         title = "Every how many hours?",
         itemCount = 12,
-        initialIndex = 0,
+        initialIndex = 2,
         itemLabel = { index ->
             val hours = index + 1
             "$hours ${if (hours == 1) "hour" else "hours"}"

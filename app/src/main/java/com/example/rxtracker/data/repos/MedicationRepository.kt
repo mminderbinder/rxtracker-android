@@ -1,6 +1,7 @@
-package com.example.rxtracker.data
+package com.example.rxtracker.data.repos
 
 import android.content.Context
+import com.example.rxtracker.data.Medication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -20,7 +21,7 @@ object MedicationRepository {
                     .bufferedReader()
                     .use { it.readText() }
 
-                medications = Json.decodeFromString(jsonString)
+                medications = Json.Default.decodeFromString(jsonString)
             }
         }
     }

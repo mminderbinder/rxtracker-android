@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Search
 import com.example.rxtracker.data.Medication
-import com.example.rxtracker.data.MedicationRepository
+import com.example.rxtracker.data.repos.MedicationRepository
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import kotlinx.coroutines.delay
 

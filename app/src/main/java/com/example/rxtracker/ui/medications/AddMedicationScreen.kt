@@ -46,8 +46,8 @@ fun AddMedicationScreen(
 
         OutlinedTextField(
             value = medicationName,
-            onValueChange = { medicationName = it},
-            label = {Text("Name")},
+            onValueChange = { medicationName = it },
+            label = { Text("Name") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -56,8 +56,8 @@ fun AddMedicationScreen(
 
         OutlinedTextField(
             value = medicationStrength,
-            onValueChange = {medicationStrength = it},
-            label = {Text("Strength")},
+            onValueChange = { medicationStrength = it },
+            label = { Text("Strength") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -66,8 +66,8 @@ fun AddMedicationScreen(
 
         OutlinedTextField(
             value = medicationForm,
-            onValueChange = {medicationForm = it},
-            label = {Text("Form")},
+            onValueChange = { medicationForm = it },
+            label = { Text("Form") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )

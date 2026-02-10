@@ -23,7 +23,7 @@ fun DialogWheelPicker(
 ) {
     WheelPicker(
         state = state,
-        bufferSize = 2,
+        bufferSize = 1,
         friction = friction,
         modifier = modifier,
         window = {

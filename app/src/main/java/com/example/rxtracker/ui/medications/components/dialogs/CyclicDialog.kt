@@ -57,7 +57,6 @@ fun CyclicDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    // Intake days picker
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.weight(1f)
@@ -68,7 +67,7 @@ fun CyclicDialog(
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         Box(
-                            modifier = Modifier.height(200.dp),
+                            modifier = Modifier.height(120.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             DialogWheelPicker(
@@ -84,7 +83,6 @@ fun CyclicDialog(
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // Pause days picker
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.weight(1f)
@@ -95,7 +93,7 @@ fun CyclicDialog(
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         Box(
-                            modifier = Modifier.height(200.dp),
+                            modifier = Modifier.height(120.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             DialogWheelPicker(

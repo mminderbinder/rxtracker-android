@@ -1,7 +1,11 @@
 package com.example.rxtracker.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.composables.icons.lucide.*
+import com.composables.icons.lucide.AlarmClock
+import com.composables.icons.lucide.CalendarFold
+import com.composables.icons.lucide.House
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.PillBottle
 import com.example.rxtracker.navigation.AppDestination.Appointments
 import com.example.rxtracker.navigation.AppDestination.Home
 import com.example.rxtracker.navigation.AppDestination.Medications
@@ -59,6 +63,11 @@ sealed class AppDestination(
     object AddFrequency : AppDestination(
         route = "add_frequency",
         title = "Add Frequency"
+    )
+
+    object AddTimes : AppDestination(
+        route = "add_times",
+        title = "Add Times"
     )
 }
 

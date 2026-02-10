@@ -11,7 +11,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,19 +36,14 @@ fun AddFrequencyScreen(
 ) {
     val medicationData = viewModel.medicationData
     var selectedFrequency by remember { mutableStateOf<Frequency?>(null) }
-    var showDialog by remember { mutableStateOf(false) }
     var frequencyDetails by remember { mutableStateOf<FrequencyDetails?>(null) }
 
-    LaunchedEffect(selectedFrequency) {
-        showDialog = when (selectedFrequency) {
-            Frequency.MULTIPLE_DAILY,
-            Frequency.EVERY_X_HOURS,
-            Frequency.EVERY_X_DAYS,
-            Frequency.SPECIFIC_WEEKDAYS,
-            Frequency.CYCLIC -> true
-            else -> false
-        }
-    }
+    var showMultipleDailyDialog by remember { mutableStateOf(false) }
+    var showEveryXHoursDialog by remember { mutableStateOf(false) }
+    var showEveryXDaysDialog by remember { mutableStateOf(false) }
+    var showSpecificWeekdaysDialog by remember { mutableStateOf(false) }
+    var showCyclicDialog by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = modifier
@@ -77,7 +71,11 @@ fun AddFrequencyScreen(
                     when (frequencyType) {
                         Frequency.ONCE_DAILY -> frequencyDetails = FrequencyDetails.OnceDaily
                         Frequency.AS_NEEDED -> frequencyDetails = FrequencyDetails.AsNeeded
-                        else -> {}
+                        Frequency.MULTIPLE_DAILY -> showMultipleDailyDialog = true
+                        Frequency.EVERY_X_HOURS -> showEveryXHoursDialog = true
+                        Frequency.EVERY_X_DAYS -> showEveryXDaysDialog = true
+                        Frequency.SPECIFIC_WEEKDAYS -> showSpecificWeekdaysDialog = true
+                        Frequency.CYCLIC -> showCyclicDialog = true
                     }
                 }
             )
@@ -88,9 +86,12 @@ fun AddFrequencyScreen(
 
         Button(
             onClick = {
-                selectedFrequency?.let {
-
+                selectedFrequency?.let { type ->
+                    frequencyDetails?.let { details ->
+                        viewModel.updateFrequency(type, details)
+                    }
                 }
+                onContinue()
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = selectedFrequency != null && frequencyDetails != null
@@ -98,73 +99,50 @@ fun AddFrequencyScreen(
             Text("Continue")
         }
     }
-    if (showDialog) {
-        when (selectedFrequency) {
-            Frequency.MULTIPLE_DAILY -> {
-                MultipleDailyDialog(
-                    onDismiss = {
-                        showDialog = false
-                        selectedFrequency = null
-                    },
-                    onConfirm = { timesPerDay ->
-                        frequencyDetails = FrequencyDetails.MultipleTimes(timesPerDay)
-                        showDialog = false
-                    }
-                )
+    if (showMultipleDailyDialog) {
+        MultipleDailyDialog(
+            onDismiss = { showMultipleDailyDialog = false },
+            onConfirm = { timesPerDay ->
+                frequencyDetails = FrequencyDetails.MultipleTimes(timesPerDay)
+                showMultipleDailyDialog = false
             }
-
-            Frequency.EVERY_X_HOURS -> {
-                EveryXHoursDialog(
-                    onDismiss = {
-                        showDialog = false
-                        selectedFrequency = null
-                    },
-                    onConfirm = { hours ->
-                        frequencyDetails = FrequencyDetails.EveryXHours(hours)
-                        showDialog = false
-                    }
-                )
+        )
+    }
+    if (showEveryXHoursDialog) {
+        EveryXHoursDialog(
+            onDismiss = { showEveryXHoursDialog = false },
+            onConfirm = { hours ->
+                frequencyDetails = FrequencyDetails.EveryXHours(hours)
+                showEveryXHoursDialog = false
             }
-
-            Frequency.EVERY_X_DAYS -> {
-                EveryXDaysDialog(
-                    onDismiss = {
-                        showDialog = false
-                        selectedFrequency = null
-                    },
-                    onConfirm = { days ->
-                        frequencyDetails = FrequencyDetails.EveryXDays(days)
-                        showDialog = false
-                    }
-                )
+        )
+    }
+    if (showEveryXDaysDialog) {
+        EveryXDaysDialog(
+            onDismiss = { showEveryXDaysDialog = false },
+            onConfirm = { days ->
+                frequencyDetails = FrequencyDetails.EveryXDays(days)
+                showEveryXDaysDialog = false
             }
-
-            Frequency.SPECIFIC_WEEKDAYS -> {
-                WeekdaysDialog(
-                    onDismiss = {
-                        showDialog = false
-                        selectedFrequency = null
-                    },
-                    onConfirm = { days ->
-                        frequencyDetails = FrequencyDetails.SpecificWeekdays(days)
-                        showDialog = false
-                    }
-                )
+        )
+    }
+    if (showSpecificWeekdaysDialog) {
+        WeekdaysDialog(
+            onDismiss = { showSpecificWeekdaysDialog = false },
+            onConfirm = { days ->
+                frequencyDetails = FrequencyDetails.SpecificWeekdays(days)
+                showSpecificWeekdaysDialog = false
             }
-            Frequency.CYCLIC -> {
-                CyclicDialog(
-                    onDismiss = {
-                        showDialog = false
-                        selectedFrequency = null
-                    },
-                    onConfirm = { intakeDays, pauseDays ->
-                        frequencyDetails = FrequencyDetails.Cyclic(intakeDays, pauseDays)
-                        showDialog = false
-                    }
-                )
+        )
+    }
+    if (showCyclicDialog) {
+        CyclicDialog(
+            onDismiss = { showCyclicDialog = false },
+            onConfirm = { intakeDays, pauseDays ->
+                frequencyDetails = FrequencyDetails.Cyclic(intakeDays, pauseDays)
+                showCyclicDialog = false
             }
-            else -> {}
-        }
+        )
     }
 }
 

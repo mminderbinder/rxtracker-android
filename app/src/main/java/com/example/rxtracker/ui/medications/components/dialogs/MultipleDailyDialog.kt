@@ -9,13 +9,13 @@ fun MultipleDailyDialog(
 ) {
     SingleDialog(
         title = "Times per day",
-        itemCount = 12,
-        initialIndex = 1,
+        itemCount = 11,
+        initialIndex = 0,
         itemLabel = { index ->
-            val times = index + 1
-            "$times ${if (times == 1) "time" else "times"}"
+            val times = index + 2
+            "$times times"
         },
         onDismiss = onDismiss,
-        onConfirm = { onConfirm(it + 1) }
+        onConfirm = { onConfirm(it + 2) }
     )
 }

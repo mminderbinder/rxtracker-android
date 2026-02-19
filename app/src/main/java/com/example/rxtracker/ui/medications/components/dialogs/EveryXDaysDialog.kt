@@ -11,15 +11,15 @@ fun EveryXDaysDialog(
 ) {
     SingleDialog(
         title = "Every how many days?",
-        itemCount = 90,
-        initialIndex = 1,
+        itemCount = 89,
+        initialIndex = 0,
         friction = 4f,
         itemLabel = { index ->
-            val days = index + 1
-            "$days ${if (days == 1) "day" else "days"}"
+            val days = index + 2
+            "$days days"
         },
         onDismiss = onDismiss,
-        onConfirm = { onConfirm(it + 1) }
+        onConfirm = { onConfirm(it + 2) }
     )
 }
 

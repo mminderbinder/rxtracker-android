@@ -21,7 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.composables.icons.lucide.*
+import com.composables.icons.lucide.CalendarCheck
+import com.composables.icons.lucide.Lucide
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.getWeekPageTitle
@@ -46,6 +47,7 @@ fun HomeScreen(
         endDate = endDate,
         firstVisibleWeekDate = currentDate
     )
+
     val visibleWeek = rememberFirstVisibleWeekAfterScroll(state)
 
     LaunchedEffect(visibleWeek) {

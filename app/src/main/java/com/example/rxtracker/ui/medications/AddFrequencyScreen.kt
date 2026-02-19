@@ -50,9 +50,10 @@ fun AddFrequencyScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text("Medication: ${medicationData.name}")
-        Text("Strength: ${medicationData.strength}")
-        Text("Form: ${medicationData.form}")
+        Text(
+            text = "${medicationData.name} ${medicationData.strength} ${medicationData.form}",
+            style = MaterialTheme.typography.titleSmall
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

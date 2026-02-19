@@ -170,7 +170,6 @@ fun AppNavigation() {
                             viewModel = viewModel,
                             onContinue = {
                                 // TODO: navigate to next screen or finish flow
-                                // navController.navigate(AppDestination.AddDosage.route)
                                 // OR to complete the flow:
                                 // navController.popBackStack("add_medication_flow", inclusive = true)
                             },

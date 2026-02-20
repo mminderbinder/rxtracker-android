@@ -19,7 +19,7 @@ fun AddTimesScreen(
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val medicationData = viewModel.medicationData
+    val medicationData = viewModel.medicationEntity
 
     Column(
         modifier = modifier
@@ -32,7 +32,7 @@ fun AddTimesScreen(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Text(
             text = "Add Time...",
             style = MaterialTheme.typography.headlineMedium

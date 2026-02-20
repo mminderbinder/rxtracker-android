@@ -4,17 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.rxtracker.data.models.DoseTimes
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
-import com.example.rxtracker.data.models.MedicationData
+import com.example.rxtracker.data.models.MedicationEntity
 
 class MedicationsViewModel : ViewModel() {
-    var medicationData by mutableStateOf(MedicationData())
+    var medicationEntity by mutableStateOf(MedicationEntity())
         private set
 
     fun updateMedicationInfo(name: String, strength: String, form: String) {
-        medicationData = medicationData.copy(
+        medicationEntity = medicationEntity.copy(
             name = name,
             strength = strength,
             form = form
@@ -22,20 +21,14 @@ class MedicationsViewModel : ViewModel() {
     }
 
     fun updateFrequency(type: Frequency, details: FrequencyDetails) {
-        medicationData = medicationData.copy(
+        medicationEntity = medicationEntity.copy(
             frequencyType = type,
             frequencyDetails = details
         )
     }
 
-    fun updateDoseTimes(doseTimes: List<DoseTimes>) {
-        medicationData = medicationData.copy(
-            doseTimes = doseTimes
-        )
-    }
-
     fun getTimesPerDay(): Int {
-        return when (val details = medicationData.frequencyDetails) {
+        return when (val details = medicationEntity.frequencyDetails) {
             is FrequencyDetails.OnceDaily -> 1
             is FrequencyDetails.MultipleTimes -> details.timesPerDay
             is FrequencyDetails.AsNeeded -> 0
@@ -46,5 +39,4 @@ class MedicationsViewModel : ViewModel() {
             null -> 0
         }
     }
-
 }

@@ -24,17 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.rxtracker.data.models.DayOfWeek
 import com.example.rxtracker.ui.theme.RXTrackerTheme
-
-enum class DayOfWeek(val displayName: String) {
-    MONDAY("Mon"),
-    TUESDAY("Tue"),
-    WEDNESDAY("Wed"),
-    THURSDAY("Thu"),
-    FRIDAY("Fri"),
-    SATURDAY("Sat"),
-    SUNDAY("Sun")
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -73,7 +64,7 @@ fun WeekdaysDialog(
                                     selectedDays + day
                                 }
                             },
-                            label = { Text(day.displayName) }
+                            label = { Text(day.name) }
                         )
                     }
                 }

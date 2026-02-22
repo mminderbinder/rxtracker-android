@@ -42,6 +42,7 @@ fun AppNavigation() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route
+    val showFab = currentRoute == AppDestination.Home.route
 
     val showBottomNav = currentRoute in listOf(
         AppDestination.Home.route,
@@ -72,6 +73,15 @@ fun AppNavigation() {
                     }
                 }
             }
+        },
+        floatingActionButton = {
+            if (showFab) {
+                FloatingActionButton(
+                    onClick = { navController.navigate(AppDestination.AddMedication.route) }
+                ) {
+                    Icon(imageVector = Lucide.Plus, contentDescription = "Add medication")
+                }
+            }
         }
     ) { innerPadding ->
         NavHost(
@@ -81,14 +91,7 @@ fun AppNavigation() {
         ) {
             composable(AppDestination.Home.route) {
                 MainScaffold(
-                    navController = navController,
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { navController.navigate(AppDestination.AddMedication.route) }
-                        ) {
-                            Icon(imageVector = Lucide.Plus, contentDescription = "Add medication")
-                        }
-                    },
+                    navController = navController
                 ) { padding ->
                     HomeScreen(modifier = Modifier.padding(padding))
                 }

@@ -21,14 +21,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.composables.icons.lucide.*
+import com.composables.icons.lucide.EllipsisVertical
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Pill
 import com.example.rxtracker.navigation.AppDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScaffold(
     navController: NavController,
-    floatingActionButton: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -87,7 +88,6 @@ fun MainScaffold(
                 }
             )
         },
-        floatingActionButton = floatingActionButton
     ) { innerPadding ->
         content(innerPadding)
     }

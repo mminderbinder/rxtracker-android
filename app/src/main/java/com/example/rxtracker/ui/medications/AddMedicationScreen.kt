@@ -12,7 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,9 +26,9 @@ fun AddMedicationScreen(
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var medicationName by remember { mutableStateOf("") }
-    var medicationStrength by remember { mutableStateOf("") }
-    var medicationForm by remember { mutableStateOf("") }
+    var medicationName by rememberSaveable { mutableStateOf("") }
+    var medicationStrength by rememberSaveable { mutableStateOf("") }
+    var medicationForm by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = modifier

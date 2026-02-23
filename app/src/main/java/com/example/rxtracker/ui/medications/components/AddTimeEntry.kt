@@ -23,10 +23,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Trash2
+import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
+import com.example.rxtracker.ui.medications.components.dialogs.pillLabel
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -38,11 +42,14 @@ private val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 fun AddTimeEntry(
     modifier: Modifier = Modifier,
     time: LocalTime,
+    quantity: Double,
+    onQuantityChange: (Double) -> Unit,
     onTimeChange: (LocalTime) -> Unit,
     onRemove: () -> Unit,
     showRemove: Boolean = true,
 ) {
     var showPicker by remember { mutableStateOf(false) }
+    var showQuantityDialog by remember { mutableStateOf(false) }
 
     OutlinedCard(
         modifier = modifier.fillMaxWidth()
@@ -50,30 +57,55 @@ fun AddTimeEntry(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 12.dp,
-                ),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                imageVector = Lucide.Clock,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = time.format(timeFormatter),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    textDecoration = TextDecoration.Underline
+                ),
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .weight(1f)
                     .clickable { showPicker = true }
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            if (showRemove) {
-                IconButton(onClick = onRemove) {
-                    Icon(
-                        imageVector = Lucide.Trash2,
-                        contentDescription = "Remove time",
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
+            Text(
+                text = pillLabel(quantity),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    textDecoration = TextDecoration.Underline
+                ),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { showQuantityDialog = true }
+            )
+            IconButton(
+                onClick = onRemove,
+                enabled = showRemove
+            ) {
+                Icon(
+                    imageVector = Lucide.Trash2,
+                    contentDescription = "Remove time",
+                    tint = if (showRemove) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                )
             }
         }
+    }
+    if (showQuantityDialog) {
+        QuantityDialog(
+            initialQuantity = quantity,
+            onDismiss = { showQuantityDialog = false },
+            onConfirm = { newQty ->
+                onQuantityChange(newQty)
+                showQuantityDialog = false
+            }
+        )
     }
     if (showPicker) {
         val pickerState = rememberTimePickerState(
@@ -103,8 +135,9 @@ fun AddTimesEntryPreview() {
     RXTrackerTheme {
         AddTimeEntry(
             time = LocalTime.now(),
+            quantity = 2.0,
             onTimeChange = {},
-            onRemove = {}
-        )
+            onRemove = {},
+            onQuantityChange = {})
     }
 }

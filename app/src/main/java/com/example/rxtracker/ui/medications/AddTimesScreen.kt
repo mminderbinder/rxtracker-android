@@ -12,8 +12,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,18 +23,35 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.ui.medications.components.AddTimeEntry
 import com.example.rxtracker.ui.theme.RXTrackerTheme
-import java.time.LocalTime
 
 @Composable
 fun AddTimesScreen(
     viewModel: MedicationsViewModel,
+    snackbarHostState: SnackbarHostState,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val medicationData = viewModel.medicationEntity
-    var times by remember { mutableStateOf(listOf(LocalTime.of(8, 0))) }
+    val medicationData = viewModel.userMedication
+    var doseTimes by remember { mutableStateOf(viewModel.generateInitialTimes()) }
+    var duplicateTimeError by remember { mutableStateOf(false) }
+
+    val intervalHours = remember { viewModel.getIntervalHours() }
+
+    val canAddTime = remember(doseTimes) {
+        val lastTime = doseTimes.maxByOrNull { it.time }?.time ?: return@remember false
+        val nextSeconds = lastTime.toSecondOfDay() + (intervalHours * 3600)
+        nextSeconds < 86400
+    }
+
+    if (duplicateTimeError) {
+        LaunchedEffect(duplicateTimeError) {
+            snackbarHostState.showSnackbar("Cannot add the same time")
+            duplicateTimeError = false
+        }
+    }
 
     Column(
         modifier = modifier
@@ -50,28 +69,52 @@ fun AddTimesScreen(
             text = "When do you take this medication?",
             style = MaterialTheme.typography.headlineSmall
         )
+
         Spacer(modifier = Modifier.height(24.dp))
 
         LazyColumn(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            itemsIndexed(times) { index, time ->
+            itemsIndexed(doseTimes) { index, doseTime ->
                 AddTimeEntry(
-                    time = time,
+                    time = doseTime.time,
+                    quantity = doseTime.quantity,
                     onTimeChange = { newTime ->
-                        times = times.toMutableList().also { it[index] = newTime }
+                        val isDuplicate = doseTimes
+                            .filterIndexed { i, _ -> i != index }
+                            .any { it.time == newTime }
+
+                        if (!isDuplicate) {
+                            doseTimes = doseTimes.toMutableList()
+                                .also { it[index] = it[index].copy(time = newTime) }
+                                .sortedBy { it.time }
+                        } else {
+                            duplicateTimeError = true
+                        }
+                    },
+                    onQuantityChange = { newQty ->
+                        doseTimes = doseTimes.toMutableList()
+                            .also { it[index] = it[index].copy(quantity = newQty) }
                     },
                     onRemove = {
-                        times = times.toMutableList().also { it.removeAt(index) }
+                        doseTimes = doseTimes.toMutableList()
+                            .also { it.removeAt(index) }
                     },
-                    showRemove = times.size > 1
+                    showRemove = doseTimes.size > 1
                 )
             }
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedButton(
-                    onClick = { times = times + LocalTime.of(8, 0) },
+                    onClick = {
+                        val lastTime = doseTimes.maxByOrNull { it.time }?.time
+                            ?: return@OutlinedButton
+                        doseTimes = doseTimes + DoseTime(
+                            time = lastTime.plusHours(intervalHours.toLong())
+                        )
+                    },
+                    enabled = canAddTime,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("+ Add Another time")
@@ -80,10 +123,10 @@ fun AddTimesScreen(
         }
         Button(
             onClick = {
-                // TODO: update dose times
+                viewModel.updateDoseTimes(doseTimes)
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = times.isNotEmpty()
+            enabled = doseTimes.isNotEmpty()
         ) {
             Text("Continue")
         }
@@ -98,6 +141,7 @@ fun AddTimesScreenPreview() {
         AddTimesScreen(
             viewModel = MedicationsViewModel(),
             onContinue = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

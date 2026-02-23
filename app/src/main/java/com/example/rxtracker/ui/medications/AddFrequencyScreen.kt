@@ -34,7 +34,7 @@ fun AddFrequencyScreen(
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val medicationData = viewModel.medicationEntity
+    val medicationData = viewModel.userMedication
     var selectedFrequency by remember { mutableStateOf<Frequency?>(null) }
     var frequencyDetails by remember { mutableStateOf<FrequencyDetails?>(null) }
 

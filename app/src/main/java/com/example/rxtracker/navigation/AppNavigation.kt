@@ -7,6 +7,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -51,7 +53,10 @@ fun AppNavigation() {
         AppDestination.Appointments.route
     )
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             if (showBottomNav) {
                 NavigationBar {
@@ -176,6 +181,7 @@ fun AppNavigation() {
                                 // OR to complete the flow:
                                 // navController.popBackStack("add_medication_flow", inclusive = true)
                             },
+                            snackbarHostState = snackbarHostState,
                             modifier = Modifier.padding(it)
                         )
                     }

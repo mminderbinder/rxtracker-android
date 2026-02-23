@@ -46,6 +46,7 @@ fun AddTimeEntry(
     onQuantityChange: (Double) -> Unit,
     onTimeChange: (LocalTime) -> Unit,
     onRemove: () -> Unit,
+    showTrash: Boolean = true,
     showRemove: Boolean = true,
 ) {
     var showPicker by remember { mutableStateOf(false) }
@@ -84,16 +85,18 @@ fun AddTimeEntry(
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { showQuantityDialog = true }
             )
-            IconButton(
-                onClick = onRemove,
-                enabled = showRemove
-            ) {
-                Icon(
-                    imageVector = Lucide.Trash2,
-                    contentDescription = "Remove time",
-                    tint = if (showRemove) MaterialTheme.colorScheme.error
-                    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                )
+            if (showTrash) {
+                IconButton(
+                    onClick = onRemove,
+                    enabled = showRemove
+                ) {
+                    Icon(
+                        imageVector = Lucide.Trash2,
+                        contentDescription = "Remove time",
+                        tint = if (showRemove) MaterialTheme.colorScheme.error
+                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    )
+                }
             }
         }
     }

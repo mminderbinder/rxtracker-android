@@ -3,9 +3,11 @@ package com.example.rxtracker.ui.medications.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -48,20 +50,25 @@ fun QuantityCounter(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        IconButton(
+        FilledIconButton(
             onClick = {
                 val newQty = (quantity - STEP).coerceAtLeast(min)
                 textValue = if (newQty % 1.0 == 0.0) newQty.toInt().toString()
                 else newQty.toString()
                 onQuantityChange(newQty)
             },
-            enabled = quantity > min
+            enabled = quantity > min,
+            shape = CircleShape,
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            )
         ) {
             Icon(
                 imageVector = Lucide.Minus,
-                contentDescription = "Decrease quantity",
-                tint = if (quantity > min) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                contentDescription = "Decrease quantity"
             )
         }
         OutlinedTextField(
@@ -87,22 +94,26 @@ fun QuantityCounter(
             ),
             singleLine = true
         )
-        IconButton(
+        FilledIconButton(
             onClick = {
                 val newQty = (quantity + STEP).coerceAtMost(max)
                 textValue = if (newQty % 1.0 == 0.0) newQty.toInt().toString()
                 else newQty.toString()
                 onQuantityChange(newQty)
             },
-            enabled = quantity < max
+            enabled = quantity < max,
+            shape = CircleShape,
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            )
         ) {
             Icon(
                 imageVector = Lucide.Plus,
-                contentDescription = "Increase quantity",
-                tint = if (quantity < max) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                contentDescription = "Increase quantity"
             )
-
         }
     }
 }

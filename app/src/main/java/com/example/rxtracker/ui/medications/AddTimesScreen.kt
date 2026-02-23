@@ -38,9 +38,11 @@ fun AddTimesScreen(
     var doseTimes by remember { mutableStateOf(viewModel.generateInitialTimes()) }
     var duplicateTimeError by remember { mutableStateOf(false) }
 
+    val isFixed = remember { viewModel.isFixedSchedule() }
     val intervalHours = remember { viewModel.getIntervalHours() }
 
     val canAddTime = remember(doseTimes) {
+        if (isFixed) return@remember false
         val lastTime = doseTimes.maxByOrNull { it.time }?.time ?: return@remember false
         val nextSeconds = lastTime.toSecondOfDay() + (intervalHours * 3600)
         nextSeconds < 86400
@@ -101,23 +103,26 @@ fun AddTimesScreen(
                         doseTimes = doseTimes.toMutableList()
                             .also { it.removeAt(index) }
                     },
+                    showTrash = !isFixed,
                     showRemove = doseTimes.size > 1
                 )
             }
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedButton(
-                    onClick = {
-                        val lastTime = doseTimes.maxByOrNull { it.time }?.time
-                            ?: return@OutlinedButton
-                        doseTimes = doseTimes + DoseTime(
-                            time = lastTime.plusHours(intervalHours.toLong())
-                        )
-                    },
-                    enabled = canAddTime,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("+ Add Another time")
+            if (!isFixed) {
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedButton(
+                        onClick = {
+                            val lastTime = doseTimes.maxByOrNull { it.time }?.time
+                                ?: return@OutlinedButton
+                            doseTimes = doseTimes + DoseTime(
+                                time = lastTime.plusHours(intervalHours.toLong())
+                            )
+                        },
+                        enabled = canAddTime,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("+ Add Another time")
+                    }
                 }
             }
         }

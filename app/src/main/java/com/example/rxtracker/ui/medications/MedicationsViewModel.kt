@@ -33,6 +33,13 @@ class MedicationsViewModel : ViewModel() {
         userMedication = userMedication.copy(doseTimes = doseTimes)
     }
 
+    fun isFixedSchedule(): Boolean {
+        return when (userMedication.frequencyType) {
+            Frequency.ONCE_DAILY, Frequency.MULTIPLE_DAILY, Frequency.EVERY_X_HOURS -> true
+            else -> false
+        }
+    }
+
     fun getIntervalHours(): Int {
         return when (val details = userMedication.frequencyDetails) {
             is FrequencyDetails.EveryXHours -> details.hours
@@ -40,7 +47,7 @@ class MedicationsViewModel : ViewModel() {
                 12 / (details.timesPerDay - 1).coerceAtLeast(1)
             }
 
-            else -> 4
+            else -> 2
         }
     }
 
@@ -57,12 +64,16 @@ class MedicationsViewModel : ViewModel() {
             is FrequencyDetails.MultipleTimes -> {
                 val intervalHours = 12 / (details.timesPerDay - 1).coerceAtLeast(1)
                 (0 until details.timesPerDay).map { i ->
-                    DoseTime(time = start.plusHours((i * intervalHours).toLong()), quantity = 1.0)
+                    DoseTime(
+                        time = start.plusHours((i * intervalHours).toLong()),
+                        quantity = 1.0
+                    )
                 }
             }
 
             else -> listOf(DoseTime(time = start, quantity = 1.0))
         }
+
         return generated.filter { it.time >= start }
             .ifEmpty { listOf(DoseTime(time = start, quantity = 1.0)) }
     }

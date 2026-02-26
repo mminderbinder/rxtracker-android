@@ -57,7 +57,7 @@ fun SingleDialog(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(120.dp),
+                        .height(100.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     DialogWheelPicker(

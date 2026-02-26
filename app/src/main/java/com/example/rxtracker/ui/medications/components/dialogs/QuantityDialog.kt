@@ -27,7 +27,7 @@ fun QuantityDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("How many pills?") },
+        title = { Text("How many doses?") },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -49,8 +49,8 @@ fun QuantityDialog(
     )
 }
 
-fun pillLabel(quantity: Double): String {
+fun doseLabel(quantity: Double): String {
     val formatted = if (quantity % 1.0 == 0.0) quantity.toInt().toString()
     else quantity.toString()
-    return "$formatted ${if (quantity == 1.0) "pill" else "pills"}"
+    return "$formatted ${if (quantity == 1.0) "dose" else "doses"}"
 }

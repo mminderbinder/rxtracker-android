@@ -66,7 +66,6 @@ class MedicationsViewModel : ViewModel() {
         }
     }
 
-
     fun isFixedSchedule(): Boolean {
         return when (userMedication.frequencyType) {
             Frequency.ONCE_DAILY, Frequency.MULTIPLE_DAILY -> true
@@ -77,10 +76,12 @@ class MedicationsViewModel : ViewModel() {
     fun generateInitialTimes(): List<DoseTime> {
         val generated = when (val details = userMedication.frequencyDetails) {
             is FrequencyDetails.EveryXHours -> {
-                val count = 24 / details.hours
-                (0 until count).map { i ->
+                val offsetHours = generateSequence(0) { it + details.hours }
+                    .takeWhile { it < 12 }
+                    .toList()
+                offsetHours.map { offset ->
                     DoseTime(
-                        time = pendingStartTime.plusHours((i * details.hours).toLong()),
+                        time = pendingStartTime.plusHours(offset.toLong()),
                         quantity = pendingQuantity
                     )
                 }

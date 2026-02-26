@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.DoseTime
+import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.ui.medications.components.AddTimeEntry
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
@@ -39,6 +40,18 @@ fun AddTimesScreen(
     var duplicateTimeError by remember { mutableStateOf(false) }
 
     val isFixed = remember { viewModel.isFixedSchedule() }
+
+    val intervalHours = remember {
+        when (val details = viewModel.userMedication.frequencyDetails) {
+            is FrequencyDetails.EveryXHours -> details.hours
+            else -> 1
+        }
+    }
+
+    val canAddTime = remember(doseTimes) {
+        val totalHoursFromStart = intervalHours * doseTimes.size
+        totalHoursFromStart < 24
+    }
 
     if (duplicateTimeError) {
         LaunchedEffect(duplicateTimeError) {
@@ -104,12 +117,13 @@ fun AddTimesScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedButton(
                         onClick = {
-                            val lastTime = doseTimes.maxByOrNull { it.time }?.time
-                                ?: return@OutlinedButton
+                            val nextOffset = intervalHours * doseTimes.size
                             doseTimes = doseTimes + DoseTime(
-                                time = lastTime.plusHours(2)
+                                time = viewModel.pendingStartTime.plusHours(nextOffset.toLong()),
+                                quantity = viewModel.pendingQuantity
                             )
                         },
+                        enabled = canAddTime,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("+ Add Another time")

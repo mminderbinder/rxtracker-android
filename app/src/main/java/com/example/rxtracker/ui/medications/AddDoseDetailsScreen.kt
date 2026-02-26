@@ -32,11 +32,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
-import com.example.rxtracker.ui.medications.components.dialogs.pillLabel
+import com.example.rxtracker.ui.medications.components.dialogs.doseLabel
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -110,7 +109,9 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Start Date",
-            value = if (selectedDate == LocalDate.now()) "Today" else selectedDate.format(dateFormatter),
+            value = if (selectedDate == LocalDate.now()) "Today" else selectedDate.format(
+                dateFormatter
+            ),
             onClick = { showDatePicker = true }
         )
 
@@ -124,7 +125,7 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Dose quantity",
-            value = pillLabel(quantity),
+            value = doseLabel(quantity),
             onClick = { showQuantityDialog = true }
         )
 

@@ -39,14 +39,6 @@ fun AddTimesScreen(
     var duplicateTimeError by remember { mutableStateOf(false) }
 
     val isFixed = remember { viewModel.isFixedSchedule() }
-    val intervalHours = remember { viewModel.getIntervalHours() }
-
-    val canAddTime = remember(doseTimes) {
-        if (isFixed) return@remember false
-        val lastTime = doseTimes.maxByOrNull { it.time }?.time ?: return@remember false
-        val nextSeconds = lastTime.toSecondOfDay() + (intervalHours * 3600)
-        nextSeconds < 86400
-    }
 
     if (duplicateTimeError) {
         LaunchedEffect(duplicateTimeError) {
@@ -115,10 +107,9 @@ fun AddTimesScreen(
                             val lastTime = doseTimes.maxByOrNull { it.time }?.time
                                 ?: return@OutlinedButton
                             doseTimes = doseTimes + DoseTime(
-                                time = lastTime.plusHours(intervalHours.toLong())
+                                time = lastTime.plusHours(2)
                             )
                         },
-                        enabled = canAddTime,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("+ Add Another time")

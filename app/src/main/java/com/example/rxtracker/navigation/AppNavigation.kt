@@ -23,10 +23,12 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
+import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.navigation.topbar.MainScaffold
 import com.example.rxtracker.navigation.topbar.SecondaryScaffold
 import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
+import com.example.rxtracker.ui.medications.AddDoseDetailsScreen
 import com.example.rxtracker.ui.medications.AddFrequencyScreen
 import com.example.rxtracker.ui.medications.AddMedicationScreen
 import com.example.rxtracker.ui.medications.AddTimesScreen
@@ -161,12 +163,43 @@ fun AppNavigation() {
                         AddFrequencyScreen(
                             viewModel = viewModel,
                             onContinue = {
-                                navController.navigate(AppDestination.AddTimes.route)
+                                if (viewModel.userMedication.frequencyType == Frequency.AS_NEEDED) {
+                                    navController.popBackStack(
+                                        "add_medication_flow",
+                                        inclusive = true
+                                    )
+                                } else {
+                                    navController.navigate(AppDestination.AddDoseDetails.route)
+                                }
                             },
                             modifier = Modifier.padding(it)
                         )
                     }
                 }
+                composable(AppDestination.AddDoseDetails.route) { navBackStackEntry ->
+                    val parentEntry = remember(navBackStackEntry) {
+                        navController.getBackStackEntry("add_medication_flow")
+                    }
+                    val viewModel: MedicationsViewModel = viewModel(parentEntry)
+
+                    SecondaryScaffold(navController, AppDestination.AddDoseDetails) {
+                        AddDoseDetailsScreen(
+                            viewModel = viewModel,
+                            onContinue = {
+                                if (viewModel.requiresTimesScreen()) {
+                                    navController.navigate(AppDestination.AddTimes.route)
+                                } else {
+                                    navController.popBackStack(
+                                        "add_medication_flow",
+                                        inclusive = true
+                                    )
+                                }
+                            },
+                            modifier = Modifier.padding(it)
+                        )
+                    }
+                }
+
                 composable(AppDestination.AddTimes.route) { navBackStackEntry ->
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")

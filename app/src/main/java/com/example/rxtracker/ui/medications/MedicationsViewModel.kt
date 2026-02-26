@@ -8,10 +8,17 @@ import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.UserMedication
+import java.time.LocalDate
 import java.time.LocalTime
 
 class MedicationsViewModel : ViewModel() {
     var userMedication by mutableStateOf(UserMedication())
+        private set
+
+    var pendingStartTime: LocalTime = LocalTime.of(8, 0)
+        private set
+
+    var pendingQuantity: Double = 1.0
         private set
 
     fun updateMedicationInfo(name: String, strength: String, form: String) {
@@ -29,35 +36,53 @@ class MedicationsViewModel : ViewModel() {
         )
     }
 
+    fun updateDoseDetails(startDate: LocalDate, startTime: LocalTime, quantity: Double) {
+        pendingStartTime = startTime
+        pendingQuantity = quantity
+
+        userMedication = when (userMedication.frequencyType) {
+            Frequency.ONCE_DAILY -> {
+                userMedication.copy(
+                    startDate = startDate,
+                    doseTimes = listOf(DoseTime(time = startTime, quantity = quantity))
+                )
+            }
+
+            else -> userMedication.copy(startDate = startDate)
+        }
+    }
+
+
     fun updateDoseTimes(doseTimes: List<DoseTime>) {
         userMedication = userMedication.copy(doseTimes = doseTimes)
     }
 
+    fun requiresTimesScreen(): Boolean {
+        return when (userMedication.frequencyType) {
+            Frequency.ONCE_DAILY,
+            Frequency.AS_NEEDED -> false
+
+            else -> true
+        }
+    }
+
+
     fun isFixedSchedule(): Boolean {
         return when (userMedication.frequencyType) {
-            Frequency.ONCE_DAILY, Frequency.MULTIPLE_DAILY, Frequency.EVERY_X_HOURS -> true
+            Frequency.ONCE_DAILY, Frequency.MULTIPLE_DAILY -> true
             else -> false
         }
     }
 
-    fun getIntervalHours(): Int {
-        return when (val details = userMedication.frequencyDetails) {
-            is FrequencyDetails.EveryXHours -> details.hours
-            is FrequencyDetails.MultipleTimes -> {
-                12 / (details.timesPerDay - 1).coerceAtLeast(1)
-            }
-
-            else -> 2
-        }
-    }
-
     fun generateInitialTimes(): List<DoseTime> {
-        val start = LocalTime.of(8, 0)
         val generated = when (val details = userMedication.frequencyDetails) {
             is FrequencyDetails.EveryXHours -> {
                 val count = 24 / details.hours
                 (0 until count).map { i ->
-                    DoseTime(time = start.plusHours((i * details.hours).toLong()), quantity = 1.0)
+                    DoseTime(
+                        time = pendingStartTime.plusHours((i * details.hours).toLong()),
+                        quantity = pendingQuantity
+                    )
                 }
             }
 
@@ -65,16 +90,16 @@ class MedicationsViewModel : ViewModel() {
                 val intervalHours = 12 / (details.timesPerDay - 1).coerceAtLeast(1)
                 (0 until details.timesPerDay).map { i ->
                     DoseTime(
-                        time = start.plusHours((i * intervalHours).toLong()),
-                        quantity = 1.0
+                        time = pendingStartTime.plusHours((i * intervalHours).toLong()),
+                        quantity = pendingQuantity
                     )
                 }
             }
 
-            else -> listOf(DoseTime(time = start, quantity = 1.0))
+            else -> listOf(DoseTime(time = pendingStartTime, quantity = pendingQuantity))
         }
-
-        return generated.filter { it.time >= start }
-            .ifEmpty { listOf(DoseTime(time = start, quantity = 1.0)) }
+        return generated.ifEmpty {
+            listOf(DoseTime(time = pendingStartTime, quantity = pendingQuantity))
+        }
     }
 }

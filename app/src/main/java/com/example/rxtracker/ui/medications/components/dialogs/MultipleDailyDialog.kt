@@ -9,7 +9,7 @@ fun MultipleDailyDialog(
 ) {
     SingleDialog(
         title = "Times per day",
-        itemCount = 11,
+        itemCount = 9,
         initialIndex = 0,
         itemLabel = { index ->
             val times = index + 2

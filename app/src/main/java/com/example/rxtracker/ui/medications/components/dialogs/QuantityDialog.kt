@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,7 +27,7 @@ fun QuantityDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("How many pills?") },
+        title = { Text("How many doses?") },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -38,12 +37,6 @@ fun QuantityDialog(
                 QuantityCounter(
                     quantity = quantity,
                     onQuantityChange = { quantity = it }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = pillLabel(quantity),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },
@@ -56,8 +49,8 @@ fun QuantityDialog(
     )
 }
 
-fun pillLabel(quantity: Double): String {
+fun doseLabel(quantity: Double): String {
     val formatted = if (quantity % 1.0 == 0.0) quantity.toInt().toString()
     else quantity.toString()
-    return "$formatted ${if (quantity == 1.0) "pill" else "pills"}"
+    return "$formatted ${if (quantity == 1.0) "dose" else "doses"}"
 }

@@ -65,6 +65,11 @@ sealed class AppDestination(
         title = "Add Frequency"
     )
 
+    object AddDoseDetails : AppDestination(
+        route = "add_dose_details",
+        title = "Add Dose Details"
+    )
+
     object AddTimes : AppDestination(
         route = "add_times",
         title = "Add Times"

@@ -30,7 +30,7 @@ import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Trash2
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
-import com.example.rxtracker.ui.medications.components.dialogs.pillLabel
+import com.example.rxtracker.ui.medications.components.dialogs.doseLabel
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -78,7 +78,7 @@ fun AddTimeEntry(
                     .clickable { showPicker = true }
             )
             Text(
-                text = pillLabel(quantity),
+                text = doseLabel(quantity),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     textDecoration = TextDecoration.Underline
                 ),

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +35,8 @@ import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.medications.components.dialogs.pillLabel
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -107,7 +110,7 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Start Date",
-            value = selectedDate.format(dateFormatter),
+            value = if (selectedDate == LocalDate.now()) "Today" else selectedDate.format(dateFormatter),
             onClick = { showDatePicker = true }
         )
 
@@ -163,17 +166,17 @@ fun AddDoseDetailsScreen(
     if (showDatePicker) {
         val pickerState = rememberDatePickerState(
             initialSelectedDateMillis = selectedDate
-                .atStartOfDay(ZoneId.systemDefault())
+                .atStartOfDay(ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli()
         )
-        AlertDialog(
+        DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
                 TextButton(onClick = {
                     pickerState.selectedDateMillis?.let { millis ->
                         selectedDate = Instant.ofEpochMilli(millis)
-                            .atZone(ZoneId.systemDefault())
+                            .atZone(ZoneId.of("UTC"))
                             .toLocalDate()
                     }
                     showDatePicker = false
@@ -182,7 +185,7 @@ fun AddDoseDetailsScreen(
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
             },
-            text = { DatePicker(state = pickerState) }
+            content = { DatePicker(state = pickerState) },
         )
     }
     if (showQuantityDialog) {

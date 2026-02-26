@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,12 +37,6 @@ fun QuantityDialog(
                 QuantityCounter(
                     quantity = quantity,
                     onQuantityChange = { quantity = it }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = pillLabel(quantity),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },

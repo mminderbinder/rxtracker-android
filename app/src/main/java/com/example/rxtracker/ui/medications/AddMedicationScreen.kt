@@ -24,14 +24,13 @@ import com.example.rxtracker.ui.theme.RXTrackerTheme
 fun AddMedicationScreen(
     viewModel: MedicationsViewModel,
     onContinue: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var medicationStrength by rememberSaveable { mutableStateOf("") }
     var medicationForm by rememberSaveable { mutableStateOf("") }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
@@ -42,6 +41,7 @@ fun AddMedicationScreen(
                 medicationForm = medication.form
             }
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -75,17 +75,19 @@ fun AddMedicationScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
+            modifier = Modifier.fillMaxWidth(),
             onClick = {
-                viewModel.updateMedicationInfo(medicationName, medicationStrength, medicationForm)
+                viewModel.updateMedicationInfo(
+                    medicationName,
+                    medicationStrength,
+                    medicationForm
+                )
                 onContinue()
             },
-            modifier = Modifier.fillMaxWidth(),
             enabled = medicationName.isNotBlank() &&
-                    medicationStrength.isNotBlank() &&
-                    medicationForm.isNotBlank()
-        ) {
-            Text("Continue")
-        }
+                    medicationStrength.isNotBlank()
+                    && medicationForm.isNotBlank()
+        ) { Text("Continue") }
     }
 }
 

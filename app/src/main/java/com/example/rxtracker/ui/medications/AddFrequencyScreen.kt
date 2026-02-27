@@ -32,7 +32,6 @@ import com.example.rxtracker.ui.theme.RXTrackerTheme
 fun AddFrequencyScreen(
     viewModel: MedicationsViewModel,
     onContinue: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val medicationData = viewModel.userMedication
     var selectedFrequency by remember { mutableStateOf<Frequency?>(null) }
@@ -45,7 +44,7 @@ fun AddFrequencyScreen(
     var showCyclicDialog by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {

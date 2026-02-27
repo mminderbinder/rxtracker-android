@@ -76,7 +76,6 @@ private fun DetailRow(
 fun AddDoseDetailsScreen(
     viewModel: MedicationsViewModel,
     onContinue: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val medicationData = viewModel.userMedication
 
@@ -89,7 +88,7 @@ fun AddDoseDetailsScreen(
     var showQuantityDialog by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {

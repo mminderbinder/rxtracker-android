@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,10 +34,9 @@ fun AddTimesScreen(
     viewModel: MedicationsViewModel,
     snackbarHostState: SnackbarHostState,
     onContinue: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val medicationData = viewModel.userMedication
-    var doseTimes by remember { mutableStateOf(viewModel.generateInitialTimes()) }
+    var doseTimes by rememberSaveable { mutableStateOf(viewModel.generateInitialTimes()) }
     var duplicateTimeError by remember { mutableStateOf(false) }
 
     val isFixed = remember { viewModel.isFixedSchedule() }
@@ -61,7 +61,7 @@ fun AddTimesScreen(
     }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
@@ -134,6 +134,7 @@ fun AddTimesScreen(
         Button(
             onClick = {
                 viewModel.updateDoseTimes(doseTimes)
+                onContinue()
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = doseTimes.isNotEmpty()

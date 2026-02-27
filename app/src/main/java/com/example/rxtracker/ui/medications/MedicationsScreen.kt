@@ -13,10 +13,10 @@ import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
 fun MedicationsScreen(
-    modifier: Modifier = Modifier,
+
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {

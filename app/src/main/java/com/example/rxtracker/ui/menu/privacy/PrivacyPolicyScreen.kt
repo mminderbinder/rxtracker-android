@@ -12,11 +12,9 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
-fun PrivacyPolicyScreen(
-    modifier: Modifier = Modifier
-) {
+fun PrivacyPolicyScreen() {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {

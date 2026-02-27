@@ -24,13 +24,14 @@ import androidx.navigation.compose.rememberNavController
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
 import com.example.rxtracker.data.models.Frequency
-import com.example.rxtracker.navigation.topbar.MainScaffold
-import com.example.rxtracker.navigation.topbar.SecondaryScaffold
+import com.example.rxtracker.navigation.topbar.MainTopBar
+import com.example.rxtracker.navigation.topbar.SecondaryTopBar
 import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
 import com.example.rxtracker.ui.medications.AddDoseDetailsScreen
 import com.example.rxtracker.ui.medications.AddFrequencyScreen
 import com.example.rxtracker.ui.medications.AddMedicationScreen
+import com.example.rxtracker.ui.medications.AddOptionalDetailsScreen
 import com.example.rxtracker.ui.medications.AddTimesScreen
 import com.example.rxtracker.ui.medications.MedicationsScreen
 import com.example.rxtracker.ui.medications.MedicationsViewModel
@@ -39,6 +40,24 @@ import com.example.rxtracker.ui.menu.privacy.PrivacyPolicyScreen
 import com.example.rxtracker.ui.menu.settings.SettingsScreen
 import com.example.rxtracker.ui.reminders.RemindersScreen
 
+private val mainRoutes = listOf(
+    AppDestination.Home.route,
+    AppDestination.Medications.route,
+    AppDestination.Reminders.route,
+    AppDestination.Appointments.route
+)
+
+private val secondaryRoutes = listOf(
+    AppDestination.Settings.route,
+    AppDestination.About.route,
+    AppDestination.PrivacyPolicy.route,
+    AppDestination.AddMedication.route,
+    AppDestination.AddFrequency.route,
+    AppDestination.AddDoseDetails.route,
+    AppDestination.AddTimes.route,
+    AppDestination.AddOptionalDetails.route
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation() {
@@ -46,21 +65,22 @@ fun AppNavigation() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route
-    val showFab = currentRoute == AppDestination.Home.route
-
-    val showBottomNav = currentRoute in listOf(
-        AppDestination.Home.route,
-        AppDestination.Medications.route,
-        AppDestination.Reminders.route,
-        AppDestination.Appointments.route
-    )
-
     val snackbarHostState = remember { SnackbarHostState() }
+
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            when (currentRoute) {
+                in mainRoutes -> MainTopBar(navController)
+                in secondaryRoutes -> SecondaryTopBar(
+                    title = AppDestination.fromRoute(currentRoute)?.title ?: "",
+                    navController = navController
+                )
+            }
+        },
         bottomBar = {
-            if (showBottomNav) {
+            if (currentRoute in mainRoutes) {
                 NavigationBar {
                     bottomNavDestinations.forEach { destination ->
                         NavigationBarItem(
@@ -82,7 +102,7 @@ fun AppNavigation() {
             }
         },
         floatingActionButton = {
-            if (showFab) {
+            if (currentRoute == AppDestination.Home.route) {
                 FloatingActionButton(
                     onClick = { navController.navigate(AppDestination.AddMedication.route) }
                 ) {
@@ -97,41 +117,25 @@ fun AppNavigation() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppDestination.Home.route) {
-                MainScaffold(
-                    navController = navController
-                ) { padding ->
-                    HomeScreen(modifier = Modifier.padding(padding))
-                }
+                HomeScreen()
             }
             composable(AppDestination.Medications.route) {
-                MainScaffold(navController) {
-                    MedicationsScreen(modifier = Modifier.padding(it))
-                }
+                MedicationsScreen()
             }
             composable(AppDestination.Reminders.route) {
-                MainScaffold(navController) {
-                    RemindersScreen(modifier = Modifier.padding(it))
-                }
+                RemindersScreen()
             }
             composable(AppDestination.Appointments.route) {
-                MainScaffold(navController) {
-                    AppointmentsScreen(modifier = Modifier.padding(it))
-                }
+                AppointmentsScreen()
             }
             composable(AppDestination.Settings.route) {
-                SecondaryScaffold(navController, AppDestination.Settings) {
-                    SettingsScreen(modifier = Modifier.padding(it))
-                }
+                SettingsScreen()
             }
             composable(AppDestination.About.route) {
-                SecondaryScaffold(navController, AppDestination.About) {
-                    AboutScreen(modifier = Modifier.padding(it))
-                }
+                AboutScreen()
             }
             composable(AppDestination.PrivacyPolicy.route) {
-                SecondaryScaffold(navController, AppDestination.PrivacyPolicy) {
-                    PrivacyPolicyScreen(modifier = Modifier.padding(it))
-                }
+                PrivacyPolicyScreen()
             }
             navigation(
                 startDestination = AppDestination.AddMedication.route,
@@ -141,40 +145,33 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
+
                     val viewModel: MedicationsViewModel = viewModel(parentEntry)
 
-                    SecondaryScaffold(navController, AppDestination.AddMedication) {
-                        AddMedicationScreen(
-                            viewModel = viewModel,
-                            onContinue = {
-                                navController.navigate(AppDestination.AddFrequency.route)
-                            },
-                            modifier = Modifier.padding(it)
-                        )
-                    }
+                    AddMedicationScreen(
+                        viewModel = viewModel,
+                        onContinue = {
+                            navController.navigate(AppDestination.AddFrequency.route)
+                        }
+                    )
                 }
                 composable(AppDestination.AddFrequency.route) { navBackStackEntry ->
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
+
                     val viewModel: MedicationsViewModel = viewModel(parentEntry)
 
-                    SecondaryScaffold(navController, AppDestination.AddFrequency) {
-                        AddFrequencyScreen(
-                            viewModel = viewModel,
-                            onContinue = {
-                                if (viewModel.userMedication.frequencyType == Frequency.AS_NEEDED) {
-                                    navController.popBackStack(
-                                        "add_medication_flow",
-                                        inclusive = true
-                                    )
-                                } else {
-                                    navController.navigate(AppDestination.AddDoseDetails.route)
-                                }
-                            },
-                            modifier = Modifier.padding(it)
-                        )
-                    }
+                    AddFrequencyScreen(
+                        viewModel = viewModel,
+                        onContinue = {
+                            if (viewModel.userMedication.frequencyType == Frequency.AS_NEEDED) {
+                                navController.navigate(AppDestination.AddOptionalDetails.route)
+                            } else {
+                                navController.navigate(AppDestination.AddDoseDetails.route)
+                            }
+                        }
+                    )
                 }
                 composable(AppDestination.AddDoseDetails.route) { navBackStackEntry ->
                     val parentEntry = remember(navBackStackEntry) {
@@ -182,22 +179,16 @@ fun AppNavigation() {
                     }
                     val viewModel: MedicationsViewModel = viewModel(parentEntry)
 
-                    SecondaryScaffold(navController, AppDestination.AddDoseDetails) {
-                        AddDoseDetailsScreen(
-                            viewModel = viewModel,
-                            onContinue = {
-                                if (viewModel.requiresTimesScreen()) {
-                                    navController.navigate(AppDestination.AddTimes.route)
-                                } else {
-                                    navController.popBackStack(
-                                        "add_medication_flow",
-                                        inclusive = true
-                                    )
-                                }
-                            },
-                            modifier = Modifier.padding(it)
-                        )
-                    }
+                    AddDoseDetailsScreen(
+                        viewModel = viewModel,
+                        onContinue = {
+                            if (viewModel.requiresTimesScreen()) {
+                                navController.navigate(AppDestination.AddTimes.route)
+                            } else {
+                                navController.navigate(AppDestination.AddOptionalDetails.route)
+                            }
+                        }
+                    )
                 }
 
                 composable(AppDestination.AddTimes.route) { navBackStackEntry ->
@@ -206,18 +197,29 @@ fun AppNavigation() {
                     }
                     val viewModel: MedicationsViewModel = viewModel(parentEntry)
 
-                    SecondaryScaffold(navController, AppDestination.AddTimes) {
-                        AddTimesScreen(
-                            viewModel = viewModel,
-                            onContinue = {
-                                // TODO: navigate to next screen or finish flow
-                                // OR to complete the flow:
-                                // navController.popBackStack("add_medication_flow", inclusive = true)
-                            },
-                            snackbarHostState = snackbarHostState,
-                            modifier = Modifier.padding(it)
-                        )
+                    AddTimesScreen(
+                        viewModel = viewModel,
+                        onContinue = {
+                            navController.navigate(AppDestination.AddOptionalDetails.route)
+                        },
+                        snackbarHostState = snackbarHostState
+                    )
+                }
+                composable(AppDestination.AddOptionalDetails.route) { navBackStackEntry ->
+                    val parentEntry = remember(navBackStackEntry) {
+                        navController.getBackStackEntry("add_medication_flow")
                     }
+                    val viewModel: MedicationsViewModel = viewModel(parentEntry)
+
+                    AddOptionalDetailsScreen(
+                        viewModel = viewModel,
+                        onComplete = {
+                            navController.popBackStack(
+                                route = "add_medication_flow",
+                                inclusive = true
+                            )
+                        }
+                    )
                 }
             }
         }

@@ -74,6 +74,19 @@ sealed class AppDestination(
         route = "add_times",
         title = "Add Times"
     )
+
+    object AddOptionalDetails : AppDestination(
+        route = "add_optional_details",
+        title = "Optional Details"
+    )
+
+    companion object {
+        fun fromRoute(route: String?): AppDestination? = listOf(
+            Home, Medications, Reminders, Appointments,
+            Settings, About, PrivacyPolicy, AddMedication,
+            AddFrequency, AddDoseDetails, AddTimes, AddOptionalDetails
+        ).find { it.route == route }
+    }
 }
 
 

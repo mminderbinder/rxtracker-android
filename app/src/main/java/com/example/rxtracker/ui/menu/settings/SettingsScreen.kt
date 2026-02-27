@@ -12,9 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
-fun SettingsScreen(
-    modifier: Modifier = Modifier
-) {
+fun SettingsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()

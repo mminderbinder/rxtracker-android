@@ -11,18 +11,13 @@ import com.example.rxtracker.data.models.UserMedication
 import java.time.LocalDate
 import java.time.LocalTime
 
-class MedicationsViewModel : ViewModel() {
-    var userMedication by mutableStateOf(UserMedication())
-        private set
+class AddMedicationsViewModel : ViewModel() {
 
-    var pendingStartTime: LocalTime = LocalTime.of(8, 0)
-        private set
-
-    var pendingQuantity: Double = 1.0
+    var uiState by mutableStateOf(AddMedicationsUiState())
         private set
 
     fun updateMedicationInfo(name: String, strength: String, form: String) {
-        userMedication = userMedication.copy(
+        uiState = uiState.copy(
             name = name,
             strength = strength,
             form = form
@@ -30,35 +25,31 @@ class MedicationsViewModel : ViewModel() {
     }
 
     fun updateFrequency(type: Frequency, details: FrequencyDetails) {
-        userMedication = userMedication.copy(
+        uiState = uiState.copy(
             frequencyType = type,
             frequencyDetails = details
         )
     }
 
-    fun updateDoseDetails(startDate: LocalDate, startTime: LocalTime, quantity: Double) {
-        pendingStartTime = startTime
-        pendingQuantity = quantity
-
-        userMedication = when (userMedication.frequencyType) {
-            Frequency.ONCE_DAILY -> {
-                userMedication.copy(
-                    startDate = startDate,
-                    doseTimes = listOf(DoseTime(time = startTime, quantity = quantity))
-                )
-            }
-
-            else -> userMedication.copy(startDate = startDate)
-        }
+    fun updateStartDate(date: LocalDate) {
+        uiState = uiState.copy(startDate = date)
     }
 
 
+    fun updateStartTime(time: LocalTime) {
+        uiState = uiState.copy(startTime = time, doseTimes = emptyList())
+    }
+
+    fun updateQuantity(qty: Double) {
+        uiState = uiState.copy(quantity = qty, doseTimes = emptyList())
+    }
+
     fun updateDoseTimes(doseTimes: List<DoseTime>) {
-        userMedication = userMedication.copy(doseTimes = doseTimes)
+        uiState = uiState.copy(doseTimes = doseTimes)
     }
 
     fun requiresTimesScreen(): Boolean {
-        return when (userMedication.frequencyType) {
+        return when (uiState.frequencyType) {
             Frequency.ONCE_DAILY,
             Frequency.AS_NEEDED -> false
 
@@ -67,22 +58,22 @@ class MedicationsViewModel : ViewModel() {
     }
 
     fun isFixedSchedule(): Boolean {
-        return when (userMedication.frequencyType) {
+        return when (uiState.frequencyType) {
             Frequency.ONCE_DAILY, Frequency.MULTIPLE_DAILY -> true
             else -> false
         }
     }
 
     fun generateInitialTimes(): List<DoseTime> {
-        val generated = when (val details = userMedication.frequencyDetails) {
+        val generated = when (val details = uiState.frequencyDetails) {
             is FrequencyDetails.EveryXHours -> {
                 val offsetHours = generateSequence(0) { it + details.hours }
                     .takeWhile { it < 12 }
                     .toList()
                 offsetHours.map { offset ->
                     DoseTime(
-                        time = pendingStartTime.plusHours(offset.toLong()),
-                        quantity = pendingQuantity
+                        time = uiState.startTime.plusHours(offset.toLong()),
+                        quantity = uiState.quantity
                     )
                 }
             }
@@ -91,16 +82,22 @@ class MedicationsViewModel : ViewModel() {
                 val intervalHours = 12 / (details.timesPerDay - 1).coerceAtLeast(1)
                 (0 until details.timesPerDay).map { i ->
                     DoseTime(
-                        time = pendingStartTime.plusHours((i * intervalHours).toLong()),
-                        quantity = pendingQuantity
+                        time = uiState.startTime.plusHours((i * intervalHours).toLong()),
+                        quantity = uiState.quantity
                     )
                 }
             }
 
-            else -> listOf(DoseTime(time = pendingStartTime, quantity = pendingQuantity))
+            else -> listOf(DoseTime(time = uiState.startTime, quantity = uiState.quantity))
         }
         return generated.ifEmpty {
-            listOf(DoseTime(time = pendingStartTime, quantity = pendingQuantity))
+            listOf(DoseTime(time = uiState.startTime, quantity = uiState.quantity))
         }
+    }
+
+    fun toUserMedication(): UserMedication {
+        return UserMedication(
+
+        )
     }
 }

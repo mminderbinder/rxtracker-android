@@ -28,13 +28,13 @@ import com.example.rxtracker.navigation.topbar.MainTopBar
 import com.example.rxtracker.navigation.topbar.SecondaryTopBar
 import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
-import com.example.rxtracker.ui.medications.AddDoseDetailsScreen
-import com.example.rxtracker.ui.medications.AddFrequencyScreen
-import com.example.rxtracker.ui.medications.AddMedicationScreen
-import com.example.rxtracker.ui.medications.AddOptionalDetailsScreen
-import com.example.rxtracker.ui.medications.AddTimesScreen
-import com.example.rxtracker.ui.medications.MedicationsScreen
-import com.example.rxtracker.ui.medications.MedicationsViewModel
+import com.example.rxtracker.ui.medications.AddMedicationsViewModel
+import com.example.rxtracker.ui.medications.screens.AddDoseDetailsScreen
+import com.example.rxtracker.ui.medications.screens.AddFrequencyScreen
+import com.example.rxtracker.ui.medications.screens.AddMedicationScreen
+import com.example.rxtracker.ui.medications.screens.AddOptionalDetailsScreen
+import com.example.rxtracker.ui.medications.screens.AddTimesScreen
+import com.example.rxtracker.ui.medications.screens.MedicationsScreen
 import com.example.rxtracker.ui.menu.about.AboutScreen
 import com.example.rxtracker.ui.menu.privacy.PrivacyPolicyScreen
 import com.example.rxtracker.ui.menu.settings.SettingsScreen
@@ -67,7 +67,6 @@ fun AppNavigation() {
     val currentRoute = currentDestination?.route
     val snackbarHostState = remember { SnackbarHostState() }
 
-
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
@@ -80,24 +79,22 @@ fun AppNavigation() {
             }
         },
         bottomBar = {
-            if (currentRoute in mainRoutes) {
-                NavigationBar {
-                    bottomNavDestinations.forEach { destination ->
-                        NavigationBarItem(
-                            icon = {
-                                destination.icon?.let {
-                                    Icon(imageVector = it, contentDescription = destination.title)
-                                }
-                            },
-                            label = { Text(destination.title) },
-                            selected = currentDestination?.hierarchy?.any {
-                                it.route == destination.route
-                            } == true,
-                            onClick = {
-                                navController.navigate(destination.route)
+            NavigationBar {
+                bottomNavDestinations.forEach { destination ->
+                    NavigationBarItem(
+                        icon = {
+                            destination.icon?.let {
+                                Icon(imageVector = it, contentDescription = destination.title)
                             }
-                        )
-                    }
+                        },
+                        label = { Text(destination.title) },
+                        selected = currentDestination?.hierarchy?.any {
+                            it.route == destination.route
+                        } == true,
+                        onClick = {
+                            navController.navigate(destination.route)
+                        }
+                    )
                 }
             }
         },
@@ -145,8 +142,7 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-
-                    val viewModel: MedicationsViewModel = viewModel(parentEntry)
+                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
 
                     AddMedicationScreen(
                         viewModel = viewModel,
@@ -159,13 +155,12 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-
-                    val viewModel: MedicationsViewModel = viewModel(parentEntry)
+                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
 
                     AddFrequencyScreen(
                         viewModel = viewModel,
                         onContinue = {
-                            if (viewModel.userMedication.frequencyType == Frequency.AS_NEEDED) {
+                            if (viewModel.uiState.frequencyType == Frequency.AS_NEEDED) {
                                 navController.navigate(AppDestination.AddOptionalDetails.route)
                             } else {
                                 navController.navigate(AppDestination.AddDoseDetails.route)
@@ -177,7 +172,7 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-                    val viewModel: MedicationsViewModel = viewModel(parentEntry)
+                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
 
                     AddDoseDetailsScreen(
                         viewModel = viewModel,
@@ -195,7 +190,7 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-                    val viewModel: MedicationsViewModel = viewModel(parentEntry)
+                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
 
                     AddTimesScreen(
                         viewModel = viewModel,
@@ -209,7 +204,7 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-                    val viewModel: MedicationsViewModel = viewModel(parentEntry)
+                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
 
                     AddOptionalDetailsScreen(
                         viewModel = viewModel,

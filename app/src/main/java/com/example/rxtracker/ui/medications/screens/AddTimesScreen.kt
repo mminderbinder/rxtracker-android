@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications
+package com.example.rxtracker.ui.medications.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,33 +19,36 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.FrequencyDetails
+import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.AddTimeEntry
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
 fun AddTimesScreen(
-    viewModel: MedicationsViewModel,
+    viewModel: AddMedicationsViewModel,
     snackbarHostState: SnackbarHostState,
     onContinue: () -> Unit,
 ) {
-    val medicationData = viewModel.userMedication
-    var doseTimes by rememberSaveable { mutableStateOf(viewModel.generateInitialTimes()) }
+    val uiState = viewModel.uiState
     var duplicateTimeError by remember { mutableStateOf(false) }
 
     val isFixed = remember { viewModel.isFixedSchedule() }
 
     val intervalHours = remember {
-        when (val details = viewModel.userMedication.frequencyDetails) {
+        when (val details = uiState.frequencyDetails) {
             is FrequencyDetails.EveryXHours -> details.hours
             else -> 1
         }
+    }
+
+    val doseTimes = uiState.doseTimes.ifEmpty {
+        viewModel.generateInitialTimes().also { viewModel.updateDoseTimes(it) }
     }
 
     val canAddTime = remember(doseTimes) {
@@ -66,7 +69,7 @@ fun AddTimesScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "${medicationData.name} ${medicationData.strength} ${medicationData.form}",
+            text = "${uiState.name} ${uiState.strength} ${uiState.form}",
             style = MaterialTheme.typography.titleSmall
         )
 
@@ -93,20 +96,23 @@ fun AddTimesScreen(
                             .any { it.time == newTime }
 
                         if (!isDuplicate) {
-                            doseTimes = doseTimes.toMutableList()
-                                .also { it[index] = it[index].copy(time = newTime) }
-                                .sortedBy { it.time }
+                            viewModel.updateDoseTimes(
+                                doseTimes.toMutableList()
+                                    .also { it[index] = it[index].copy(time = newTime) }
+                                    .sortedBy { it.time })
                         } else {
                             duplicateTimeError = true
                         }
                     },
                     onQuantityChange = { newQty ->
-                        doseTimes = doseTimes.toMutableList()
-                            .also { it[index] = it[index].copy(quantity = newQty) }
+                        viewModel.updateDoseTimes(
+                            doseTimes.toMutableList()
+                                .also { it[index] = it[index].copy(quantity = newQty) })
                     },
                     onRemove = {
-                        doseTimes = doseTimes.toMutableList()
-                            .also { it.removeAt(index) }
+                        viewModel.updateDoseTimes(
+                            doseTimes.toMutableList()
+                                .also { it.removeAt(index) })
                     },
                     showTrash = !isFixed,
                     showRemove = doseTimes.size > 1
@@ -118,9 +124,11 @@ fun AddTimesScreen(
                     OutlinedButton(
                         onClick = {
                             val nextOffset = intervalHours * doseTimes.size
-                            doseTimes = doseTimes + DoseTime(
-                                time = viewModel.pendingStartTime.plusHours(nextOffset.toLong()),
-                                quantity = viewModel.pendingQuantity
+                            viewModel.updateDoseTimes(
+                                doseTimes + DoseTime(
+                                    time = uiState.startTime.plusHours(nextOffset.toLong()),
+                                    quantity = uiState.quantity
+                                )
                             )
                         },
                         enabled = canAddTime,
@@ -133,7 +141,6 @@ fun AddTimesScreen(
         }
         Button(
             onClick = {
-                viewModel.updateDoseTimes(doseTimes)
                 onContinue()
             },
             modifier = Modifier.fillMaxWidth(),
@@ -150,7 +157,7 @@ fun AddTimesScreen(
 fun AddTimesScreenPreview() {
     RXTrackerTheme {
         AddTimesScreen(
-            viewModel = MedicationsViewModel(),
+            viewModel = AddMedicationsViewModel(),
             onContinue = {},
             snackbarHostState = SnackbarHostState()
         )

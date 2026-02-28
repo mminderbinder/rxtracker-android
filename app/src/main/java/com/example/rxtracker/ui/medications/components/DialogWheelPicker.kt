@@ -1,14 +1,17 @@
 package com.example.rxtracker.ui.medications.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpwheelpicker.WheelPicker
 import com.swmansion.kmpwheelpicker.WheelPickerState
@@ -27,12 +30,19 @@ fun DialogWheelPicker(
         friction = friction,
         modifier = modifier,
         window = {
-            Box(
-                Modifier.background(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                    MaterialTheme.shapes.small
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.primary,
+                    thickness = 1.dp
                 )
-            )
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.primary,
+                    thickness = 1.dp
+                )
+            }
         }
     ) { index ->
         Text(
@@ -42,6 +52,7 @@ fun DialogWheelPicker(
                 .graphicsLayer {
                     alpha = (3 - abs(state.value - index)).coerceIn(0f, 1f)
                 },
+            fontWeight = if (index == state.index) FontWeight.Bold else FontWeight.Normal,
             color = lerp(
                 MaterialTheme.colorScheme.primary,
                 MaterialTheme.colorScheme.onSurfaceVariant,

@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications
+package com.example.rxtracker.ui.medications.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

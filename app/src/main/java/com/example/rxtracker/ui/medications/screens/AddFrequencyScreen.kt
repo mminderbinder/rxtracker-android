@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications
+package com.example.rxtracker.ui.medications.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
+import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.FrequencyOption
 import com.example.rxtracker.ui.medications.components.dialogs.CyclicDialog
 import com.example.rxtracker.ui.medications.components.dialogs.EveryXDaysDialog
@@ -30,12 +31,10 @@ import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
 fun AddFrequencyScreen(
-    viewModel: MedicationsViewModel,
+    viewModel: AddMedicationsViewModel,
     onContinue: () -> Unit,
 ) {
-    val medicationData = viewModel.userMedication
-    var selectedFrequency by remember { mutableStateOf<Frequency?>(null) }
-    var frequencyDetails by remember { mutableStateOf<FrequencyDetails?>(null) }
+    val uiState = viewModel.uiState
 
     var showMultipleDailyDialog by remember { mutableStateOf(false) }
     var showEveryXHoursDialog by remember { mutableStateOf(false) }
@@ -49,7 +48,7 @@ fun AddFrequencyScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "${medicationData.name} ${medicationData.strength} ${medicationData.form}",
+            text = "${uiState.name} ${uiState.strength} ${uiState.form}",
             style = MaterialTheme.typography.titleSmall
         )
 
@@ -64,12 +63,19 @@ fun AddFrequencyScreen(
         Frequency.entries.forEach { frequencyType ->
             FrequencyOption(
                 label = frequencyType.label,
-                selected = selectedFrequency == frequencyType,
+                selected = uiState.frequencyType == frequencyType,
                 onClick = {
-                    selectedFrequency = frequencyType
                     when (frequencyType) {
-                        Frequency.ONCE_DAILY -> frequencyDetails = FrequencyDetails.OnceDaily
-                        Frequency.AS_NEEDED -> frequencyDetails = FrequencyDetails.AsNeeded
+                        Frequency.ONCE_DAILY -> viewModel.updateFrequency(
+                            frequencyType,
+                            FrequencyDetails.OnceDaily
+                        )
+
+                        Frequency.AS_NEEDED -> viewModel.updateFrequency(
+                            frequencyType,
+                            FrequencyDetails.AsNeeded
+                        )
+
                         Frequency.MULTIPLE_DAILY -> showMultipleDailyDialog = true
                         Frequency.EVERY_X_HOURS -> showEveryXHoursDialog = true
                         Frequency.EVERY_X_DAYS -> showEveryXDaysDialog = true
@@ -84,16 +90,9 @@ fun AddFrequencyScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = {
-                selectedFrequency?.let { type ->
-                    frequencyDetails?.let { details ->
-                        viewModel.updateFrequency(type, details)
-                    }
-                }
-                onContinue()
-            },
+            onClick = onContinue,
             modifier = Modifier.fillMaxWidth(),
-            enabled = selectedFrequency != null && frequencyDetails != null
+            enabled = uiState.frequencyType != null && uiState.frequencyDetails != null
         ) {
             Text("Continue")
         }
@@ -102,7 +101,10 @@ fun AddFrequencyScreen(
         MultipleDailyDialog(
             onDismiss = { showMultipleDailyDialog = false },
             onConfirm = { timesPerDay ->
-                frequencyDetails = FrequencyDetails.MultipleTimes(timesPerDay)
+                viewModel.updateFrequency(
+                    type = Frequency.MULTIPLE_DAILY,
+                    details = FrequencyDetails.MultipleTimes(timesPerDay)
+                )
                 showMultipleDailyDialog = false
             }
         )
@@ -111,7 +113,10 @@ fun AddFrequencyScreen(
         EveryXHoursDialog(
             onDismiss = { showEveryXHoursDialog = false },
             onConfirm = { hours ->
-                frequencyDetails = FrequencyDetails.EveryXHours(hours)
+                viewModel.updateFrequency(
+                    type = Frequency.EVERY_X_HOURS,
+                    details = FrequencyDetails.EveryXHours(hours)
+                )
                 showEveryXHoursDialog = false
             }
         )
@@ -120,7 +125,10 @@ fun AddFrequencyScreen(
         EveryXDaysDialog(
             onDismiss = { showEveryXDaysDialog = false },
             onConfirm = { days ->
-                frequencyDetails = FrequencyDetails.EveryXDays(days)
+                viewModel.updateFrequency(
+                    type = Frequency.EVERY_X_DAYS,
+                    details = FrequencyDetails.EveryXDays(days)
+                )
                 showEveryXDaysDialog = false
             }
         )
@@ -129,7 +137,10 @@ fun AddFrequencyScreen(
         WeekdaysDialog(
             onDismiss = { showSpecificWeekdaysDialog = false },
             onConfirm = { days ->
-                frequencyDetails = FrequencyDetails.SpecificWeekdays(days)
+                viewModel.updateFrequency(
+                    type = Frequency.SPECIFIC_WEEKDAYS,
+                    details = FrequencyDetails.SpecificWeekdays(days)
+                )
                 showSpecificWeekdaysDialog = false
             }
         )
@@ -138,7 +149,10 @@ fun AddFrequencyScreen(
         CyclicDialog(
             onDismiss = { showCyclicDialog = false },
             onConfirm = { intakeDays, pauseDays ->
-                frequencyDetails = FrequencyDetails.Cyclic(intakeDays, pauseDays)
+                viewModel.updateFrequency(
+                    type = Frequency.CYCLIC,
+                    details = FrequencyDetails.Cyclic(intakeDays, pauseDays)
+                )
                 showCyclicDialog = false
             }
         )
@@ -152,7 +166,7 @@ fun AddFrequencyScreen(
 fun AddFrequencyScreenPreview() {
     RXTrackerTheme {
         AddFrequencyScreen(
-            viewModel = MedicationsViewModel(),
+            viewModel = AddMedicationsViewModel(),
             onContinue = {}
         )
     }

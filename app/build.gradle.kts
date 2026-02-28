@@ -98,6 +98,9 @@ dependencies {
     // Calendar
     implementation(libs.compose)
 
+    // Lottie
+    implementation(libs.lottie.compose)
+
     implementation(libs.kotlinx.datetime)
 
     implementation(libs.swmansion.kmpWheelPicker)

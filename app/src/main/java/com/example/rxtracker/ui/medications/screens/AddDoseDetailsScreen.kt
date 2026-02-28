@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications
+package com.example.rxtracker.ui.medications.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -22,7 +22,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.medications.components.dialogs.doseLabel
 import com.example.rxtracker.ui.theme.RXTrackerTheme
@@ -74,14 +74,10 @@ private fun DetailRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddDoseDetailsScreen(
-    viewModel: MedicationsViewModel,
+    viewModel: AddMedicationsViewModel,
     onContinue: () -> Unit,
 ) {
-    val medicationData = viewModel.userMedication
-
-    var selectedDate by remember { mutableStateOf(medicationData.startDate) }
-    var selectedTime by remember { mutableStateOf(LocalTime.of(8, 0)) }
-    var quantity by remember { mutableDoubleStateOf(1.0) }
+    val uiState = viewModel.uiState
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
@@ -93,7 +89,7 @@ fun AddDoseDetailsScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "${medicationData.name} ${medicationData.strength} ${medicationData.form}",
+            text = "${uiState.name} ${uiState.strength} ${uiState.form}",
             style = MaterialTheme.typography.titleSmall
         )
 
@@ -108,7 +104,7 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Start Date",
-            value = if (selectedDate == LocalDate.now()) "Today" else selectedDate.format(
+            value = if (uiState.startDate == LocalDate.now()) "Today" else uiState.startDate.format(
                 dateFormatter
             ),
             onClick = { showDatePicker = true }
@@ -117,14 +113,14 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Earliest dose time",
-            value = selectedTime.format(timeFormatter),
+            value = uiState.startTime.format(timeFormatter),
             onClick = { showTimePicker = true }
         )
 
         HorizontalDivider()
         DetailRow(
             label = "Dose quantity",
-            value = doseLabel(quantity),
+            value = doseLabel(uiState.quantity),
             onClick = { showQuantityDialog = true }
         )
 
@@ -133,10 +129,7 @@ fun AddDoseDetailsScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = {
-                viewModel.updateDoseDetails(selectedDate, selectedTime, quantity)
-                onContinue()
-            },
+            onClick = { onContinue() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Continue")
@@ -145,15 +138,15 @@ fun AddDoseDetailsScreen(
 
     if (showTimePicker) {
         val pickerState = rememberTimePickerState(
-            initialHour = selectedTime.hour,
-            initialMinute = selectedTime.minute,
+            initialHour = uiState.startTime.hour,
+            initialMinute = uiState.startTime.minute,
             is24Hour = false
         )
         AlertDialog(
             onDismissRequest = { showTimePicker = false },
             confirmButton = {
                 TextButton(onClick = {
-                    selectedTime = LocalTime.of(pickerState.hour, pickerState.minute)
+                    viewModel.updateStartTime(LocalTime.of(pickerState.hour, pickerState.minute))
                     showTimePicker = false
                 }) { Text("OK") }
             },
@@ -165,7 +158,7 @@ fun AddDoseDetailsScreen(
     }
     if (showDatePicker) {
         val pickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDate
+            initialSelectedDateMillis = uiState.startDate
                 .atStartOfDay(ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli()
@@ -175,9 +168,11 @@ fun AddDoseDetailsScreen(
             confirmButton = {
                 TextButton(onClick = {
                     pickerState.selectedDateMillis?.let { millis ->
-                        selectedDate = Instant.ofEpochMilli(millis)
-                            .atZone(ZoneId.of("UTC"))
-                            .toLocalDate()
+                        viewModel.updateStartDate(
+                            Instant.ofEpochMilli(millis)
+                                .atZone(ZoneId.of("UTC"))
+                                .toLocalDate()
+                        )
                     }
                     showDatePicker = false
                 }) { Text("OK") }
@@ -190,10 +185,10 @@ fun AddDoseDetailsScreen(
     }
     if (showQuantityDialog) {
         QuantityDialog(
-            initialQuantity = quantity,
+            initialQuantity = uiState.quantity,
             onDismiss = { showQuantityDialog = false },
             onConfirm = { newQty ->
-                quantity = newQty
+                viewModel.updateQuantity(newQty)
                 showQuantityDialog = false
             }
         )
@@ -206,7 +201,7 @@ fun AddDoseDetailsScreen(
 fun AddDoseDetailsScreenPreview() {
     RXTrackerTheme {
         AddDoseDetailsScreen(
-            viewModel = MedicationsViewModel(),
+            viewModel = AddMedicationsViewModel(),
             onContinue = {}
         )
     }

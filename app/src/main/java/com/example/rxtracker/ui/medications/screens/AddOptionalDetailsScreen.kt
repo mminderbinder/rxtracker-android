@@ -1,12 +1,13 @@
-package com.example.rxtracker.ui.medications
+package com.example.rxtracker.ui.medications.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
 fun AddOptionalDetailsScreen(
-    viewModel: MedicationsViewModel,
+    viewModel: AddMedicationsViewModel,
     onComplete: () -> Unit,
 ) {
 
@@ -18,7 +19,7 @@ fun AddOptionalDetailsScreen(
 fun AddOptionalDetailsScreenPreview() {
     RXTrackerTheme {
         AddOptionalDetailsScreen(
-            viewModel = MedicationsViewModel(),
+            viewModel = AddMedicationsViewModel(),
             onComplete = {}
         )
     }

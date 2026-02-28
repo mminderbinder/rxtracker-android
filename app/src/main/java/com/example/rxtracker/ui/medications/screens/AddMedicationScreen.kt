@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications
+package com.example.rxtracker.ui.medications.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,24 +10,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.MedicationSearchBar
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
 fun AddMedicationScreen(
-    viewModel: MedicationsViewModel,
+    viewModel: AddMedicationsViewModel,
     onContinue: () -> Unit,
 ) {
-    var medicationName by rememberSaveable { mutableStateOf("") }
-    var medicationStrength by rememberSaveable { mutableStateOf("") }
-    var medicationForm by rememberSaveable { mutableStateOf("") }
+    val uiState = viewModel.uiState
 
     Column(
         modifier = Modifier
@@ -36,17 +31,24 @@ fun AddMedicationScreen(
     ) {
         MedicationSearchBar(
             onMedicationSelected = { medication ->
-                medicationName = medication.brand
-                medicationStrength = medication.amount
-                medicationForm = medication.form
+                viewModel.updateMedicationInfo(
+                    name = medication.brand,
+                    strength = medication.amount,
+                    form = medication.form
+                )
             }
         )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = medicationName,
-            onValueChange = { medicationName = it },
+            value = uiState.name,
+            onValueChange = {
+                viewModel.updateMedicationInfo(
+                    name = it,
+                    strength = uiState.strength,
+                    form = uiState.form
+                )
+            },
             label = { Text("Name") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
@@ -55,8 +57,14 @@ fun AddMedicationScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = medicationStrength,
-            onValueChange = { medicationStrength = it },
+            value = uiState.strength,
+            onValueChange = {
+                viewModel.updateMedicationInfo(
+                    name = uiState.name,
+                    strength = it,
+                    form = uiState.form
+                )
+            },
             label = { Text("Strength") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
@@ -65,8 +73,14 @@ fun AddMedicationScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = medicationForm,
-            onValueChange = { medicationForm = it },
+            value = uiState.form,
+            onValueChange = {
+                viewModel.updateMedicationInfo(
+                    name = uiState.name,
+                    strength = uiState.strength,
+                    form = it
+                )
+            },
             label = { Text("Form") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
@@ -76,17 +90,10 @@ fun AddMedicationScreen(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                viewModel.updateMedicationInfo(
-                    medicationName,
-                    medicationStrength,
-                    medicationForm
-                )
-                onContinue()
-            },
-            enabled = medicationName.isNotBlank() &&
-                    medicationStrength.isNotBlank()
-                    && medicationForm.isNotBlank()
+            onClick = onContinue,
+            enabled = uiState.name.isNotBlank() &&
+                    uiState.strength.isNotBlank()
+                    && uiState.form.isNotBlank()
         ) { Text("Continue") }
     }
 }
@@ -97,7 +104,7 @@ fun AddMedicationScreen(
 fun AddMedicationScreenPreview() {
     RXTrackerTheme {
         AddMedicationScreen(
-            viewModel = MedicationsViewModel(),
+            viewModel = AddMedicationsViewModel(),
             onContinue = {}
         )
     }

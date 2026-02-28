@@ -1,7 +1,9 @@
 package com.example.rxtracker.ui.medications.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,17 +46,18 @@ fun MedicationSearchBar(
     var isLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        isLoading = true
         MedicationRepository.ensureLoaded(context)
-        isLoading = false
     }
 
     LaunchedEffect(query) {
-        delay(300)
-        searchResults = if (query.length >= 2) {
-            MedicationRepository.search(query)
+        if (query.length >= 2) {
+            isLoading = true
+            delay(300)
+            searchResults = MedicationRepository.search(query)
+            isLoading = false
         } else {
-            emptyList()
+            searchResults = emptyList()
+            isLoading = false
         }
     }
 
@@ -67,14 +71,7 @@ fun MedicationSearchBar(
                 onExpandedChange = { expanded = it },
                 placeholder = { Text("Search medications...") },
                 leadingIcon = {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Icon(imageVector = Lucide.Search, contentDescription = null)
-                    }
+                    Icon(imageVector = Lucide.Search, contentDescription = null)
                 }
             )
         },
@@ -82,28 +79,42 @@ fun MedicationSearchBar(
         onExpandedChange = { expanded = it },
         modifier = modifier.fillMaxWidth()
     ) {
-        LazyColumn {
-            items(searchResults) { prescription ->
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            if (prescription.name != prescription.brand) {
-                                "${prescription.name} (${prescription.brand})"
-                            } else {
-                                prescription.name
-                            }
-                        )
-                    },
-                    supportingContent = {
-                        Text("${prescription.amount} ${prescription.form}")
-                    },
-                    modifier = Modifier.clickable {
-                        onMedicationSelected(prescription)
-                        query = ""
-                        expanded = false
-                    }
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(400.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(48.dp),
+                    strokeWidth = 2.dp
                 )
-                HorizontalDivider()
+            }
+        } else {
+            LazyColumn {
+                items(searchResults) { prescription ->
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                if (prescription.name != prescription.brand) {
+                                    "${prescription.name} (${prescription.brand})"
+                                } else {
+                                    prescription.name
+                                }
+                            )
+                        },
+                        supportingContent = {
+                            Text("${prescription.amount} ${prescription.form}")
+                        },
+                        modifier = Modifier.clickable {
+                            onMedicationSelected(prescription)
+                            query = ""
+                            expanded = false
+                        }
+                    )
+                    HorizontalDivider()
+                }
             }
         }
     }

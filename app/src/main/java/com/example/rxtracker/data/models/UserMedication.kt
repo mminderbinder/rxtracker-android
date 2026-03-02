@@ -27,5 +27,11 @@ data class UserMedication(
     val endDate: LocalDate? = null,
     val frequencyDetails: FrequencyDetails? = null,
     val doseTimes: List<DoseTime> = mutableListOf(),
+    val remindersEnabled: Boolean = true,
+    val rxNumber: String? = null,
+    val instructions: String? = null,
+    val refillReminderEnabled: Boolean = false,
+    val refillThreshold: Int? = null,
+    val doseCount: Int? = null,
     val userId: Long = 0
 )

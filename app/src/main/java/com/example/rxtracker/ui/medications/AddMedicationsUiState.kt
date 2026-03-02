@@ -15,6 +15,7 @@ data class AddMedicationsUiState(
     val frequencyDetails: FrequencyDetails? = null,
     val startDate: LocalDate = LocalDate.now(),
     val startTime: LocalTime = LocalTime.of(8, 0),
+    val endDate: LocalDate? = null,
     val quantity: Double = 1.0,
     val doseTimes: List<DoseTime> = emptyList()
 )

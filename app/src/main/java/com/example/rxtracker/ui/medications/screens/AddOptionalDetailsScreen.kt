@@ -1,16 +1,102 @@
 package com.example.rxtracker.ui.medications.screens
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
+import com.example.rxtracker.ui.medications.components.DetailRow
+import com.example.rxtracker.ui.medications.components.dialogs.DateSelectionDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
+import java.time.Instant
+import java.time.ZoneId
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddOptionalDetailsScreen(
     viewModel: AddMedicationsViewModel,
     onComplete: () -> Unit,
 ) {
+    val uiState = viewModel.uiState
+    var showDatePicker by remember { mutableStateOf(false) }
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "${uiState.name} ${uiState.strength} ${uiState.form}",
+            style = MaterialTheme.typography.titleSmall
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Is there anything else?",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+        HorizontalDivider()
+        DetailRow(
+            label = "Set End Date",
+            value = uiState.endDate?.toString() ?: "Never",
+            onClick = { showDatePicker = true }
+        )
+
+        HorizontalDivider()
+        DetailRow(
+            label = "Add Refill Reminder",
+            value = "Placeholder",
+            onClick = {}
+        )
+
+        HorizontalDivider()
+        DetailRow(
+            label = "Additional Information",
+            value = "Placeholder",
+            onClick = {}
+        )
+
+        HorizontalDivider()
+        Spacer(modifier = Modifier.weight(1f))
+
+        Button(
+            onClick = { onComplete() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Complete")
+        }
+    }
+    if (showDatePicker) {
+        DateSelectionDialog(
+            startDate = uiState.startDate,
+            onConfirm = { millis ->
+                viewModel.updateEndDate(
+                    Instant.ofEpochMilli(millis)
+                        .atZone(ZoneId.of("UTC"))
+                        .toLocalDate()
+                )
+                showDatePicker = false
+            },
+            onDismiss = { showDatePicker = false }
+        )
+    }
 }
 
 @Suppress("ViewModelConstructorInComposable")

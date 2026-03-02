@@ -185,7 +185,6 @@ fun AppNavigation() {
                         }
                     )
                 }
-
                 composable(AppDestination.AddTimes.route) { navBackStackEntry ->
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")

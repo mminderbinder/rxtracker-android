@@ -1,5 +1,6 @@
 package com.example.rxtracker.ui.medications.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -130,6 +131,13 @@ fun AddTimesScreen(
                                     quantity = uiState.quantity
                                 )
                             )
+                            Log.d("AddTimesScreen", "Doses: ${doseTimes.size}")
+                            for (dose in doseTimes) {
+                                Log.d(
+                                    "AddTimesScreen",
+                                    "Start time: ${uiState.startTime}, Dose: ${dose.time}"
+                                )
+                            }
                         },
                         enabled = canAddTime,
                         modifier = Modifier.fillMaxWidth()

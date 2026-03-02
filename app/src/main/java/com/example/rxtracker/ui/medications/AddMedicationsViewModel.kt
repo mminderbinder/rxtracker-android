@@ -27,7 +27,8 @@ class AddMedicationsViewModel : ViewModel() {
     fun updateFrequency(type: Frequency, details: FrequencyDetails) {
         uiState = uiState.copy(
             frequencyType = type,
-            frequencyDetails = details
+            frequencyDetails = details,
+            doseTimes = emptyList()
         )
     }
 
@@ -35,7 +36,10 @@ class AddMedicationsViewModel : ViewModel() {
         uiState = uiState.copy(startDate = date)
     }
 
-
+    fun updateEndDate(date: LocalDate) {
+        uiState = uiState.copy(endDate = date)
+    }
+    
     fun updateStartTime(time: LocalTime) {
         uiState = uiState.copy(startTime = time, doseTimes = emptyList())
     }
@@ -68,7 +72,7 @@ class AddMedicationsViewModel : ViewModel() {
         val generated = when (val details = uiState.frequencyDetails) {
             is FrequencyDetails.EveryXHours -> {
                 val offsetHours = generateSequence(0) { it + details.hours }
-                    .takeWhile { it < 12 }
+                    .takeWhile { it <= 12 }
                     .toList()
                 offsetHours.map { offset ->
                     DoseTime(

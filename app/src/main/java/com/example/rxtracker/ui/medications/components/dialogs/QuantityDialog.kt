@@ -20,6 +20,9 @@ import com.example.rxtracker.ui.medications.components.QuantityCounter
 @Composable
 fun QuantityDialog(
     initialQuantity: Double,
+    title: String,
+    min: Double,
+    max: Double,
     onDismiss: () -> Unit,
     onConfirm: (Double) -> Unit
 ) {
@@ -27,7 +30,7 @@ fun QuantityDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("How many doses?") },
+        title = { Text(title) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -36,7 +39,9 @@ fun QuantityDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 QuantityCounter(
                     quantity = quantity,
-                    onQuantityChange = { quantity = it }
+                    onQuantityChange = { quantity = it },
+                    min = min,
+                    max = max,
                 )
             }
         },

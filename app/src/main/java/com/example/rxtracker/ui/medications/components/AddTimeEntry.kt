@@ -103,6 +103,9 @@ fun AddTimeEntry(
     if (showQuantityDialog) {
         QuantityDialog(
             initialQuantity = quantity,
+            title = "Dose Quantity",
+            min = 0.5,
+            max = 20.0,
             onDismiss = { showQuantityDialog = false },
             onConfirm = { newQty ->
                 onQuantityChange(newQty)

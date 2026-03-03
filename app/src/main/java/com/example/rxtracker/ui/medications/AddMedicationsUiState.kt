@@ -14,8 +14,14 @@ data class AddMedicationsUiState(
     val frequencyType: Frequency? = null,
     val frequencyDetails: FrequencyDetails? = null,
     val startDate: LocalDate = LocalDate.now(),
-    val startTime: LocalTime = LocalTime.of(8, 0),
     val endDate: LocalDate? = null,
+    val startTime: LocalTime = LocalTime.of(8, 0),
     val quantity: Double = 1.0,
-    val doseTimes: List<DoseTime> = emptyList()
+    val doseTimes: List<DoseTime> = emptyList(),
+    val remindersEnabled: Boolean = true,
+    val rxNumber: String? = null,
+    val instructions: String? = null,
+    val refillReminderEnabled: Boolean = false,
+    val refillThreshold: Int? = null,
+    val doseCount: Int? = null
 )

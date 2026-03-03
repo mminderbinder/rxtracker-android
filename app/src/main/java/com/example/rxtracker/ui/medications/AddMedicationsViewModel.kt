@@ -36,12 +36,12 @@ class AddMedicationsViewModel : ViewModel() {
         uiState = uiState.copy(startDate = date)
     }
 
-    fun updateEndDate(date: LocalDate) {
-        uiState = uiState.copy(endDate = date)
-    }
-    
     fun updateStartTime(time: LocalTime) {
         uiState = uiState.copy(startTime = time, doseTimes = emptyList())
+    }
+
+    fun updateEndDate(date: LocalDate?) {
+        uiState = uiState.copy(endDate = date)
     }
 
     fun updateQuantity(qty: Double) {
@@ -50,6 +50,30 @@ class AddMedicationsViewModel : ViewModel() {
 
     fun updateDoseTimes(doseTimes: List<DoseTime>) {
         uiState = uiState.copy(doseTimes = doseTimes)
+    }
+
+    fun updateRemindersEnabled(enabled: Boolean) {
+        uiState = uiState.copy(remindersEnabled = enabled)
+    }
+
+    fun updateRefillReminderEnabled(enabled: Boolean) {
+        uiState = uiState.copy(refillReminderEnabled = enabled)
+    }
+
+    fun updateRxNumber(number: String?) {
+        uiState = uiState.copy(rxNumber = number)
+    }
+
+    fun updateInstructions(instructions: String?) {
+        uiState = uiState.copy(instructions = instructions)
+    }
+
+    fun updateDoseCount(count: Int) {
+        uiState = uiState.copy(doseCount = count)
+    }
+
+    fun updateRefillThreshold(threshold: Int) {
+        uiState = uiState.copy(refillThreshold = threshold)
     }
 
     fun requiresTimesScreen(): Boolean {

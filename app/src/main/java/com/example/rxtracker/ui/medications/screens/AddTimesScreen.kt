@@ -131,7 +131,6 @@ fun AddTimesScreen(
                                     quantity = uiState.quantity
                                 )
                             )
-                            Log.d("AddTimesScreen", "Doses: ${doseTimes.size}")
                             for (dose in doseTimes) {
                                 Log.d(
                                     "AddTimesScreen",

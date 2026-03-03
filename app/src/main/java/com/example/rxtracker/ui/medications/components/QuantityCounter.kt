@@ -35,9 +35,8 @@ fun QuantityCounter(
     quantity: Double,
     onQuantityChange: (Double) -> Unit,
     modifier: Modifier = Modifier,
-    min: Double = 0.5,
-    max: Double = 20.0,
-    label: String = "Quantity"
+    min: Double,
+    max: Double,
 ) {
     var textValue by remember(quantity) {
         mutableStateOf(
@@ -84,7 +83,7 @@ fun QuantityCounter(
                 }
             },
             modifier = Modifier.width(120.dp),
-            label = { Text(label) },
+            label = { Text("Quantity") },
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 textAlign = TextAlign.Center
             ),
@@ -125,6 +124,8 @@ fun QuantityCounterPreview() {
         QuantityCounter(
             quantity = 2.0,
             onQuantityChange = {},
+            min = 0.5,
+            max = 20.0,
         )
     }
 }

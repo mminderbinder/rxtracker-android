@@ -83,7 +83,7 @@ fun AddDoseDetailsScreen(
 
         HorizontalDivider()
         DetailRow(
-            label = "Dose quantity",
+            label = "Initial dose quantity",
             value = doseLabel(uiState.quantity),
             onClick = { showQuantityDialog = true }
         )
@@ -127,6 +127,9 @@ fun AddDoseDetailsScreen(
     if (showQuantityDialog) {
         QuantityDialog(
             initialQuantity = uiState.quantity,
+            title = "Dose Quantity",
+            min = 0.5,
+            max = 20.0,
             onDismiss = { showQuantityDialog = false },
             onConfirm = { newQty ->
                 viewModel.updateQuantity(newQty)

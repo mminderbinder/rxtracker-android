@@ -2,7 +2,10 @@ package com.example.rxtracker.ui.medications.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -114,10 +117,16 @@ fun MedicationSearchBar(
     )
 
     if (query.isNotBlank()) {
-        LazyColumn {
+        LazyColumn(contentPadding = WindowInsets.ime.asPaddingValues()) {
             item {
                 ListItem(
                     headlineContent = { Text(query) },
+                    supportingContent = {
+                        Text(
+                            text = "Tap to add this medication if not found",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    },
                     trailingContent = {
                         Icon(
                             imageVector = Lucide.ChevronRight,

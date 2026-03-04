@@ -20,10 +20,12 @@ class AddMedicationsViewModel : ViewModel() {
         uiState = uiState.copy(
             name = name,
             strength = strength,
-            form = form
+            form = form,
+            frequencyDetails = null,
+            frequencyType = null
         )
     }
-    
+
     fun updateFrequency(type: Frequency, details: FrequencyDetails) {
         uiState = uiState.copy(
             frequencyType = type,
@@ -76,6 +78,10 @@ class AddMedicationsViewModel : ViewModel() {
         uiState = uiState.copy(refillThreshold = threshold)
     }
 
+    fun updateApplyQuantityToAll(apply: Boolean) {
+        uiState = uiState.copy(applyQuantityToAll = apply, doseTimes = emptyList())
+    }
+
     fun requiresTimesScreen(): Boolean {
         return when (uiState.frequencyType) {
             Frequency.ONCE_DAILY,
@@ -93,25 +99,28 @@ class AddMedicationsViewModel : ViewModel() {
     }
 
     fun generateInitialTimes(): List<DoseTime> {
+        val qty = { index: Int ->
+            if (index == 0 || uiState.applyQuantityToAll) uiState.quantity else 1.0
+        }
         val generated = when (val details = uiState.frequencyDetails) {
             is FrequencyDetails.EveryXHours -> {
                 val offsetHours = generateSequence(0) { it + details.hours }
                     .takeWhile { it <= 12 }
                     .toList()
-                offsetHours.map { offset ->
+                offsetHours.mapIndexed { index, offset ->
                     DoseTime(
                         time = uiState.startTime.plusHours(offset.toLong()),
-                        quantity = uiState.quantity
+                        quantity = qty(index)
                     )
                 }
             }
 
             is FrequencyDetails.MultipleTimes -> {
                 val intervalHours = 12 / (details.timesPerDay - 1).coerceAtLeast(1)
-                (0 until details.timesPerDay).map { i ->
+                (0 until details.timesPerDay).mapIndexed { i, _ ->
                     DoseTime(
                         time = uiState.startTime.plusHours((i * intervalHours).toLong()),
-                        quantity = uiState.quantity
+                        quantity = qty(i)
                     )
                 }
             }

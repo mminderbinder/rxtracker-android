@@ -23,5 +23,6 @@ data class AddMedicationsUiState(
     val instructions: String? = null,
     val refillReminderEnabled: Boolean = false,
     val refillThreshold: Int? = null,
-    val doseCount: Int? = null
+    val doseCount: Int? = null,
+    val applyQuantityToAll: Boolean = false
 )

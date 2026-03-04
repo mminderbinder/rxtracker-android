@@ -23,7 +23,7 @@ class AddMedicationsViewModel : ViewModel() {
             form = form
         )
     }
-
+    
     fun updateFrequency(type: Frequency, details: FrequencyDetails) {
         uiState = uiState.copy(
             frequencyType = type,

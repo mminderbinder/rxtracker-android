@@ -89,7 +89,6 @@ sealed class AppDestination(
     }
 }
 
-
 val bottomNavDestinations = listOf(
     Home,
     Medications,

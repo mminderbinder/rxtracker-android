@@ -160,7 +160,7 @@ fun AppNavigation() {
                     AddFrequencyScreen(
                         viewModel = viewModel,
                         onContinue = {
-                            if (viewModel.uiState.frequencyType == Frequency.AS_NEEDED) {
+                            if (viewModel.uiState.frequency.type == Frequency.AS_NEEDED) {
                                 navController.navigate(AppDestination.AddOptionalDetails.route)
                             } else {
                                 navController.navigate(AppDestination.AddDoseDetails.route)

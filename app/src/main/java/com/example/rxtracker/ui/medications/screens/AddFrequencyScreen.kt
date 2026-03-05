@@ -36,6 +36,9 @@ fun AddFrequencyScreen(
 ) {
     val uiState = viewModel.uiState
 
+    val med = uiState.medicationInfo
+    val freq = uiState.frequency
+
     var showMultipleDailyDialog by remember { mutableStateOf(false) }
     var showEveryXHoursDialog by remember { mutableStateOf(false) }
     var showEveryXDaysDialog by remember { mutableStateOf(false) }
@@ -48,7 +51,7 @@ fun AddFrequencyScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "${uiState.name} ${uiState.strength} ${uiState.form}",
+            text = med.selectionSummary,
             style = MaterialTheme.typography.titleSmall
         )
 
@@ -63,7 +66,7 @@ fun AddFrequencyScreen(
         Frequency.entries.forEach { frequencyType ->
             FrequencyOption(
                 label = frequencyType.label,
-                selected = uiState.frequencyType == frequencyType,
+                selected = freq.type == frequencyType,
                 onClick = {
                     when (frequencyType) {
                         Frequency.ONCE_DAILY -> viewModel.updateFrequency(
@@ -92,7 +95,7 @@ fun AddFrequencyScreen(
         Button(
             onClick = onContinue,
             modifier = Modifier.fillMaxWidth(),
-            enabled = uiState.frequencyType != null && uiState.frequencyDetails != null
+            enabled = freq.type != null && freq.details != null
         ) {
             Text("Continue")
         }

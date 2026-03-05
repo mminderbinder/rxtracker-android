@@ -42,6 +42,10 @@ fun AddOptionalDetailsScreen(
 ) {
     val uiState = viewModel.uiState
 
+    val med = uiState.medicationInfo
+    val dose = uiState.doseDetails
+    val opt = uiState.optionalDetails
+
     var showDatePicker by remember { mutableStateOf(false) }
     var showDoseQuantityDialog by remember { mutableStateOf(false) }
     var showRefillThresholdDialog by remember { mutableStateOf(false) }
@@ -52,7 +56,7 @@ fun AddOptionalDetailsScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "${uiState.name} ${uiState.strength} ${uiState.form}",
+            text = med.selectionSummary,
             style = MaterialTheme.typography.titleSmall
         )
 
@@ -67,30 +71,30 @@ fun AddOptionalDetailsScreen(
         HorizontalDivider()
         ToggleRow(
             label = "Reminders",
-            checked = uiState.remindersEnabled,
+            checked = opt.remindersEnabled,
             onCheckedChange = { viewModel.updateRemindersEnabled(it) }
         )
 
         HorizontalDivider()
         ToggleRow(
             label = "Refill reminder",
-            checked = uiState.refillReminderEnabled,
+            checked = opt.refillReminderEnabled,
             onCheckedChange = { viewModel.updateRefillReminderEnabled(it) }
         )
 
-        AnimatedVisibility(visible = uiState.refillReminderEnabled) {
+        AnimatedVisibility(visible = opt.refillReminderEnabled) {
             Column {
                 HorizontalDivider()
                 DetailRow(
                     label = "Current dose count",
-                    value = uiState.doseCount?.toString() ?: "30",
+                    value = opt.doseCount?.toString() ?: "30",
                     onClick = { showDoseQuantityDialog = true }
                 )
 
                 HorizontalDivider()
                 DetailRow(
                     label = "Remind me when",
-                    value = uiState.refillThreshold?.let { "$it left" }
+                    value = opt.refillThreshold?.let { "$it left" }
                         ?: "10 left",
                     onClick = { showRefillThresholdDialog = true }
                 )
@@ -100,14 +104,14 @@ fun AddOptionalDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Treatment end date",
-            value = uiState.endDate?.format(dateFormatter) ?: "Forever",
+            value = opt.endDate?.format(dateFormatter) ?: "Forever",
             onClick = { showDatePicker = true }
         )
 
         HorizontalDivider()
 
         OutlinedTextField(
-            value = uiState.rxNumber ?: "",
+            value = opt.rxNumber ?: "",
             onValueChange = { viewModel.updateRxNumber(it.ifEmpty { null }) },
             label = { Text("Prescription number") },
             modifier = Modifier
@@ -117,7 +121,7 @@ fun AddOptionalDetailsScreen(
         )
 
         OutlinedTextField(
-            value = uiState.instructions ?: "",
+            value = opt.instructions ?: "",
             onValueChange = { viewModel.updateInstructions(it.ifBlank { null }) },
             label = { Text("Instructions") },
             modifier = Modifier
@@ -138,7 +142,7 @@ fun AddOptionalDetailsScreen(
     }
     if (showDatePicker) {
         DateSelectionDialog(
-            startDate = uiState.startDate,
+            startDate = dose.startDate,
             onConfirm = { millis ->
                 viewModel.updateEndDate(
                     Instant.ofEpochMilli(millis)
@@ -152,7 +156,7 @@ fun AddOptionalDetailsScreen(
     }
     if (showDoseQuantityDialog) {
         QuantityDialog(
-            initialQuantity = uiState.doseCount?.toDouble() ?: 30.0,
+            initialQuantity = opt.doseCount?.toDouble() ?: 30.0,
             title = "Doses Left",
             min = 0.5,
             max = 500.0,
@@ -165,7 +169,7 @@ fun AddOptionalDetailsScreen(
     }
     if (showRefillThresholdDialog) {
         QuantityDialog(
-            initialQuantity = uiState.refillThreshold?.toDouble() ?: 10.0,
+            initialQuantity = opt.refillThreshold?.toDouble() ?: 10.0,
             title = "Doses left",
             min = 1.0,
             max = 30.0,

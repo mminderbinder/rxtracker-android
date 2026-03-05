@@ -1,6 +1,5 @@
 package com.example.rxtracker.ui.medications.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -37,12 +36,16 @@ fun AddTimesScreen(
     onContinue: () -> Unit,
 ) {
     val uiState = viewModel.uiState
-    var duplicateTimeError by remember { mutableStateOf(false) }
 
+    val med = uiState.medicationInfo
+    val freq = uiState.frequency
+    val dose = uiState.doseDetails
+
+    var duplicateTimeError by remember { mutableStateOf(false) }
     val isFixed = remember { viewModel.isFixedSchedule() }
 
     val intervalHours = remember {
-        when (val details = uiState.frequencyDetails) {
+        when (val details = freq.details) {
             is FrequencyDetails.EveryXHours -> details.hours
             else -> 1
         }
@@ -70,7 +73,7 @@ fun AddTimesScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "${uiState.name} ${uiState.strength} ${uiState.form}",
+            text = med.selectionSummary,
             style = MaterialTheme.typography.titleSmall
         )
 
@@ -127,16 +130,10 @@ fun AddTimesScreen(
                             val nextOffset = intervalHours * doseTimes.size
                             viewModel.updateDoseTimes(
                                 doseTimes + DoseTime(
-                                    time = uiState.startTime.plusHours(nextOffset.toLong()),
-                                    quantity = uiState.quantity
+                                    time = dose.startTime.plusHours(nextOffset.toLong()),
+                                    quantity = dose.quantity
                                 )
                             )
-                            for (dose in doseTimes) {
-                                Log.d(
-                                    "AddTimesScreen",
-                                    "Start time: ${uiState.startTime}, Dose: ${dose.time}"
-                                )
-                            }
                         },
                         enabled = canAddTime,
                         modifier = Modifier.fillMaxWidth()

@@ -1,17 +1,13 @@
-
 package com.example.rxtracker.ui.medications.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,6 +45,9 @@ fun AddDoseDetailsScreen(
 ) {
     val uiState = viewModel.uiState
 
+    val med = uiState.medicationInfo
+    val dose = uiState.doseDetails
+
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     var showQuantityDialog by remember { mutableStateOf(false) }
@@ -60,7 +58,7 @@ fun AddDoseDetailsScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "${uiState.name} ${uiState.strength} ${uiState.form}",
+            text = med.selectionSummary,
             style = MaterialTheme.typography.titleSmall
         )
 
@@ -75,32 +73,34 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Start Date",
-            value = if (uiState.startDate == LocalDate.now()) "Today" else uiState.startDate.format(dateFormatter),
+            value = if (dose.startDate == LocalDate.now()) "Today" else dose.startDate.format(
+                dateFormatter
+            ),
             onClick = { showDatePicker = true }
         )
 
         HorizontalDivider()
         DetailRow(
             label = "Earliest dose time",
-            value = uiState.startTime.format(timeFormatter),
+            value = dose.startTime.format(timeFormatter),
             onClick = { showTimePicker = true }
         )
 
         HorizontalDivider()
         DetailRow(
             label = "Initial dose quantity",
-            value = doseLabel(uiState.quantity),
+            value = doseLabel(dose.quantity),
             onClick = { showQuantityDialog = true }
         )
 
         AnimatedVisibility(
-            visible = viewModel.requiresTimesScreen() && uiState.quantity != 1.0
+            visible = viewModel.requiresTimesScreen() && dose.quantity != 1.0
         ) {
             Column {
                 HorizontalDivider()
                 ToggleRow(
                     label = "Apply quantity to all doses",
-                    checked = uiState.applyQuantityToAll,
+                    checked = dose.applyQuantityToAll,
                     onCheckedChange = { viewModel.updateApplyQuantityToAll(it) }
                 )
             }
@@ -120,7 +120,7 @@ fun AddDoseDetailsScreen(
 
     if (showTimePicker) {
         TimeSelectionDialog(
-            startTime = uiState.startTime,
+            startTime = dose.startTime,
             onConfirm = { hour, minute ->
                 viewModel.updateStartTime(LocalTime.of(hour, minute))
                 showTimePicker = false
@@ -130,7 +130,7 @@ fun AddDoseDetailsScreen(
     }
     if (showDatePicker) {
         DateSelectionDialog(
-            startDate = uiState.startDate,
+            startDate = dose.startDate,
             onConfirm = { millis ->
                 viewModel.updateStartDate(
                     Instant.ofEpochMilli(millis)
@@ -144,7 +144,7 @@ fun AddDoseDetailsScreen(
     }
     if (showQuantityDialog) {
         QuantityDialog(
-            initialQuantity = uiState.quantity,
+            initialQuantity = dose.quantity,
             title = "Dose Quantity",
             min = 0.5,
             max = 20.0,

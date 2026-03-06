@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.rxtracker.data.models.DoseTime
+import com.example.rxtracker.data.models.EndDateMode
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.UserMedication
@@ -22,16 +23,14 @@ class AddMedicationsViewModel : ViewModel() {
      *
      * Screen 1: name, strength, form (handled by full reset)
      * Screen 2: frequencyType, frequencyDetails
-     * Screen 3: startDate, startTime, quantity, applyQuantityToAll
+     * Screen 3: startDate, startTime, quantity
      * Screen 4: doseTimes
      * Screen 5: reminders, refill, endDate, rxNumber, instructions
      */
+
     private fun wipeFrom(step: Int, state: AddMedicationsUiState): AddMedicationsUiState {
         var s = state
-        if (step <= 2) s = s.copy(frequency = FrequencyState())
-        if (step <= 3) s = s.copy(doseDetails = DoseDetailsState())
         if (step <= 4) s = s.copy(doseTimes = emptyList())
-
         return s
     }
 
@@ -76,13 +75,6 @@ class AddMedicationsViewModel : ViewModel() {
         )
     }
 
-    fun updateApplyQuantityToAll(apply: Boolean) {
-        uiState = wipeFrom(
-            step = 4,
-            state = uiState.copy(doseDetails = uiState.doseDetails.copy(applyQuantityToAll = apply))
-        )
-    }
-
     // Screen 4
     fun updateDoseTimes(doseTimes: List<DoseTime>) {
         uiState = uiState.copy(doseTimes = doseTimes)
@@ -97,10 +89,6 @@ class AddMedicationsViewModel : ViewModel() {
     fun updateRefillReminderEnabled(enabled: Boolean) {
         uiState =
             uiState.copy(optionalDetails = uiState.optionalDetails.copy(refillReminderEnabled = enabled))
-    }
-
-    fun updateRxNumber(number: String?) {
-        uiState = uiState.copy(optionalDetails = uiState.optionalDetails.copy(rxNumber = number))
     }
 
     fun updateInstructions(instructions: String?) {
@@ -119,6 +107,15 @@ class AddMedicationsViewModel : ViewModel() {
 
     fun updateEndDate(date: LocalDate?) {
         uiState = uiState.copy(optionalDetails = uiState.optionalDetails.copy(endDate = date))
+    }
+
+    fun updateEndDateMode(mode: EndDateMode) {
+        uiState = uiState.copy(
+            optionalDetails = uiState.optionalDetails.copy(
+                endDateMode = mode,
+                endDate = uiState.optionalDetails.endDate
+            )
+        )
     }
 
     fun requiresTimesScreen(): Boolean {
@@ -140,28 +137,25 @@ class AddMedicationsViewModel : ViewModel() {
     }
 
     fun generateInitialTimes(): List<DoseTime> {
-        val qty = { index: Int ->
-            if (index == 0 || uiState.doseDetails.applyQuantityToAll) uiState.doseDetails.quantity else 1.0
-        }
         val generated = when (val details = uiState.frequency.details) {
             is FrequencyDetails.EveryXHours -> {
                 val offsetHours = generateSequence(0) { it + details.hours }
                     .takeWhile { it <= 12 }
                     .toList()
-                offsetHours.mapIndexed { index, offset ->
+                offsetHours.map { offset ->
                     DoseTime(
                         time = uiState.doseDetails.startTime.plusHours(offset.toLong()),
-                        quantity = qty(index)
+                        quantity = uiState.doseDetails.quantity
                     )
                 }
             }
 
             is FrequencyDetails.MultipleTimes -> {
                 val intervalHours = 12 / (details.timesPerDay - 1).coerceAtLeast(1)
-                (0 until details.timesPerDay).mapIndexed { i, _ ->
+                (0 until details.timesPerDay).map { i ->
                     DoseTime(
                         time = uiState.doseDetails.startTime.plusHours((i * intervalHours).toLong()),
-                        quantity = qty(i)
+                        quantity = uiState.doseDetails.quantity
                     )
                 }
             }

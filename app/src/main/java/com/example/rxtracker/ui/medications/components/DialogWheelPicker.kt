@@ -31,7 +31,7 @@ fun DialogWheelPicker(
         modifier = modifier,
         window = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(0.6f),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 HorizontalDivider(

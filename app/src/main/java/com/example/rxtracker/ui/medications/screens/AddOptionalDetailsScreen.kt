@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -21,16 +23,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.rxtracker.data.models.EndDateMode
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.DetailRow
+import com.example.rxtracker.ui.medications.components.FrequencyOption
 import com.example.rxtracker.ui.medications.components.ToggleRow
 import com.example.rxtracker.ui.medications.components.dialogs.DateSelectionDialog
+import com.example.rxtracker.ui.medications.components.dialogs.InXDaysDialog
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 private val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
 
@@ -41,117 +47,169 @@ fun AddOptionalDetailsScreen(
     onComplete: () -> Unit,
 ) {
     val uiState = viewModel.uiState
-
     val med = uiState.medicationInfo
     val dose = uiState.doseDetails
     val opt = uiState.optionalDetails
 
-    var showDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+    var showInXDaysDialog by remember { mutableStateOf(false) }
+    var showDurationOptions by remember { mutableStateOf(false) }
     var showDoseQuantityDialog by remember { mutableStateOf(false) }
     var showRefillThresholdDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = med.selectionSummary,
-            style = MaterialTheme.typography.titleSmall
-        )
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+        ) {
+            Text(
+                text = med.selectionSummary,
+                style = MaterialTheme.typography.titleSmall
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Is there anything else?",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
+            Text(
+                text = "Is there anything else?",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
 
-        HorizontalDivider()
-        ToggleRow(
-            label = "Reminders",
-            checked = opt.remindersEnabled,
-            onCheckedChange = { viewModel.updateRemindersEnabled(it) }
-        )
-
-        HorizontalDivider()
-        ToggleRow(
-            label = "Refill reminder",
-            checked = opt.refillReminderEnabled,
-            onCheckedChange = { viewModel.updateRefillReminderEnabled(it) }
-        )
-
-        AnimatedVisibility(visible = opt.refillReminderEnabled) {
-            Column {
-                HorizontalDivider()
-                DetailRow(
-                    label = "Current dose count",
-                    value = opt.doseCount?.toString() ?: "30",
-                    onClick = { showDoseQuantityDialog = true }
-                )
-
-                HorizontalDivider()
-                DetailRow(
-                    label = "Remind me when",
-                    value = opt.refillThreshold?.let { "$it left" }
-                        ?: "10 left",
-                    onClick = { showRefillThresholdDialog = true }
-                )
+            Text(
+                text = "Notifications",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            HorizontalDivider()
+            ToggleRow(
+                label = "Reminders",
+                checked = opt.remindersEnabled,
+                onCheckedChange = { viewModel.updateRemindersEnabled(it) }
+            )
+            HorizontalDivider()
+            ToggleRow(
+                label = "Refill reminder",
+                checked = opt.refillReminderEnabled,
+                onCheckedChange = { viewModel.updateRefillReminderEnabled(it) }
+            )
+            AnimatedVisibility(visible = opt.refillReminderEnabled) {
+                Column {
+                    HorizontalDivider()
+                    DetailRow(
+                        label = "Current dose count",
+                        value = opt.doseCount?.toString() ?: "30",
+                        onClick = { showDoseQuantityDialog = true }
+                    )
+                    HorizontalDivider()
+                    DetailRow(
+                        label = "Remind me when",
+                        value = opt.refillThreshold?.let { "$it left" } ?: "10 left",
+                        onClick = { showRefillThresholdDialog = true }
+                    )
+                }
             }
+            HorizontalDivider()
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Treatment duration",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            HorizontalDivider()
+            ToggleRow(
+                label = "Set treatment duration",
+                checked = showDurationOptions,
+                onCheckedChange = { showDurationOptions = it }
+            )
+            AnimatedVisibility(visible = showDurationOptions) {
+                Column {
+                    EndDateMode.entries.forEach { mode ->
+                        val label = when (mode) {
+                            EndDateMode.ONGOING -> "Ongoing"
+                            EndDateMode.IN_X_DAYS -> {
+                                if (opt.endDateMode == EndDateMode.IN_X_DAYS && opt.endDate != null)
+                                    "In ${ChronoUnit.DAYS.between(dose.startDate, opt.endDate)} days"
+                                else "In X days"
+                            }
+                            EndDateMode.SELECT_DATE -> {
+                                if (opt.endDateMode == EndDateMode.SELECT_DATE && opt.endDate != null)
+                                    opt.endDate.format(dateFormatter)
+                                else "Select date"
+                            }
+                        }
+                        HorizontalDivider()
+                        FrequencyOption(
+                            label = label,
+                            selected = opt.endDateMode == mode,
+                            onClick = {
+                                viewModel.updateEndDateMode(mode)
+                                when (mode) {
+                                    EndDateMode.ONGOING -> Unit
+                                    EndDateMode.IN_X_DAYS -> showInXDaysDialog = true
+                                    EndDateMode.SELECT_DATE -> showEndDatePicker = true
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+            HorizontalDivider()
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Notes",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            OutlinedTextField(
+                value = opt.instructions ?: "",
+                onValueChange = { viewModel.updateInstructions(it.ifBlank { null }) },
+                label = { Text("Instructions") },
+                modifier = Modifier.fillMaxWidth(),
+                minLines = 3,
+                maxLines = 5
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
-
-        HorizontalDivider()
-        DetailRow(
-            label = "Treatment end date",
-            value = opt.endDate?.format(dateFormatter) ?: "Forever",
-            onClick = { showDatePicker = true }
-        )
-
-        HorizontalDivider()
-
-        OutlinedTextField(
-            value = opt.rxNumber ?: "",
-            onValueChange = { viewModel.updateRxNumber(it.ifEmpty { null }) },
-            label = { Text("Prescription number") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = opt.instructions ?: "",
-            onValueChange = { viewModel.updateInstructions(it.ifBlank { null }) },
-            label = { Text("Instructions") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            minLines = 3,
-            maxLines = 5
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
 
         Button(
             onClick = { onComplete() },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Text("Complete")
         }
     }
-    if (showDatePicker) {
+
+    if (showInXDaysDialog) {
+        InXDaysDialog(
+            onDismiss = { showInXDaysDialog = false },
+            onConfirm = { numDays ->
+                viewModel.updateEndDate(dose.startDate.plusDays(numDays.toLong()))
+                showInXDaysDialog = false
+            }
+        )
+    }
+    if (showEndDatePicker) {
         DateSelectionDialog(
-            startDate = dose.startDate,
+            startDate = opt.endDate ?: LocalDate.now(),
             onConfirm = { millis ->
                 viewModel.updateEndDate(
-                    Instant.ofEpochMilli(millis)
-                        .atZone(ZoneId.of("UTC"))
-                        .toLocalDate() ?: LocalDate.now()
+                    Instant.ofEpochMilli(millis).atZone(ZoneId.of("UTC")).toLocalDate()
                 )
-                showDatePicker = false
+                showEndDatePicker = false
             },
-            onDismiss = { showDatePicker = false }
+            onDismiss = { showEndDatePicker = false }
         )
     }
     if (showDoseQuantityDialog) {
@@ -170,7 +228,7 @@ fun AddOptionalDetailsScreen(
     if (showRefillThresholdDialog) {
         QuantityDialog(
             initialQuantity = opt.refillThreshold?.toDouble() ?: 10.0,
-            title = "Doses left",
+            title = "Remind me when",
             min = 1.0,
             max = 30.0,
             onDismiss = { showRefillThresholdDialog = false },

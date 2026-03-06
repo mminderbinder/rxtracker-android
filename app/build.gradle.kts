@@ -103,5 +103,6 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 
     implementation(libs.swmansion.kmpWheelPicker)
-    implementation(libs.datetime.wheel.picker)
+
+    implementation("com.composables:core:1.49.6")
 }

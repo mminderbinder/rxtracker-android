@@ -1,6 +1,5 @@
 package com.example.rxtracker.ui.medications.screens
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.DetailRow
-import com.example.rxtracker.ui.medications.components.ToggleRow
 import com.example.rxtracker.ui.medications.components.dialogs.DateSelectionDialog
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.medications.components.dialogs.TimeSelectionDialog
@@ -88,24 +86,10 @@ fun AddDoseDetailsScreen(
 
         HorizontalDivider()
         DetailRow(
-            label = "Initial dose quantity",
+            label = "First dose quantity",
             value = doseLabel(dose.quantity),
             onClick = { showQuantityDialog = true }
         )
-
-        AnimatedVisibility(
-            visible = viewModel.requiresTimesScreen() && dose.quantity != 1.0
-        ) {
-            Column {
-                HorizontalDivider()
-                ToggleRow(
-                    label = "Apply quantity to all doses",
-                    checked = dose.applyQuantityToAll,
-                    onCheckedChange = { viewModel.updateApplyQuantityToAll(it) }
-                )
-            }
-        }
-
         HorizontalDivider()
 
         Spacer(modifier = Modifier.weight(1f))

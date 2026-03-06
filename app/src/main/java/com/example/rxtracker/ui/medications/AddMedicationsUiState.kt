@@ -21,9 +21,9 @@ data class FrequencyState(
 )
 
 data class DoseDetailsState(
-    val startDate: LocalDate = LocalDate.now(),
-    val startTime: LocalTime = LocalTime.of(8, 0),
-    val quantity: Double = 1.0,
+    val startDate: LocalDate? = LocalDate.now(),
+    val startTime: LocalTime? = LocalTime.of(8, 0),
+    val quantity: Double? = 1.0
 )
 
 data class OptionalDetailsState(

@@ -41,6 +41,11 @@ fun AddTimesScreen(
     val freq = uiState.frequency
     val dose = uiState.doseDetails
 
+    val startTime = dose.startTime ?: error("startTime is null on AddTimesScreen")
+    val quantity = dose.quantity ?: error("quantity is null on AddTimesScreen")
+
+    val doseTimes = uiState.doseTimes
+
     var duplicateTimeError by remember { mutableStateOf(false) }
     val isFixed = remember { viewModel.isFixedSchedule() }
 
@@ -51,8 +56,10 @@ fun AddTimesScreen(
         }
     }
 
-    val doseTimes = uiState.doseTimes.ifEmpty {
-        viewModel.generateInitialTimes().also { viewModel.updateDoseTimes(it) }
+    LaunchedEffect(Unit) {
+        if (doseTimes.isEmpty()) {
+            viewModel.updateDoseTimes(viewModel.generateInitialTimes())
+        }
     }
 
     val canAddTime = remember(doseTimes) {
@@ -130,8 +137,8 @@ fun AddTimesScreen(
                             val nextOffset = intervalHours * doseTimes.size
                             viewModel.updateDoseTimes(
                                 doseTimes + DoseTime(
-                                    time = dose.startTime.plusHours(nextOffset.toLong()),
-                                    quantity = dose.quantity
+                                    time = startTime.plusHours(nextOffset.toLong()),
+                                    quantity = quantity
                                 )
                             )
                         },

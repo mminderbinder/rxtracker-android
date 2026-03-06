@@ -45,6 +45,10 @@ fun AddDoseDetailsScreen(
 
     val med = uiState.medicationInfo
     val dose = uiState.doseDetails
+    
+    val startDate = dose.startDate ?: error("startDate is null on DoseDetailsScreen")
+    val startTime = dose.startTime ?: error("startTime is null on DoseDetailsScreen")
+    val quantity = dose.quantity ?: error("quantity is null on DoseDetailsScreen")
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
@@ -71,7 +75,7 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Start Date",
-            value = if (dose.startDate == LocalDate.now()) "Today" else dose.startDate.format(
+            value = if (startDate == LocalDate.now()) "Today" else startDate.format(
                 dateFormatter
             ),
             onClick = { showDatePicker = true }
@@ -80,14 +84,14 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Earliest dose time",
-            value = dose.startTime.format(timeFormatter),
+            value = startTime.format(timeFormatter),
             onClick = { showTimePicker = true }
         )
 
         HorizontalDivider()
         DetailRow(
             label = "Dose quantity",
-            value = doseLabel(dose.quantity),
+            value = doseLabel(quantity),
             onClick = { showQuantityDialog = true }
         )
         HorizontalDivider()
@@ -104,7 +108,7 @@ fun AddDoseDetailsScreen(
 
     if (showTimePicker) {
         TimeSelectionDialog(
-            startTime = dose.startTime,
+            startTime = startTime,
             onConfirm = { hour, minute ->
                 viewModel.updateStartTime(LocalTime.of(hour, minute))
                 showTimePicker = false
@@ -114,7 +118,7 @@ fun AddDoseDetailsScreen(
     }
     if (showDatePicker) {
         DateSelectionDialog(
-            startDate = dose.startDate,
+            startDate = startDate,
             onConfirm = { millis ->
                 viewModel.updateStartDate(
                     Instant.ofEpochMilli(millis)
@@ -128,9 +132,9 @@ fun AddDoseDetailsScreen(
     }
     if (showQuantityDialog) {
         QuantityDialog(
-            initialQuantity = dose.quantity,
+            initialQuantity = quantity,
             title = "Dose Quantity",
-            min = 0.5,
+            min = 0.25,
             max = 20.0,
             onDismiss = { showQuantityDialog = false },
             onConfirm = { newQty ->

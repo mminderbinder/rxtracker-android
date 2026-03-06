@@ -51,9 +51,12 @@ fun AddOptionalDetailsScreen(
     val dose = uiState.doseDetails
     val opt = uiState.optionalDetails
 
+    var showDurationOptions by remember {
+        mutableStateOf(opt.endDateMode != EndDateMode.ONGOING || opt.endDate != null)
+    }
+
     var showEndDatePicker by remember { mutableStateOf(false) }
     var showInXDaysDialog by remember { mutableStateOf(false) }
-    var showDurationOptions by remember { mutableStateOf(false) }
     var showDoseQuantityDialog by remember { mutableStateOf(false) }
     var showRefillThresholdDialog by remember { mutableStateOf(false) }
 
@@ -95,6 +98,7 @@ fun AddOptionalDetailsScreen(
                 checked = opt.refillReminderEnabled,
                 onCheckedChange = { viewModel.updateRefillReminderEnabled(it) }
             )
+
             AnimatedVisibility(visible = opt.refillReminderEnabled) {
                 Column {
                     HorizontalDivider()
@@ -111,54 +115,7 @@ fun AddOptionalDetailsScreen(
                     )
                 }
             }
-            HorizontalDivider()
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Treatment duration",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            HorizontalDivider()
-            ToggleRow(
-                label = "Set treatment end date",
-                checked = showDurationOptions,
-                onCheckedChange = { showDurationOptions = it }
-            )
-            AnimatedVisibility(visible = showDurationOptions) {
-                Column {
-                    EndDateMode.entries.forEach { mode ->
-                        val label = when (mode) {
-                            EndDateMode.ONGOING -> "Ongoing"
-                            EndDateMode.IN_X_DAYS -> {
-                                if (opt.endDateMode == EndDateMode.IN_X_DAYS && opt.endDate != null)
-                                    "In ${ChronoUnit.DAYS.between(dose.startDate, opt.endDate)} days"
-                                else "In X days"
-                            }
-                            EndDateMode.SELECT_DATE -> {
-                                if (opt.endDateMode == EndDateMode.SELECT_DATE && opt.endDate != null)
-                                    opt.endDate.format(dateFormatter)
-                                else "Select date"
-                            }
-                        }
-                        HorizontalDivider()
-                        FrequencyOption(
-                            label = label,
-                            selected = opt.endDateMode == mode,
-                            onClick = {
-                                viewModel.updateEndDateMode(mode)
-                                when (mode) {
-                                    EndDateMode.ONGOING -> Unit
-                                    EndDateMode.IN_X_DAYS -> showInXDaysDialog = true
-                                    EndDateMode.SELECT_DATE -> showEndDatePicker = true
-                                }
-                            }
-                        )
-                    }
-                }
-            }
             HorizontalDivider()
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -191,32 +148,11 @@ fun AddOptionalDetailsScreen(
         }
     }
 
-    if (showInXDaysDialog) {
-        InXDaysDialog(
-            onDismiss = { showInXDaysDialog = false },
-            onConfirm = { numDays ->
-                viewModel.updateEndDate(dose.startDate.plusDays(numDays.toLong()))
-                showInXDaysDialog = false
-            }
-        )
-    }
-    if (showEndDatePicker) {
-        DateSelectionDialog(
-            startDate = opt.endDate ?: LocalDate.now(),
-            onConfirm = { millis ->
-                viewModel.updateEndDate(
-                    Instant.ofEpochMilli(millis).atZone(ZoneId.of("UTC")).toLocalDate()
-                )
-                showEndDatePicker = false
-            },
-            onDismiss = { showEndDatePicker = false }
-        )
-    }
     if (showDoseQuantityDialog) {
         QuantityDialog(
             initialQuantity = opt.doseCount?.toDouble() ?: 30.0,
             title = "Doses Left",
-            min = 0.5,
+            min = 0.25,
             max = 500.0,
             onDismiss = { showDoseQuantityDialog = false },
             onConfirm = { newQty ->

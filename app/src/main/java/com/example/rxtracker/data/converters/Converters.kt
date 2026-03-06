@@ -1,6 +1,7 @@
 package com.example.rxtracker.data.converters
 
 import androidx.room.TypeConverter
+import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
 import kotlinx.serialization.json.Json
@@ -42,4 +43,12 @@ class Converters {
     @TypeConverter
     fun toFrequencyDetails(value: String): FrequencyDetails =
         json.decodeFromString(FrequencyDetails.serializer(), value)
+
+    @TypeConverter
+    fun fromDoseTimes(doseTimes: List<DoseTime>): String =
+        json.encodeToString(doseTimes)
+
+    @TypeConverter
+    fun toDoseTimes(value: String): List<DoseTime> =
+        json.decodeFromString(value)
 }

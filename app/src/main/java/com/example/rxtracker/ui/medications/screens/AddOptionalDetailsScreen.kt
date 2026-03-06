@@ -123,7 +123,7 @@ fun AddOptionalDetailsScreen(
             )
             HorizontalDivider()
             ToggleRow(
-                label = "Set treatment duration",
+                label = "Set treatment end date",
                 checked = showDurationOptions,
                 onCheckedChange = { showDurationOptions = it }
             )

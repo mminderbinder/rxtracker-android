@@ -23,20 +23,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.rxtracker.data.models.EndDateMode
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.DetailRow
-import com.example.rxtracker.ui.medications.components.FrequencyOption
 import com.example.rxtracker.ui.medications.components.ToggleRow
-import com.example.rxtracker.ui.medications.components.dialogs.DateSelectionDialog
-import com.example.rxtracker.ui.medications.components.dialogs.InXDaysDialog
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 private val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
 
@@ -48,15 +40,8 @@ fun AddOptionalDetailsScreen(
 ) {
     val uiState = viewModel.uiState
     val med = uiState.medicationInfo
-    val dose = uiState.doseDetails
     val opt = uiState.optionalDetails
 
-    var showDurationOptions by remember {
-        mutableStateOf(opt.endDateMode != EndDateMode.ONGOING || opt.endDate != null)
-    }
-
-    var showEndDatePicker by remember { mutableStateOf(false) }
-    var showInXDaysDialog by remember { mutableStateOf(false) }
     var showDoseQuantityDialog by remember { mutableStateOf(false) }
     var showRefillThresholdDialog by remember { mutableStateOf(false) }
 

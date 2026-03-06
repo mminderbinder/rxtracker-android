@@ -49,7 +49,7 @@ fun CyclicDialog(
             ) {
                 Text(
                     text = "Cyclic schedule",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 

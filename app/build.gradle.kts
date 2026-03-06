@@ -104,5 +104,5 @@ dependencies {
 
     implementation(libs.swmansion.kmpWheelPicker)
 
-    implementation("com.composables:core:1.49.6")
+    implementation(libs.core)
 }

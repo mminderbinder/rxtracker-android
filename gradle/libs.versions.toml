@@ -1,5 +1,6 @@
 [versions]
 agp = "9.0.1"
+core = "1.49.6"
 iconsLucide = "1.1.0"
 kotlin = "2.3.10"
 coreKtx = "1.17.0"
@@ -30,6 +31,7 @@ foundation = "1.10.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+core = { module = "com.composables:core", version.ref = "core" }
 icons-lucide = { module = "com.composables:icons-lucide", version.ref = "iconsLucide" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

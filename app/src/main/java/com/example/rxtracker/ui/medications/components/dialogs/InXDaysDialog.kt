@@ -36,7 +36,7 @@ fun InXDaysDialog(
     onConfirm: (Int) -> Unit,
 ) {
     var textValue by remember { mutableStateOf("") }
-    var parsed = textValue.toIntOrNull()
+    val parsed = textValue.toIntOrNull()
     val isValid = parsed != null && parsed in 1..9999
 
     Dialog(onDismissRequest = onDismiss) {
@@ -51,7 +51,7 @@ fun InXDaysDialog(
             ) {
                 Text(
                     text = "Number of days",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
                 OutlinedTextField(
@@ -87,7 +87,7 @@ fun InXDaysDialog(
 
 @Preview(showBackground = true)
 @Composable
-fun inXDaysDialogPreview() {
+fun InXDaysDialogPreview() {
     RXTrackerTheme {
         InXDaysDialog(
             onDismiss = {},

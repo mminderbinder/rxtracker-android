@@ -86,7 +86,7 @@ fun AddDoseDetailsScreen(
 
         HorizontalDivider()
         DetailRow(
-            label = "First dose quantity",
+            label = "Dose quantity",
             value = doseLabel(dose.quantity),
             onClick = { showQuantityDialog = true }
         )

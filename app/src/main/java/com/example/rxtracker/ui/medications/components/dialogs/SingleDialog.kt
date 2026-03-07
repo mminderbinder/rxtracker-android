@@ -1,6 +1,6 @@
 package com.example.rxtracker.ui.medications.components.dialogs
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +44,11 @@ fun SingleDialog(
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(28.dp)
+            shape = RoundedCornerShape(28.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
@@ -52,7 +56,8 @@ fun SingleDialog(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
@@ -62,6 +67,17 @@ fun SingleDialog(
                         .height(100.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(36.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer
+                                    .copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                    )
+
                     DialogWheelPicker(
                         state = state,
                         itemLabel = itemLabel,

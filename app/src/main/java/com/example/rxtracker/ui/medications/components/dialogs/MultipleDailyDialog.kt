@@ -8,7 +8,7 @@ fun MultipleDailyDialog(
     onConfirm: (timesPerDay: Int) -> Unit
 ) {
     SingleDialog(
-        title = "Times per day",
+        title = "Select times per day",
         itemCount = 9,
         initialIndex = 0,
         itemLabel = { index ->

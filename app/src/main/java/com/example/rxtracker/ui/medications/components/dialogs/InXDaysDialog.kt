@@ -50,8 +50,8 @@ fun InXDaysDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Number of days",
-                    style = MaterialTheme.typography.headlineSmall,
+                    text = "Select number of days",
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
                 OutlinedTextField(

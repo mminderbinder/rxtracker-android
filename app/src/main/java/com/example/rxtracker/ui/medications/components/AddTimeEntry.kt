@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,7 +56,10 @@ fun AddTimeEntry(
     var showQuantityDialog by remember { mutableStateOf(false) }
 
     OutlinedCard(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        )
     ) {
         Row(
             modifier = Modifier
@@ -70,6 +76,7 @@ fun AddTimeEntry(
             Text(
                 text = time.format(timeFormatter),
                 style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Medium,
                     textDecoration = TextDecoration.Underline
                 ),
                 color = MaterialTheme.colorScheme.primary,
@@ -80,30 +87,33 @@ fun AddTimeEntry(
             Text(
                 text = doseLabel(quantity),
                 style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium,
                     textDecoration = TextDecoration.Underline
                 ),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { showQuantityDialog = true }
             )
-            if (showTrash) {
-                IconButton(
-                    onClick = onRemove,
-                    enabled = showRemove
-                ) {
-                    Icon(
-                        imageVector = Lucide.Trash2,
-                        contentDescription = "Remove time",
-                        tint = if (showRemove) MaterialTheme.colorScheme.error
-                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                    )
-                }
+            IconButton(
+                onClick = onRemove,
+                enabled = showTrash && showRemove,
+                modifier = Modifier.alpha(if (showTrash) 1f else 0f)
+            ) {
+                Icon(
+                    imageVector = Lucide.Trash2,
+                    contentDescription = "Remove time",
+                    tint = when {
+                        !showTrash -> MaterialTheme.colorScheme.surface
+                        showRemove -> MaterialTheme.colorScheme.error
+                        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    }
+                )
             }
         }
     }
     if (showQuantityDialog) {
         QuantityDialog(
             initialQuantity = quantity,
-            title = "Dose Quantity",
+            title = "Select quantity",
             min = 0.25,
             max = 20.0,
             onDismiss = { showQuantityDialog = false },

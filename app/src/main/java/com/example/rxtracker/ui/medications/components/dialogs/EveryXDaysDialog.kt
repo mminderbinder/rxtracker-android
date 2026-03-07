@@ -10,7 +10,7 @@ fun EveryXDaysDialog(
     onConfirm: (days: Int) -> Unit
 ) {
     SingleDialog(
-        title = "Every how many days?",
+        title = "Select day interval",
         itemCount = 89,
         initialIndex = 0,
         friction = 4f,

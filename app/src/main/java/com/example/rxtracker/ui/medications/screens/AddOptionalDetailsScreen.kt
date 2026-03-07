@@ -149,7 +149,7 @@ fun AddOptionalDetailsScreen(
     if (showRefillThresholdDialog) {
         QuantityDialog(
             initialQuantity = opt.refillThreshold?.toDouble() ?: 10.0,
-            title = "Remind me when",
+            title = "Select quantity",
             min = 1.0,
             max = 30.0,
             onDismiss = { showRefillThresholdDialog = false },

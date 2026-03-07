@@ -10,7 +10,7 @@ fun EveryXHoursDialog(
     onConfirm: (hours: Int) -> Unit
 ) {
     SingleDialog(
-        title = "Every how many hours?",
+        title = "Select hour interval",
         itemCount = 12,
         initialIndex = 5,
         itemLabel = { index ->

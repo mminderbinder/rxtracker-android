@@ -129,7 +129,7 @@ fun AddDoseDetailsScreen(
     if (showQuantityDialog) {
         QuantityDialog(
             initialQuantity = dose.quantity,
-            title = "Dose Quantity",
+            title = "Select quantity",
             min = 0.25,
             max = 20.0,
             onDismiss = { showQuantityDialog = false },

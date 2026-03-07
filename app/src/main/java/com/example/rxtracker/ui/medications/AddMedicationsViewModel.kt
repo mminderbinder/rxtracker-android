@@ -28,7 +28,7 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
      * Screen 2: frequencyType, frequencyDetails
      * Screen 3: startDate, startTime, quantity
      * Screen 4: doseTimes
-     * Screen 5: reminders, refill, endDate, rxNumber, instructions
+     * Screen 5: reminders, refill, endDate, instructions
      */
 
     private fun wipeFrom(step: Int, state: AddMedicationsUiState): AddMedicationsUiState {
@@ -129,8 +129,8 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
     }
 
     fun generateInitialTimes(): List<DoseTime> {
-        val startTime = uiState.doseDetails.startTime ?: LocalTime.of(8, 0)
-        val quantity = uiState.doseDetails.quantity ?: 1.0
+        val startTime = uiState.doseDetails.startTime
+        val quantity = uiState.doseDetails.quantity
 
         val generated = when (val details = uiState.frequency.details) {
             is FrequencyDetails.EveryXHours -> {

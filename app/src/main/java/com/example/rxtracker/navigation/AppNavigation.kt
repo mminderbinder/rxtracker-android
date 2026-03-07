@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +29,7 @@ import com.example.rxtracker.navigation.topbar.SecondaryTopBar
 import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
+import com.example.rxtracker.ui.medications.MedicationSearchViewModel
 import com.example.rxtracker.ui.medications.screens.AddDoseDetailsScreen
 import com.example.rxtracker.ui.medications.screens.AddFrequencyScreen
 import com.example.rxtracker.ui.medications.screens.AddMedicationScreen
@@ -142,10 +143,12 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
+                    val addViewModel: AddMedicationsViewModel = hiltViewModel(parentEntry)
+                    val searchViewModel: MedicationSearchViewModel = hiltViewModel()
 
                     AddMedicationScreen(
-                        viewModel = viewModel,
+                        searchViewModel = searchViewModel,
+                        addViewModel = addViewModel,
                         onContinue = {
                             navController.navigate(AppDestination.AddFrequency.route)
                         }
@@ -155,7 +158,7 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
+                    val viewModel: AddMedicationsViewModel = hiltViewModel(parentEntry)
 
                     AddFrequencyScreen(
                         viewModel = viewModel,
@@ -172,7 +175,7 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
+                    val viewModel: AddMedicationsViewModel = hiltViewModel(parentEntry)
 
                     AddDoseDetailsScreen(
                         viewModel = viewModel,
@@ -189,7 +192,7 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
+                    val viewModel: AddMedicationsViewModel = hiltViewModel(parentEntry)
 
                     AddTimesScreen(
                         viewModel = viewModel,
@@ -203,7 +206,7 @@ fun AppNavigation() {
                     val parentEntry = remember(navBackStackEntry) {
                         navController.getBackStackEntry("add_medication_flow")
                     }
-                    val viewModel: AddMedicationsViewModel = viewModel(parentEntry)
+                    val viewModel: AddMedicationsViewModel = hiltViewModel(parentEntry)
 
                     AddOptionalDetailsScreen(
                         viewModel = viewModel,

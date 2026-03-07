@@ -8,10 +8,13 @@ import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.UserMedication
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.LocalTime
+import javax.inject.Inject
 
-class AddMedicationsViewModel : ViewModel() {
+@HiltViewModel
+class AddMedicationsViewModel @Inject constructor() : ViewModel() {
 
     var uiState by mutableStateOf(AddMedicationsUiState())
         private set
@@ -21,6 +24,7 @@ class AddMedicationsViewModel : ViewModel() {
      * at or after the given step back to defaults.
      *
      * Screen 1: name, strength, form (handled by full reset)
+     *
      * Screen 2: frequencyType, frequencyDetails
      * Screen 3: startDate, startTime, quantity
      * Screen 4: doseTimes

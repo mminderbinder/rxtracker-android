@@ -30,45 +30,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.X
-import com.example.rxtracker.data.Medication
-import com.example.rxtracker.data.repos.MedicationRepository
-import com.example.rxtracker.ui.theme.RXTrackerTheme
-import kotlinx.coroutines.delay
+import com.example.rxtracker.data.models.Prescribable
+import com.example.rxtracker.ui.medications.MedicationSearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedicationSearchBar(
-    onMedicationSelected: (Medication) -> Unit,
+    viewModel: MedicationSearchViewModel,
+    onMedicationSelected: (Prescribable) -> Unit,
     onManualEntry: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     var query by remember { mutableStateOf("") }
-    var searchResults by remember { mutableStateOf<List<Medication>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        MedicationRepository.ensureLoaded(context)
-    }
 
     LaunchedEffect(query) {
-        if (query.length >= 2) {
-            isLoading = true
-            delay(300)
-            searchResults = MedicationRepository.search(query)
-            isLoading = false
-        } else {
-            searchResults = emptyList()
-            isLoading = false
-        }
+        viewModel.search(query)
     }
 
     OutlinedTextField(
@@ -88,7 +70,7 @@ fun MedicationSearchBar(
         },
         trailingIcon = {
             when {
-                isLoading -> Box(
+                viewModel.isLoading -> Box(
                     modifier = Modifier.size(48.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -141,7 +123,7 @@ fun MedicationSearchBar(
                 )
                 HorizontalDivider()
             }
-            items(searchResults) { prescription ->
+            items(viewModel.searchResults) { prescription ->
                 ListItem(
                     headlineContent = {
                         Text(
@@ -170,16 +152,5 @@ fun MedicationSearchBar(
                 HorizontalDivider()
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MedicationSearchBarPreview() {
-    RXTrackerTheme {
-        MedicationSearchBar(
-            onMedicationSelected = {},
-            onManualEntry = {}
-        )
     }
 }

@@ -1,21 +1,19 @@
 package com.example.rxtracker.data.models
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.LocalDate
 
 @Entity(
     tableName = "medication",
-    foreignKeys = [
-        ForeignKey(
-            entity = User::class,
-            parentColumns = ["id"],
-            childColumns = ["userId"],
-            onDelete = ForeignKey.CASCADE
-        )],
-    indices = [Index("userId")]
+//    foreignKeys = [
+//        ForeignKey(
+//            entity = User::class,
+//            parentColumns = ["id"],
+//            childColumns = ["userId"],
+//            onDelete = ForeignKey.CASCADE
+//        )],
+//    indices = [Index("userId")]
 )
 data class UserMedication(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -32,6 +30,5 @@ data class UserMedication(
     val instructions: String? = null,
     val refillReminderEnabled: Boolean = false,
     val refillThreshold: Int? = null,
-    val doseCount: Int? = null,
-    val userId: Long = 0
+    val doseCount: Int? = null
 )

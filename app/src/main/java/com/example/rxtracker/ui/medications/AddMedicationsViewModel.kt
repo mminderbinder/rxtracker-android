@@ -50,25 +50,10 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
 
     // Screen 2
     fun updateFrequency(type: Frequency, details: FrequencyDetails) {
-        val newDoseDetails = when {
-            type == Frequency.AS_NEEDED -> {
-                DoseDetailsState(startDate = null, startTime = null, quantity = null)
-            }
-
-            uiState.doseDetails.startDate == null -> {
-                DoseDetailsState()
-            }
-
-            else -> {
-                uiState.doseDetails
-            }
-        }
-
         uiState = wipeFrom(
             step = 3,
             state = uiState.copy(
                 frequency = FrequencyState(type = type, details = details),
-                doseDetails = newDoseDetails
             )
         )
     }

@@ -73,7 +73,7 @@ fun SingleDialog(
                             .height(36.dp)
                             .background(
                                 color = MaterialTheme.colorScheme.primaryContainer
-                                    .copy(alpha = 0.3f),
+                                    .copy(alpha = 0.1f),
                                 shape = RoundedCornerShape(8.dp)
                             )
                     )

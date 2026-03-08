@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
+import com.example.rxtracker.data.models.IntakeTime
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -51,4 +52,10 @@ class Converters {
     @TypeConverter
     fun toDoseTimes(value: String): List<DoseTime> =
         json.decodeFromString(value)
+
+    @TypeConverter
+    fun fromIntakeTime(time: IntakeTime): String = time.name
+
+    @TypeConverter
+    fun toIntakeTime(value: String): IntakeTime = IntakeTime.valueOf(value)
 }

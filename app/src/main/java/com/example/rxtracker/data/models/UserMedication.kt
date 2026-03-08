@@ -30,5 +30,6 @@ data class UserMedication(
     val instructions: String? = null,
     val refillReminderEnabled: Boolean = false,
     val refillThreshold: Int? = null,
-    val doseCount: Int? = null
+    val doseCount: Int? = null,
+    val intakeTime: IntakeTime? = null
 )

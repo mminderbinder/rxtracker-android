@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.rxtracker.data.models.IntakeTime
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.DetailRow
 import com.example.rxtracker.ui.medications.components.ToggleRow
@@ -44,6 +49,10 @@ fun AddOptionalDetailsScreen(
 
     var showDoseQuantityDialog by remember { mutableStateOf(false) }
     var showRefillThresholdDialog by remember { mutableStateOf(false) }
+    var intakeDropdownExpanded by remember { mutableStateOf(false) }
+
+    val effectiveDoseCount = opt.doseCount
+    val effectiveRefillThreshold = opt.refillThreshold
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -65,11 +74,12 @@ fun AddOptionalDetailsScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
+            // --- Notifications ---
             Text(
                 text = "Notifications",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
             )
             HorizontalDivider()
             ToggleRow(
@@ -89,13 +99,13 @@ fun AddOptionalDetailsScreen(
                     HorizontalDivider()
                     DetailRow(
                         label = "Current dose count",
-                        value = opt.doseCount?.toString() ?: "30",
+                        value = effectiveDoseCount?.toString() ?: "Not set",
                         onClick = { showDoseQuantityDialog = true }
                     )
                     HorizontalDivider()
                     DetailRow(
                         label = "Remind me when",
-                        value = opt.refillThreshold?.let { "$it left" } ?: "10 left",
+                        value = effectiveRefillThreshold?.let { "$it left" } ?: "Not set",
                         onClick = { showRefillThresholdDialog = true }
                     )
                 }
@@ -106,21 +116,60 @@ fun AddOptionalDetailsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
+                text = "Intake Timing",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            ExposedDropdownMenuBox(
+                expanded = intakeDropdownExpanded,
+                onExpandedChange = { intakeDropdownExpanded = it }
+            ) {
+                OutlinedTextField(
+                    value = opt.intakeTime?.label ?: "Not specified",
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = intakeDropdownExpanded)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                )
+                ExposedDropdownMenu(
+                    expanded = intakeDropdownExpanded,
+                    onDismissRequest = { intakeDropdownExpanded = false }
+                ) {
+                    IntakeTime.entries.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option.label) },
+                            onClick = {
+                                viewModel.updateIntakeTime(option)
+                                intakeDropdownExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
                 text = "Notes",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
             )
+
             OutlinedTextField(
                 value = opt.instructions ?: "",
                 onValueChange = { viewModel.updateInstructions(it.ifBlank { null }) },
-                label = { Text("Instructions") },
+                label = { Text("Additional notes") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 maxLines = 5
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
 
         Button(
@@ -135,7 +184,7 @@ fun AddOptionalDetailsScreen(
 
     if (showDoseQuantityDialog) {
         QuantityDialog(
-            initialQuantity = opt.doseCount?.toDouble() ?: 30.0,
+            initialQuantity = (effectiveDoseCount ?: 30).toDouble(),
             title = "Doses Left",
             min = 0.25,
             max = 500.0,
@@ -148,8 +197,8 @@ fun AddOptionalDetailsScreen(
     }
     if (showRefillThresholdDialog) {
         QuantityDialog(
-            initialQuantity = opt.refillThreshold?.toDouble() ?: 10.0,
-            title = "Select quantity",
+            initialQuantity = (effectiveRefillThreshold ?: 10).toDouble(),
+            title = "Refill Reminder At",
             min = 1.0,
             max = 30.0,
             onDismiss = { showRefillThresholdDialog = false },

@@ -1,9 +1,9 @@
 package com.example.rxtracker.ui.medications
 
 import com.example.rxtracker.data.models.DoseTime
-import com.example.rxtracker.data.models.EndDateMode
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
+import com.example.rxtracker.data.models.IntakeTime
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -29,11 +29,10 @@ data class DoseDetailsState(
 data class OptionalDetailsState(
     val remindersEnabled: Boolean = true,
     val refillReminderEnabled: Boolean = false,
-    val endDateMode: EndDateMode = EndDateMode.ONGOING,
-    val endDate: LocalDate? = null,
-    val instructions: String? = null,
     val doseCount: Int? = null,
-    val refillThreshold: Int? = null
+    val refillThreshold: Int? = null,
+    val intakeTime: IntakeTime? = null,
+    val instructions: String? = null,
 )
 
 data class AddMedicationsUiState(

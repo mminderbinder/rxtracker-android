@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
+import com.example.rxtracker.data.models.IntakeTime
 import com.example.rxtracker.data.models.UserMedication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
@@ -28,7 +29,7 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
      * Screen 2: frequencyType, frequencyDetails
      * Screen 3: startDate, startTime, quantity
      * Screen 4: doseTimes
-     * Screen 5: reminders, refill, endDate, instructions
+     * Screen 5: reminders, refill, intake time, instructions
      */
 
     private fun wipeFrom(step: Int, state: AddMedicationsUiState): AddMedicationsUiState {
@@ -96,11 +97,6 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
             uiState.copy(optionalDetails = uiState.optionalDetails.copy(refillReminderEnabled = enabled))
     }
 
-    fun updateInstructions(instructions: String?) {
-        uiState =
-            uiState.copy(optionalDetails = uiState.optionalDetails.copy(instructions = instructions))
-    }
-
     fun updateDoseCount(count: Int) {
         uiState = uiState.copy(optionalDetails = uiState.optionalDetails.copy(doseCount = count))
     }
@@ -108,6 +104,16 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
     fun updateRefillThreshold(threshold: Int) {
         uiState =
             uiState.copy(optionalDetails = uiState.optionalDetails.copy(refillThreshold = threshold))
+    }
+
+    fun updateIntakeTime(intakeTime: IntakeTime?) {
+        uiState =
+            uiState.copy(optionalDetails = uiState.optionalDetails.copy(intakeTime = intakeTime))
+    }
+
+    fun updateInstructions(instructions: String?) {
+        uiState =
+            uiState.copy(optionalDetails = uiState.optionalDetails.copy(instructions = instructions))
     }
 
     fun requiresTimesScreen(): Boolean {

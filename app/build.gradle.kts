@@ -106,3 +106,7 @@ dependencies {
 
     implementation(libs.core)
 }
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}

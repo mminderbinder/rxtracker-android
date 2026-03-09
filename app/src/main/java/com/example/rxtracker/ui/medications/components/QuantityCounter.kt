@@ -81,7 +81,7 @@ fun QuantityCounter(
                     onQuantityChange(parsed)
                 }
             },
-            modifier = Modifier.width(120.dp),
+            modifier = Modifier.width(150.dp),
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 textAlign = TextAlign.Center
             ),

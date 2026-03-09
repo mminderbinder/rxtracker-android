@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,11 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.composables.icons.lucide.CalendarCheck
-import com.composables.icons.lucide.Lucide
-import com.example.rxtracker.data.models.Profile
 import com.example.rxtracker.ui.home.components.CalendarDay
-import com.example.rxtracker.ui.home.components.ProfileSwitcher
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.getWeekPageTitle
 import com.example.rxtracker.utils.rememberFirstVisibleWeekAfterScroll
@@ -37,12 +32,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
-fun HomeScreen(
-    profiles: List<Profile> = emptyList(),
-    activeProfile: Profile? = null,
-    onProfileSelected: (Profile) -> Unit = {},
-    onAddProfile: () -> Unit = {},
-) {
+fun HomeScreen() {
     val currentDate = remember { LocalDate.now() }
     val startDate = remember { currentDate.minusDays(500) }
     val endDate = remember { currentDate.plusDays(500) }
@@ -82,13 +72,6 @@ fun HomeScreen(
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.weight(1f)
             )
-
-            ProfileSwitcher(
-                profiles = profiles,
-                activeProfile = activeProfile,
-                onProfileSelected = onProfileSelected,
-                onAddProfile = onAddProfile
-            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -117,7 +100,6 @@ fun HomeScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(Lucide.CalendarCheck, contentDescription = "Scroll to today")
                 Spacer(modifier = Modifier.width(4.dp))
                 Text("Return to today")
             }

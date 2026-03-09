@@ -1,21 +1,19 @@
 package com.example.rxtracker.data.models
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.LocalDate
 
 @Entity(
     tableName = "medications",
-    foreignKeys = [
-        ForeignKey(
-            entity = Profile::class,
-            parentColumns = ["id"],
-            childColumns = ["profileId"],
-            onDelete = ForeignKey.CASCADE
-        )],
-    indices = [Index("profileId")]
+//    foreignKeys = [
+//        ForeignKey(
+//            entity = Profile::class,
+//            parentColumns = ["id"],
+//            childColumns = ["profileId"],
+//            onDelete = ForeignKey.CASCADE
+//        )],
+//    indices = [Index("profileId")]
 )
 data class UserMedication(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

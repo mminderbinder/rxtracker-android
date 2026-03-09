@@ -13,7 +13,7 @@ fun YearMonth.displayText(): String {
 }
 
 fun Month.displayText(): String {
-    return getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
+    return getDisplayName(TextStyle.FULL, Locale.ENGLISH)
 }
 
 fun DayOfWeek.displayText(): String {

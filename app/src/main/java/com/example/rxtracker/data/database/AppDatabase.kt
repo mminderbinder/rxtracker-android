@@ -4,11 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.rxtracker.data.converters.Converters
-import com.example.rxtracker.data.models.Profile
 import com.example.rxtracker.data.models.UserMedication
 
 @Database(
-    entities = [UserMedication::class, Profile::class],
+    entities = [UserMedication::class],
     version = 1,
     exportSchema = true
 )

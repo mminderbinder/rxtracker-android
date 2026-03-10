@@ -178,7 +178,24 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+
 //    fun toUserMedication(): UserMedication {
+//        val info = uiState.medicationInfo
+//        val freq = uiState.frequency
+//        val dose = uiState.doseDetails
+//        val opt = uiState.optionalDetails
 //
+//        val frequencyType = requireNotNull(freq.type) {
+//            "Frequency type cannot be null"
+//        }
+//        val frequencyDetails = requireNotNull(freq.details) {
+//            "Frequency details cannot be null"
+//        }
+//
+//        return UserMedication(
+//            name = info.name,
+//            strength = info.strength,
+//            form = info.form
+//        )
 //    }
 }

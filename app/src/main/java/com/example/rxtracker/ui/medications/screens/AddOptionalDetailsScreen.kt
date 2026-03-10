@@ -56,7 +56,7 @@ fun AddOptionalDetailsScreen(
     var showRefillThresholdDialog by remember { mutableStateOf(false) }
     var intakeDropdownExpanded by remember { mutableStateOf(false) }
 
-    val effectiveDoseCount = opt.doseCount
+    val effectiveDoseCount = opt.totalQuantity
     val effectiveRefillThreshold = opt.refillThreshold
 
     val coroutineScope = rememberCoroutineScope()
@@ -106,7 +106,7 @@ fun AddOptionalDetailsScreen(
                 Column {
                     HorizontalDivider()
                     DetailRow(
-                        label = "Current dose count",
+                        label = "Current unit count",
                         value = effectiveDoseCount?.toString() ?: "Not set",
                         onClick = { showDoseQuantityDialog = true }
                     )
@@ -202,7 +202,7 @@ fun AddOptionalDetailsScreen(
     if (showDoseQuantityDialog) {
         QuantityDialog(
             initialQuantity = (effectiveDoseCount ?: 30).toDouble(),
-            title = "Doses Left",
+            title = "Units Left",
             min = 0.25,
             max = 500.0,
             onDismiss = { showDoseQuantityDialog = false },

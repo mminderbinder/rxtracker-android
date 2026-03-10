@@ -29,7 +29,7 @@ data class DoseDetailsState(
 data class OptionalDetailsState(
     val remindersEnabled: Boolean = true,
     val refillReminderEnabled: Boolean = false,
-    val doseCount: Int? = null,
+    val totalQuantity: Int? = null,
     val refillThreshold: Int? = null,
     val intakeTime: IntakeTime? = null,
     val instructions: String? = null,

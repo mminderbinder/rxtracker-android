@@ -1,6 +1,7 @@
 package com.example.rxtracker.data.converters
 
 import androidx.room.TypeConverter
+import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
@@ -14,10 +15,10 @@ class Converters {
     private val json = Json { ignoreUnknownKeys = true }
 
     @TypeConverter
-    fun fromLocalDate(date: LocalDate): String = date.toString()
+    fun fromLocalDate(date: LocalDate?): String? = date?.toString()
 
     @TypeConverter
-    fun toLocalDate(value: String): LocalDate = LocalDate.parse(value)
+    fun toLocalDate(value: String?): LocalDate? = value.let { LocalDate.parse(it) }
 
     @TypeConverter
     fun fromLocalTime(time: LocalTime): String = time.toString()
@@ -54,8 +55,14 @@ class Converters {
         json.decodeFromString(value)
 
     @TypeConverter
-    fun fromIntakeTime(time: IntakeTime): String = time.name
+    fun fromIntakeTime(time: IntakeTime?): String? = time?.name
 
     @TypeConverter
-    fun toIntakeTime(value: String): IntakeTime = IntakeTime.valueOf(value)
+    fun toIntakeTime(value: String?): IntakeTime? = value?.let { IntakeTime.valueOf(it) }
+
+    @TypeConverter
+    fun fromDoseStatus(status: DoseStatus): String = status.name
+
+    @TypeConverter
+    fun toDoseStatus(value: String): DoseStatus = DoseStatus.valueOf(value)
 }

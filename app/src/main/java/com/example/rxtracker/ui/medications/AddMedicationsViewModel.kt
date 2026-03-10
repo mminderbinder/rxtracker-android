@@ -8,7 +8,6 @@ import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.IntakeTime
-import com.example.rxtracker.data.models.UserMedication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.LocalTime
@@ -98,7 +97,8 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
     }
 
     fun updateDoseCount(count: Int) {
-        uiState = uiState.copy(optionalDetails = uiState.optionalDetails.copy(doseCount = count))
+        uiState =
+            uiState.copy(optionalDetails = uiState.optionalDetails.copy(totalQuantity = count))
     }
 
     fun updateRefillThreshold(threshold: Int) {
@@ -178,9 +178,7 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun toUserMedication(): UserMedication {
-        return UserMedication(
-
-        )
-    }
+//    fun toUserMedication(): UserMedication {
+//
+//    }
 }

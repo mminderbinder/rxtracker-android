@@ -98,6 +98,7 @@ fun AddTimesScreen(
                 AddTimeEntry(
                     time = doseTime.time,
                     quantity = doseTime.quantity,
+                    medicationForm = med.form,
                     onTimeChange = { newTime ->
                         val isDuplicate = doseTimes
                             .filterIndexed { i, _ -> i != index }

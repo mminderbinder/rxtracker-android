@@ -24,8 +24,8 @@ import com.example.rxtracker.ui.medications.components.DetailRow
 import com.example.rxtracker.ui.medications.components.dialogs.DateSelectionDialog
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.medications.components.dialogs.TimeSelectionDialog
-import com.example.rxtracker.ui.medications.components.dialogs.doseLabel
 import com.example.rxtracker.ui.theme.RXTrackerTheme
+import com.example.rxtracker.utils.formatQuantity
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -87,7 +87,7 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Dose Quantity",
-            value = doseLabel(dose.quantity),
+            value = formatQuantity(dose.quantity, med.form),
             onClick = { showQuantityDialog = true }
         )
         HorizontalDivider()

@@ -64,7 +64,7 @@ fun SingleDialog(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp),
+                        .height(120.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(

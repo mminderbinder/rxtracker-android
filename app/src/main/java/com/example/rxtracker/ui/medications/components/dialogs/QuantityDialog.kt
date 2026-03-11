@@ -82,9 +82,3 @@ fun QuantityDialog(
         }
     }
 }
-
-fun doseLabel(quantity: Double): String {
-    val formatted = if (quantity % 1.0 == 0.0) quantity.toInt().toString()
-    else quantity.toString()
-    return "$formatted ${if (quantity == 1.0) "unit" else "units"}"
-}

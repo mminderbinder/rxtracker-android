@@ -33,8 +33,8 @@ import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Trash2
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
-import com.example.rxtracker.ui.medications.components.dialogs.doseLabel
 import com.example.rxtracker.ui.theme.RXTrackerTheme
+import com.example.rxtracker.utils.formatQuantity
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -46,6 +46,7 @@ fun AddTimeEntry(
     modifier: Modifier = Modifier,
     time: LocalTime,
     quantity: Double,
+    medicationForm: String,
     onQuantityChange: (Double) -> Unit,
     onTimeChange: (LocalTime) -> Unit,
     onRemove: () -> Unit,
@@ -85,7 +86,7 @@ fun AddTimeEntry(
                     .clickable { showPicker = true }
             )
             Text(
-                text = doseLabel(quantity),
+                text = formatQuantity(quantity, medicationForm),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium,
                     textDecoration = TextDecoration.Underline
@@ -152,6 +153,7 @@ fun AddTimesEntryPreview() {
         AddTimeEntry(
             time = LocalTime.now(),
             quantity = 2.0,
+            medicationForm = "tablet",
             onTimeChange = {},
             onRemove = {},
             onQuantityChange = {})

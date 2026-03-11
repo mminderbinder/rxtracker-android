@@ -1,28 +1,28 @@
 package com.example.rxtracker.utils
 
-enum class FormUnit(val singular: String, val plural: String) {
-    TABLET("tablet", "tablets"),
-    CAPSULE("capsule", "capsules"),
-    INJECTABLE("injection", "injections"),
-    DROP("drop", "drops"),
+enum class FormUnit(val form: String) {
+    TABLET("tablet(s)"),
+    CAPSULE("capsule(s)"),
+    INJECTABLE("injection(s)"),
+    DROP("drop(s)"),
 
-    SPRAY("spray", "sprays"),
-    PATCH("patch", "patches"),
-    SUPPOSITORY("suppository", "suppositories"),
-    FILM("film", "films"),
-    GUM("piece", "pieces"),
-    LOZENGE("lozenge", "lozenges"),
+    SPRAY("spray(s)"),
+    PATCH("patch(es)"),
+    SUPPOSITORY("suppository(ies)"),
+    FILM("film(s)"),
+    GUM("piece(s)"),
+    LOZENGE("lozenge(s)"),
 
-    POWDER("unit", "units"),
-    CREAM("application", "applications"),
-    OINTMENT("application", "applications"),
-    GEL("application", "applications"),
-    LOTION("application", "applications"),
-    LIQUID("ml", "ml"),
-    SOLUTION("ml", "ml"),
-    SYRUP("ml", "ml"),
+    POWDER("unit(s)"),
+    CREAM("application(s)"),
+    OINTMENT("application(s)"),
+    GEL("application(s)"),
+    LOTION("application(s)"),
+    LIQUID("ml"),
+    SOLUTION("ml"),
+    SYRUP("ml"),
 
-    UNKNOWN("unit", "units")
+    UNKNOWN("unit(s)")
 }
 
 fun resolveFormUnit(raw: String): FormUnit {
@@ -54,7 +54,11 @@ fun resolveFormUnit(raw: String): FormUnit {
 
 fun formatQuantity(quantity: Double, raw: String): String {
     val unit = resolveFormUnit(raw)
-    val label = if (quantity == 1.0) unit.singular else unit.plural
     val amount = if (quantity % 1.0 == 0.0) quantity.toInt().toString() else quantity.toString()
-    return "$amount $label"
+    return "$amount ${unit.form}"
+}
+
+fun formLabel(raw: String): String {
+    val unit = resolveFormUnit(raw)
+    return unit.form
 }

@@ -36,6 +36,7 @@ import com.example.rxtracker.ui.medications.components.DetailRow
 import com.example.rxtracker.ui.medications.components.ToggleRow
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
+import com.example.rxtracker.utils.formLabel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
@@ -202,7 +203,7 @@ fun AddOptionalDetailsScreen(
     if (showDoseQuantityDialog) {
         QuantityDialog(
             initialQuantity = (effectiveDoseCount ?: 30).toDouble(),
-            title = "Units Left",
+            title = "${formLabel(med.form).replaceFirstChar(Char::titlecase)} left",
             min = 0.25,
             max = 500.0,
             onDismiss = { showDoseQuantityDialog = false },

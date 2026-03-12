@@ -107,7 +107,7 @@ fun AddOptionalDetailsScreen(
                 Column {
                     HorizontalDivider()
                     DetailRow(
-                        label = "Current unit count",
+                        label = "Current count",
                         value = effectiveDoseCount?.toString() ?: "Not set",
                         onClick = { showDoseQuantityDialog = true }
                     )

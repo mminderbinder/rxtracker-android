@@ -6,7 +6,7 @@ enum class FormUnit(val form: String) {
     INJECTABLE("injection(s)"),
     DROP("drop(s)"),
 
-    SPRAY("spray(s)"),
+    SPRAY("spray(s)/puff(s)"),
     PATCH("patch(es)"),
     SUPPOSITORY("suppository(ies)"),
     FILM("film(s)"),

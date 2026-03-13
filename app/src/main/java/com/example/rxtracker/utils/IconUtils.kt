@@ -14,6 +14,7 @@ fun resolveFormIcon(form: String): Int {
         upper.contains("PATCH") -> R.drawable.patch
         upper.contains("CREAM") -> R.drawable.cream
         upper.contains("OINTMENT") -> R.drawable.cream
+        upper.contains("LOTION") -> R.drawable.cream
         upper.contains("GEL") -> R.drawable.cream
         upper.contains("LIQUID") -> R.drawable.liquid
         upper.contains("SOLUTION") -> R.drawable.liquid

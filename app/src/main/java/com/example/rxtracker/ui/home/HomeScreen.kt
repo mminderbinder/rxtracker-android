@@ -1,12 +1,16 @@
 package com.example.rxtracker.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,8 +24,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.rxtracker.R
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.getWeekPageTitle
@@ -44,6 +50,7 @@ fun HomeScreen() {
         endDate = endDate,
         firstVisibleWeekDate = currentDate
     )
+
     val visibleWeek = rememberFirstVisibleWeekAfterScroll(state)
 
     LaunchedEffect(visibleWeek) {
@@ -102,6 +109,26 @@ fun HomeScreen() {
             ) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Text("Return to today")
+            }
+        }
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.drug),
+                    contentDescription = null,
+                    modifier = Modifier.size(200.dp)
+                )
+                Spacer(modifier = Modifier.padding(8.dp))
+                Text(
+                    text = "No medications today",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

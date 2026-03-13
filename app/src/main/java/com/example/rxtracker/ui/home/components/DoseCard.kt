@@ -61,7 +61,6 @@ fun DoseCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Form icon — far left
             Image(
                 painter = painterResource(id = resolveFormIcon(dose.form)),
                 contentDescription = dose.form,
@@ -69,7 +68,6 @@ fun DoseCard(
                 alpha = if (isSkipped) 0.4f else 1f
             )
 
-            // Medication info — middle
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
@@ -93,7 +91,6 @@ fun DoseCard(
                 )
             }
 
-            // Checkbox — far right
             if (!isFutureDate) {
                 Checkbox(
                     checked = isTaken,

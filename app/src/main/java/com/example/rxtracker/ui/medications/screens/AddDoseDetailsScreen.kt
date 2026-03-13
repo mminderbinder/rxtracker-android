@@ -1,11 +1,13 @@
 package com.example.rxtracker.ui.medications.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -16,9 +18,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.rxtracker.R
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.DetailRow
 import com.example.rxtracker.ui.medications.components.dialogs.DateSelectionDialog
@@ -42,7 +47,6 @@ fun AddDoseDetailsScreen(
     onContinue: () -> Unit,
 ) {
     val uiState = viewModel.uiState
-
     val med = uiState.medicationInfo
     val dose = uiState.doseDetails
 
@@ -92,6 +96,15 @@ fun AddDoseDetailsScreen(
         )
         HorizontalDivider()
 
+        Spacer(modifier = Modifier.weight(1f))
+
+        Image(
+            painter = painterResource(id = R.drawable.date),
+            contentDescription = null,
+            modifier = Modifier
+                .size(200.dp)
+                .align(Alignment.CenterHorizontally)
+        )
         Spacer(modifier = Modifier.weight(1f))
 
         Button(

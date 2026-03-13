@@ -1,5 +1,6 @@
 package com.example.rxtracker.navigation.topbar
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DropdownMenu
@@ -17,17 +18,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.composables.icons.lucide.EllipsisVertical
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.Pill
+import com.example.rxtracker.R
 import com.example.rxtracker.navigation.AppDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainTopBar(navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
+    val darkTheme = isSystemInDarkTheme()
+
+    val containerColor = if (darkTheme) MaterialTheme.colorScheme.primaryContainer
+    else MaterialTheme.colorScheme.primary
+
+    val contentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimaryContainer
+    else MaterialTheme.colorScheme.onPrimary
 
     TopAppBar(
         title = {
@@ -36,17 +45,18 @@ fun MainTopBar(navController: NavController) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Icon(
-                    imageVector = Lucide.Pill,
+                    painter = painterResource(id = R.drawable.prescription_24),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = contentColor
                 )
                 Text("RxTracker")
+
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = containerColor,
+            titleContentColor = contentColor,
+            actionIconContentColor = contentColor
         ),
         actions = {
             IconButton(onClick = { expanded = true }) {

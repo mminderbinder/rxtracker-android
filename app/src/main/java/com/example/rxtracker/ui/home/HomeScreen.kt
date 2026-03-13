@@ -119,7 +119,7 @@ fun HomeScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.drug),
+                    painter = painterResource(id = R.drawable.date),
                     contentDescription = null,
                     modifier = Modifier.size(200.dp)
                 )

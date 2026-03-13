@@ -1,5 +1,6 @@
 package com.example.rxtracker.navigation.topbar
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,6 +19,14 @@ fun SecondaryTopBar(
     title: String,
     navController: NavController
 ) {
+    val darkTheme = isSystemInDarkTheme()
+
+    val containerColor = if (darkTheme) MaterialTheme.colorScheme.primaryContainer
+    else MaterialTheme.colorScheme.primary
+
+    val contentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimaryContainer
+    else MaterialTheme.colorScheme.onPrimary
+
     TopAppBar(
         title = { Text(title) },
         navigationIcon = {
@@ -29,9 +38,9 @@ fun SecondaryTopBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = containerColor,
+            titleContentColor = contentColor,
+            navigationIconContentColor = contentColor
         )
     )
 }

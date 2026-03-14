@@ -27,8 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.rxtracker.data.models.DayOfWeek
 import com.example.rxtracker.ui.theme.RXTrackerTheme
+import java.time.DayOfWeek
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

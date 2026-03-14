@@ -59,6 +59,14 @@ private val secondaryRoutes = listOf(
     AppDestination.AddOptionalDetails.route
 )
 
+private val addMedicationRoutes = listOf(
+    AppDestination.AddMedication.route,
+    AppDestination.AddFrequency.route,
+    AppDestination.AddDoseDetails.route,
+    AppDestination.AddTimes.route,
+    AppDestination.AddOptionalDetails.route
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation() {
@@ -67,6 +75,10 @@ fun AppNavigation() {
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val isInAddFlow = currentRoute in addMedicationRoutes
+    val showBottomNav = !isInAddFlow
+    val showFab = currentRoute == AppDestination.Home.route
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -80,27 +92,29 @@ fun AppNavigation() {
             }
         },
         bottomBar = {
-            NavigationBar {
-                bottomNavDestinations.forEach { destination ->
-                    NavigationBarItem(
-                        icon = {
-                            destination.icon?.let {
-                                Icon(imageVector = it, contentDescription = destination.title)
+            if (showBottomNav) {
+                NavigationBar {
+                    bottomNavDestinations.forEach { destination ->
+                        NavigationBarItem(
+                            icon = {
+                                destination.icon?.let {
+                                    Icon(imageVector = it, contentDescription = destination.title)
+                                }
+                            },
+                            label = { Text(destination.title) },
+                            selected = currentDestination?.hierarchy?.any {
+                                it.route == destination.route
+                            } == true,
+                            onClick = {
+                                navController.navigate(destination.route)
                             }
-                        },
-                        label = { Text(destination.title) },
-                        selected = currentDestination?.hierarchy?.any {
-                            it.route == destination.route
-                        } == true,
-                        onClick = {
-                            navController.navigate(destination.route)
-                        }
-                    )
+                        )
+                    }
                 }
             }
         },
         floatingActionButton = {
-            if (currentRoute == AppDestination.Home.route) {
+            if (showFab) {
                 FloatingActionButton(
                     onClick = { navController.navigate(AppDestination.AddMedication.route) }
                 ) {
@@ -112,7 +126,7 @@ fun AppNavigation() {
         NavHost(
             navController = navController,
             startDestination = AppDestination.Home.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         ) {
             composable(AppDestination.Home.route) {
                 HomeScreen()

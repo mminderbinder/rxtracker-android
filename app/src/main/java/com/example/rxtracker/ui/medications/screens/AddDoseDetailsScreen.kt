@@ -144,7 +144,7 @@ fun AddDoseDetailsScreen(
             initialQuantity = dose.quantity,
             title = "Select quantity",
             min = 0.25,
-            max = 20.0,
+            max = 999.0,
             onDismiss = { showQuantityDialog = false },
             onConfirm = { newQty ->
                 viewModel.updateQuantity(newQty)

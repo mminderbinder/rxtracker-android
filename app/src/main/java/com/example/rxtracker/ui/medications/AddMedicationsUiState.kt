@@ -40,5 +40,7 @@ data class AddMedicationsUiState(
     val frequency: FrequencyState = FrequencyState(),
     val doseDetails: DoseDetailsState = DoseDetailsState(),
     val doseTimes: List<DoseTime> = emptyList(),
-    val optionalDetails: OptionalDetailsState = OptionalDetailsState()
+    val optionalDetails: OptionalDetailsState = OptionalDetailsState(),
+    val isSaving: Boolean = false,
+    val saveError: String? = null
 )

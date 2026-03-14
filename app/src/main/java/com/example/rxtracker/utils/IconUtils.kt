@@ -9,13 +9,13 @@ fun resolveFormIcon(form: String): Int {
         upper.contains("TABLET") -> R.drawable.tablet
         upper.contains("CAPSULE") -> R.drawable.capsule
         upper.contains("INJECTABLE") -> R.drawable.syringe
-        upper.contains("DROP") -> R.drawable.drops
+        upper.contains("DROP") -> R.drawable.dropper
         upper.contains("SPRAY") -> R.drawable.spray
         upper.contains("PATCH") -> R.drawable.patch
-        upper.contains("CREAM") -> R.drawable.cream
-        upper.contains("OINTMENT") -> R.drawable.cream
-        upper.contains("LOTION") -> R.drawable.cream
-        upper.contains("GEL") -> R.drawable.cream
+        upper.contains("CREAM") -> R.drawable.tube
+        upper.contains("OINTMENT") -> R.drawable.tube
+        upper.contains("LOTION") -> R.drawable.tube
+        upper.contains("GEL") -> R.drawable.tube
         upper.contains("LIQUID") -> R.drawable.liquid
         upper.contains("SOLUTION") -> R.drawable.liquid
         upper.contains("SYRUP") -> R.drawable.liquid

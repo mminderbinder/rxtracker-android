@@ -1,15 +1,23 @@
 package com.example.rxtracker.ui.theme
+
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+
+@Immutable
+data class ExtendedColorScheme(
+    val success: ColorFamily,
+)
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -239,6 +247,67 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
+val extendedLight = ExtendedColorScheme(
+    success = ColorFamily(
+        successLight,
+        onSuccessLight,
+        successContainerLight,
+        onSuccessContainerLight,
+    ),
+)
+
+val extendedDark = ExtendedColorScheme(
+    success = ColorFamily(
+        successDark,
+        onSuccessDark,
+        successContainerDark,
+        onSuccessContainerDark,
+    ),
+)
+
+val extendedLightMediumContrast = ExtendedColorScheme(
+    success = ColorFamily(
+        successLightMediumContrast,
+        onSuccessLightMediumContrast,
+        successContainerLightMediumContrast,
+        onSuccessContainerLightMediumContrast,
+    ),
+)
+
+val extendedLightHighContrast = ExtendedColorScheme(
+    success = ColorFamily(
+        successLightHighContrast,
+        onSuccessLightHighContrast,
+        successContainerLightHighContrast,
+        onSuccessContainerLightHighContrast,
+    ),
+)
+
+val extendedDarkMediumContrast = ExtendedColorScheme(
+    success = ColorFamily(
+        successDarkMediumContrast,
+        onSuccessDarkMediumContrast,
+        successContainerDarkMediumContrast,
+        onSuccessContainerDarkMediumContrast,
+    ),
+)
+
+val extendedDarkHighContrast = ExtendedColorScheme(
+    success = ColorFamily(
+        successDarkHighContrast,
+        onSuccessDarkHighContrast,
+        successContainerDarkHighContrast,
+        onSuccessContainerDarkHighContrast,
+    ),
+)
+
+val LocalExtendedColorScheme = staticCompositionLocalOf { extendedLight }
+
+val MaterialTheme.extendedColorScheme: ExtendedColorScheme
+    @Composable
+    get() = LocalExtendedColorScheme.current
+
+
 @Immutable
 data class ColorFamily(
     val color: Color,
@@ -246,6 +315,7 @@ data class ColorFamily(
     val colorContainer: Color,
     val onColorContainer: Color
 )
+
 
 val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
@@ -258,20 +328,24 @@ fun RXTrackerTheme(
     dynamicColor: Boolean = false,
     content: @Composable() () -> Unit
 ) {
-  val colorScheme = when {
-      dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-          val context = LocalContext.current
-          if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-      }
-      
-      darkTheme -> darkScheme
-      else -> lightScheme
-  }
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
 
-  MaterialTheme(
-    colorScheme = colorScheme,
-    typography = AppTypography,
-    content = content
-  )
+        darkTheme -> darkScheme
+        else -> lightScheme
+    }
+
+    val extendedColorScheme = if (darkTheme) extendedDark else extendedLight
+
+    CompositionLocalProvider(LocalExtendedColorScheme provides extendedColorScheme) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = AppTypography,
+            content = content
+        )
+    }
 }
 

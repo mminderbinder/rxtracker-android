@@ -8,6 +8,7 @@ import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.IntakeTime
+import com.example.rxtracker.data.models.UserMedication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.LocalTime
@@ -33,6 +34,7 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
 
     private fun wipeFrom(step: Int, state: AddMedicationsUiState): AddMedicationsUiState {
         var s = state
+        if (step <= 3) s = s.copy(doseDetails = DoseDetailsState())
         if (step <= 4) s = s.copy(doseTimes = emptyList())
         return s
     }
@@ -179,23 +181,39 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
     }
 
 
-//    fun toUserMedication(): UserMedication {
-//        val info = uiState.medicationInfo
-//        val freq = uiState.frequency
-//        val dose = uiState.doseDetails
-//        val opt = uiState.optionalDetails
-//
-//        val frequencyType = requireNotNull(freq.type) {
-//            "Frequency type cannot be null"
-//        }
-//        val frequencyDetails = requireNotNull(freq.details) {
-//            "Frequency details cannot be null"
-//        }
-//
-//        return UserMedication(
-//            name = info.name,
-//            strength = info.strength,
-//            form = info.form
-//        )
-//    }
+    fun toUserMedication(): UserMedication {
+        val info = uiState.medicationInfo
+        val freq = uiState.frequency
+        val dose = uiState.doseDetails
+        val opt = uiState.optionalDetails
+
+        val frequencyType = requireNotNull(freq.type) {
+            "frequencyType must be set before saving"
+        }
+        val frequencyDetails = requireNotNull(freq.details) {
+            "frequencyDetails must be set before saving"
+        }
+
+        return UserMedication(
+            name = info.name,
+            strength = info.strength,
+            form = info.form,
+            frequencyType = frequencyType,
+            frequencyDetails = frequencyDetails,
+            startDate = dose.startDate,
+            doseTimes = if (frequencyDetails is FrequencyDetails.AsNeeded) {
+                emptyList()
+            } else {
+                uiState.doseTimes
+            },
+            remindersEnabled = opt.remindersEnabled,
+            refillReminderEnabled = opt.refillReminderEnabled,
+            totalQuantity = opt.totalQuantity,
+            refillThreshold = opt.refillThreshold,
+            intakeTime = opt.intakeTime,
+            instructions = opt.instructions
+        )
+    }
+
+    
 }

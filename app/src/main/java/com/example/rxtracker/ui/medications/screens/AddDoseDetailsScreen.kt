@@ -103,7 +103,7 @@ fun AddDoseDetailsScreen(
             painter = painterResource(id = R.drawable.pills),
             contentDescription = null,
             modifier = Modifier
-                .size(200.dp)
+                .size(160.dp)
                 .align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.weight(1f))

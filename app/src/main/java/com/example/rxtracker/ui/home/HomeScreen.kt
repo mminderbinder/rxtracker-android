@@ -63,10 +63,6 @@ fun HomeScreen() {
         firstVisibleWeekDate = currentDate
     )
 
-    val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.heartbeat)
-    )
-
     val visibleWeek = rememberFirstVisibleWeekAfterScroll(state)
 
     LaunchedEffect(visibleWeek) {

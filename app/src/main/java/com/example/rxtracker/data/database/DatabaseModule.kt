@@ -32,4 +32,16 @@ object DatabaseModule {
     fun provideMedicationDao(db: AppDatabase): MedicationDao {
         return db.medicationDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideScheduledDoseDao(db: AppDatabase) : ScheduledDoseDao {
+        return db.scheduledDoseDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDoseTakenDao(db: AppDatabase) : DoseTakenDao {
+        return db.doseTakenDao()
+    }
 }

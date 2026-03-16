@@ -160,15 +160,15 @@ fun AddTimesScreen(
     }
 }
 
-@Suppress("ViewModelConstructorInComposable")
-@Preview(showBackground = true)
-@Composable
-fun AddTimesScreenPreview() {
-    RXTrackerTheme {
-        AddTimesScreen(
-            viewModel = AddMedicationsViewModel(),
-            onContinue = {},
-            snackbarHostState = SnackbarHostState()
-        )
-    }
-}
+//@Suppress("ViewModelConstructorInComposable")
+//@Preview(showBackground = true)
+//@Composable
+//fun AddTimesScreenPreview() {
+//    RXTrackerTheme {
+//        AddTimesScreen(
+//            viewModel = AddMedicationsViewModel(),
+//            onContinue = {},
+//            snackbarHostState = SnackbarHostState()
+//        )
+//    }
+//}

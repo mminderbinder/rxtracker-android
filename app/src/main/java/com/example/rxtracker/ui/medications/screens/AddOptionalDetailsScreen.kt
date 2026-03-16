@@ -1,6 +1,9 @@
 package com.example.rxtracker.ui.medications.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -26,11 +30,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.IntakeTime
+import com.example.rxtracker.ui.medications.AddMedicationsUiState
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.components.DetailRow
 import com.example.rxtracker.ui.medications.components.ToggleRow
@@ -41,8 +47,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
-private val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddOptionalDetailsScreen(
@@ -50,6 +54,31 @@ fun AddOptionalDetailsScreen(
     onComplete: () -> Unit,
 ) {
     val uiState = viewModel.uiState
+
+    AddOptionalDetailsContent(
+        uiState = uiState,
+        onComplete = { viewModel.save(onComplete) },
+        onUpdateReminders = { viewModel.updateRemindersEnabled(it) },
+        onUpdateRefillReminder = { viewModel.updateRefillReminderEnabled(it) },
+        onUpdateDoseCount = { viewModel.updateDoseCount(it) },
+        onUpdateRefillThreshold = { viewModel.updateRefillThreshold(it) },
+        onUpdateIntakeTime = { viewModel.updateIntakeTime(it) },
+        onUpdateInstructions = { viewModel.updateInstructions(it) }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddOptionalDetailsContent(
+    uiState: AddMedicationsUiState,
+    onComplete: () -> Unit,
+    onUpdateReminders: (Boolean) -> Unit,
+    onUpdateRefillReminder: (Boolean) -> Unit,
+    onUpdateDoseCount: (Int) -> Unit,
+    onUpdateRefillThreshold: (Int) -> Unit,
+    onUpdateIntakeTime: (IntakeTime?) -> Unit,
+    onUpdateInstructions: (String?) -> Unit,
+) {
     val med = uiState.medicationInfo
     val opt = uiState.optionalDetails
 
@@ -63,140 +92,155 @@ fun AddOptionalDetailsScreen(
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(scrollState)
-                .padding(16.dp)
-                .imePadding()
-        ) {
-            Text(
-                text = med.selectionSummary,
-                style = MaterialTheme.typography.titleSmall
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Is there anything else?",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
-
-            Text(
-                text = "Notifications",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            HorizontalDivider()
-            ToggleRow(
-                label = "Reminders",
-                checked = opt.remindersEnabled,
-                onCheckedChange = { viewModel.updateRemindersEnabled(it) }
-            )
-            HorizontalDivider()
-            ToggleRow(
-                label = "Refill reminder",
-                checked = opt.refillReminderEnabled,
-                onCheckedChange = { viewModel.updateRefillReminderEnabled(it) }
-            )
-
-            AnimatedVisibility(visible = opt.refillReminderEnabled) {
-                Column {
-                    HorizontalDivider()
-                    DetailRow(
-                        label = "Current count",
-                        value = effectiveDoseCount?.toString() ?: "Not set",
-                        onClick = { showDoseQuantityDialog = true }
-                    )
-                    HorizontalDivider()
-                    DetailRow(
-                        label = "Remind me when",
-                        value = effectiveRefillThreshold?.let { "$it left" } ?: "Not set",
-                        onClick = { showRefillThresholdDialog = true }
-                    )
-                }
-            }
-
-            HorizontalDivider()
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Intake Timing",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            ExposedDropdownMenuBox(
-                expanded = intakeDropdownExpanded,
-                onExpandedChange = { intakeDropdownExpanded = it }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+                    .padding(16.dp)
+                    .imePadding()
             ) {
-                OutlinedTextField(
-                    value = opt.intakeTime?.label ?: "Not specified",
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = intakeDropdownExpanded)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                Text(
+                    text = med.selectionSummary,
+                    style = MaterialTheme.typography.titleSmall
                 )
-                ExposedDropdownMenu(
-                    expanded = intakeDropdownExpanded,
-                    onDismissRequest = { intakeDropdownExpanded = false }
-                ) {
-                    IntakeTime.entries.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option.label) },
-                            onClick = {
-                                viewModel.updateIntakeTime(option)
-                                intakeDropdownExpanded = false
-                            }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Is there anything else?",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+
+                Text(
+                    text = "Notifications",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                HorizontalDivider()
+                ToggleRow(
+                    label = "Reminders",
+                    checked = opt.remindersEnabled,
+                    onCheckedChange = onUpdateReminders
+                )
+                HorizontalDivider()
+                ToggleRow(
+                    label = "Refill reminder",
+                    checked = opt.refillReminderEnabled,
+                    onCheckedChange = onUpdateRefillReminder
+                )
+
+                AnimatedVisibility(visible = opt.refillReminderEnabled) {
+                    Column {
+                        HorizontalDivider()
+                        DetailRow(
+                            label = "Current count",
+                            value = effectiveDoseCount?.toString() ?: "Not set",
+                            onClick = { showDoseQuantityDialog = true }
+                        )
+                        HorizontalDivider()
+                        DetailRow(
+                            label = "Remind me when",
+                            value = effectiveRefillThreshold?.let { "$it left" } ?: "Not set",
+                            onClick = { showRefillThresholdDialog = true }
                         )
                     }
                 }
+
+                HorizontalDivider()
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = "Intake Timing",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                ExposedDropdownMenuBox(
+                    expanded = intakeDropdownExpanded,
+                    onExpandedChange = { intakeDropdownExpanded = it }
+                ) {
+                    OutlinedTextField(
+                        value = opt.intakeTime?.label ?: "Not specified",
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = intakeDropdownExpanded)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    )
+                    ExposedDropdownMenu(
+                        expanded = intakeDropdownExpanded,
+                        onDismissRequest = { intakeDropdownExpanded = false }
+                    ) {
+                        IntakeTime.entries.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option.label) },
+                                onClick = {
+                                    onUpdateIntakeTime(option)
+                                    intakeDropdownExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = "Notes",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                OutlinedTextField(
+                    value = opt.instructions ?: "",
+                    onValueChange = { onUpdateInstructions(it.ifBlank { null }) },
+                    label = { Text("Additional notes") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged {
+                            if (it.isFocused) {
+                                coroutineScope.launch {
+                                    delay(300)
+                                    scrollState.animateScrollTo(scrollState.maxValue)
+                                }
+                            }
+                        },
+                    minLines = 3,
+                    maxLines = 5
+                )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Notes",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            OutlinedTextField(
-                value = opt.instructions ?: "",
-                onValueChange = { viewModel.updateInstructions(it.ifBlank { null }) },
-                label = { Text("Additional notes") },
+            Button(
+                onClick = onComplete,
+                enabled = !uiState.isSaving,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .onFocusChanged {
-                        if (it.isFocused) {
-                            coroutineScope.launch {
-                                delay(300)
-                                scrollState.animateScrollTo(scrollState.maxValue)
-                            }
-                        }
-                    },
-                minLines = 3,
-                maxLines = 5
-            )
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text("Complete")
+            }
         }
 
-        Button(
-            onClick = { onComplete() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text("Complete")
+        if (uiState.isSaving) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.32f))
+                    .clickable(enabled = false) { },
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
     }
 
@@ -208,11 +252,12 @@ fun AddOptionalDetailsScreen(
             max = 500.0,
             onDismiss = { showDoseQuantityDialog = false },
             onConfirm = { newQty ->
-                viewModel.updateDoseCount(newQty.toInt())
+                onUpdateDoseCount(newQty.toInt())
                 showDoseQuantityDialog = false
             }
         )
     }
+
     if (showRefillThresholdDialog) {
         QuantityDialog(
             initialQuantity = (effectiveRefillThreshold ?: 10).toDouble(),
@@ -221,21 +266,26 @@ fun AddOptionalDetailsScreen(
             max = 30.0,
             onDismiss = { showRefillThresholdDialog = false },
             onConfirm = { newQty ->
-                viewModel.updateRefillThreshold(newQty.toInt())
+                onUpdateRefillThreshold(newQty.toInt())
                 showRefillThresholdDialog = false
             }
         )
     }
 }
 
-@Suppress("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun AddOptionalDetailsScreenPreview() {
     RXTrackerTheme {
-        AddOptionalDetailsScreen(
-            viewModel = AddMedicationsViewModel(),
-            onComplete = {}
+        AddOptionalDetailsContent(
+            uiState = AddMedicationsUiState(),
+            onComplete = {},
+            onUpdateReminders = {},
+            onUpdateRefillReminder = {},
+            onUpdateDoseCount = {},
+            onUpdateRefillThreshold = {},
+            onUpdateIntakeTime = {},
+            onUpdateInstructions = {}
         )
     }
 }

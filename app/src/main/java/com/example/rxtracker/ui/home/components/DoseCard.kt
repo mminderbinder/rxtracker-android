@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.theme.RXTrackerTheme
-import com.example.rxtracker.ui.theme.extendedColorScheme
 import com.example.rxtracker.utils.formatQuantity
 import com.example.rxtracker.utils.resolveFormIcon
 import java.time.LocalDate
@@ -43,7 +42,6 @@ fun DoseCard(
     val isSkipped = dose.status == DoseStatus.SKIPPED
 
     val contentAlpha = if (isSkipped) 0.5f else 1f
-    val extendedColors = MaterialTheme.extendedColorScheme
 
     val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT)
 
@@ -104,7 +102,7 @@ fun DoseCard(
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
                         color = when (dose.status) {
-                            DoseStatus.TAKEN -> extendedColors.success.colorContainer
+                            DoseStatus.TAKEN -> MaterialTheme.colorScheme.primary
                             DoseStatus.MISSED -> MaterialTheme.colorScheme.error
                             else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
                         }

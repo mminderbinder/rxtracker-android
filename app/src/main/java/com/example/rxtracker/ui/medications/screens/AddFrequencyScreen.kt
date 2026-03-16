@@ -163,14 +163,14 @@ fun AddFrequencyScreen(
 }
 
 
-@Suppress("ViewModelConstructorInComposable")
-@Preview(showBackground = true)
-@Composable
-fun AddFrequencyScreenPreview() {
-    RXTrackerTheme {
-        AddFrequencyScreen(
-            viewModel = AddMedicationsViewModel(),
-            onContinue = {}
-        )
-    }
-}
+//@Suppress("ViewModelConstructorInComposable")
+//@Preview(showBackground = true)
+//@Composable
+//fun AddFrequencyScreenPreview() {
+//    RXTrackerTheme {
+//        AddFrequencyScreen(
+//            viewModel = AddMedicationsViewModel(),
+//            onContinue = {}
+//        )
+//    }
+//}

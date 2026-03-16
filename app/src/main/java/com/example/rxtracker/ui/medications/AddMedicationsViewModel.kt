@@ -4,18 +4,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.IntakeTime
 import com.example.rxtracker.data.models.UserMedication
+import com.example.rxtracker.data.repository.MedicationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
-class AddMedicationsViewModel @Inject constructor() : ViewModel() {
+class AddMedicationsViewModel @Inject constructor(
+    private val repository: MedicationRepository
+) : ViewModel() {
 
     var uiState by mutableStateOf(AddMedicationsUiState())
         private set
@@ -215,5 +220,20 @@ class AddMedicationsViewModel @Inject constructor() : ViewModel() {
         )
     }
 
-    
+    fun save(onComplete: () -> Unit) {
+        viewModelScope.launch {
+            uiState = uiState.copy(isSaving = true, saveError = null)
+            try {
+                val medication = toUserMedication()
+                repository.insertWithDoses(medication)
+                onComplete()
+            } catch (e: Exception) {
+                uiState = uiState.copy(
+                    isSaving = false,
+                    saveError = e.message ?:
+                    "An error occurred while attempting to save medication"
+                )
+            }
+        }
+    }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -98,8 +99,8 @@ fun AddDoseDetailsScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Image(
-            painter = painterResource(id = R.drawable.date),
+        Icon(
+            painter = painterResource(id = R.drawable.pills),
             contentDescription = null,
             modifier = Modifier
                 .size(200.dp)
@@ -154,14 +155,14 @@ fun AddDoseDetailsScreen(
     }
 }
 
-@Suppress("ViewModelConstructorInComposable")
-@Preview(showBackground = true)
-@Composable
-fun AddDoseDetailsScreenPreview() {
-    RXTrackerTheme {
-        AddDoseDetailsScreen(
-            viewModel = AddMedicationsViewModel(),
-            onContinue = {}
-        )
-    }
-}
+//@Suppress("ViewModelConstructorInComposable")
+//@Preview(showBackground = true)
+//@Composable
+//fun AddDoseDetailsScreenPreview() {
+//    RXTrackerTheme {
+//        AddDoseDetailsScreen(
+//            viewModel = AddMedicationsViewModel(),
+//            onContinue = {}
+//        )
+//    }
+//}

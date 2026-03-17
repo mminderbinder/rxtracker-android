@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
+import com.example.rxtracker.utils.displayText
 import java.time.DayOfWeek
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -73,7 +74,7 @@ fun WeekdaysDialog(
                                     selectedDays + day
                                 }
                             },
-                            label = { Text(day.name) },
+                            label = { Text(day.displayText()) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = MaterialTheme.colorScheme.primary,
                                 selectedLabelColor = MaterialTheme.colorScheme.onPrimary

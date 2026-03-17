@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,7 +50,7 @@ fun DoseCard(
         DoseStatus.TAKEN -> MaterialTheme.colorScheme.secondaryContainer
         DoseStatus.MISSED -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
         DoseStatus.SKIPPED -> MaterialTheme.colorScheme.surfaceVariant
-        DoseStatus.PENDING -> MaterialTheme.colorScheme.surface
+        DoseStatus.PENDING -> MaterialTheme.colorScheme.surfaceContainerLow
     }
 
     OutlinedCard(
@@ -65,22 +66,29 @@ fun DoseCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Form icon — far left
             Icon(
                 painter = painterResource(id = resolveFormIcon(dose.form)),
                 contentDescription = dose.form,
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = contentAlpha)
             )
 
+            // Medication info — middle
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                // Line 1 — name
                 Text(
                     text = dose.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    textDecoration = if (isSkipped) TextDecoration.LineThrough else TextDecoration.None,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Medium,
+                        textDecoration = if (isSkipped) TextDecoration.LineThrough else TextDecoration.None
+                    ),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = contentAlpha)
                 )
+
+                // Line 2 — strength + quantity
                 Text(
                     text = buildString {
                         if (dose.strength.isNotBlank()) append("${dose.strength} · ")
@@ -90,6 +98,7 @@ fun DoseCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
                 )
 
+                // Line 3 — status line
                 val statusText = when (dose.status) {
                     DoseStatus.TAKEN -> dose.takenAt?.let { "Taken at ${it.format(formatter)}" }
                     DoseStatus.SKIPPED -> "Skipped"
@@ -100,7 +109,9 @@ fun DoseCard(
                 statusText?.let {
                     Text(
                         text = it,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Medium
+                        ),
                         color = when (dose.status) {
                             DoseStatus.TAKEN -> MaterialTheme.colorScheme.primary
                             DoseStatus.MISSED -> MaterialTheme.colorScheme.error
@@ -109,6 +120,8 @@ fun DoseCard(
                     )
                 }
             }
+
+            // Checkbox — far right, hidden for future dates
             if (!isFutureDate) {
                 Checkbox(
                     checked = isTaken,
@@ -121,7 +134,6 @@ fun DoseCard(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

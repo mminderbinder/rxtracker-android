@@ -1,9 +1,7 @@
 package com.example.rxtracker.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,48 +12,46 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.rxtracker.R
 import com.example.rxtracker.ui.home.components.CalendarDay
-import com.example.rxtracker.ui.theme.RXTrackerTheme
-import com.example.rxtracker.ui.theme.tertiaryDark
+import com.example.rxtracker.ui.home.components.DoseCard
 import com.example.rxtracker.utils.getWeekPageTitle
 import com.example.rxtracker.utils.rememberFirstVisibleWeekAfterScroll
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: HomeViewModel
+) {
     val currentDate = remember { LocalDate.now() }
     val startDate = remember { currentDate.minusDays(500) }
     val endDate = remember { currentDate.plusDays(500) }
-    var selection by remember { mutableStateOf(currentDate) }
     val coroutineScope = rememberCoroutineScope()
+
+    val selectedDate by viewModel.selectedDate.collectAsState()
+    val doses by viewModel.dosesForDate.collectAsState()
 
     val state = rememberWeekCalendarState(
         startDate = startDate,
@@ -67,14 +63,15 @@ fun HomeScreen() {
 
     LaunchedEffect(visibleWeek) {
         val weekContainsToday = visibleWeek.days.any { it.date == currentDate }
-        selection = if (weekContainsToday) {
-            currentDate
-        } else {
-            visibleWeek.days.first().date
-        }
+        viewModel.selectDate(
+            if (weekContainsToday) currentDate
+            else visibleWeek.days.first().date
+        )
     }
 
-    val showTodayButton = selection != currentDate ||
+    val groupedDoses = doses.groupBy { it.scheduledTime }
+
+    val showTodayButton = selectedDate != currentDate ||
             !visibleWeek.days.any { it.date == currentDate }
 
     Column(
@@ -100,10 +97,10 @@ fun HomeScreen() {
             dayContent = { day ->
                 CalendarDay(
                     date = day.date,
-                    isSelected = selection == day.date,
+                    isSelected = selectedDate == day.date,
                     onClick = { date ->
-                        if (selection != date) {
-                            selection = date
+                        if (selectedDate != date) {
+                            viewModel.selectDate(date)
                         }
                     }
                 )
@@ -112,7 +109,7 @@ fun HomeScreen() {
         AnimatedVisibility(visible = showTodayButton) {
             TextButton(
                 onClick = {
-                    selection = currentDate
+                    viewModel.selectDate(currentDate)
                     coroutineScope.launch {
                         state.animateScrollToWeek(currentDate)
                     }
@@ -123,33 +120,62 @@ fun HomeScreen() {
                 Text("Return to today")
             }
         }
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+        if (doses.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.schedule),
-                    contentDescription = null,
-                    modifier = Modifier.size(160.dp)
-                )
-                Spacer(modifier = Modifier.padding(8.dp))
-                Text(
-                    text = "No medications today",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.schedule),
+                        contentDescription = null,
+                        modifier = Modifier.size(80.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "No medications today",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                groupedDoses.forEach { (time, dosesAtTime) ->
+                    item {
+                        Text(
+                            text = time.format(timeFormatter),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+                        )
+                    }
+                    items(dosesAtTime) { dose ->
+                        DoseCard(
+                            dose = dose,
+                            selectedDate = selectedDate,
+                            onTap = {/* TODO: launch bottom sheet */ },
+                            onToggleTaken = { checked ->
+                                if (checked) viewModel.markTaken(dose)
+                                else viewModel.unmarkAsTaken(dose)
+                            }
+                        )
+                    }
+                }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    RXTrackerTheme {
-        HomeScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomeScreenPreview() {
+//    RXTrackerTheme {
+//        HomeScreen()
+//    }
+//}

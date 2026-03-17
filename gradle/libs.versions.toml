@@ -25,9 +25,8 @@ uiTextGoogleFonts = "1.10.4"
 kmpWheelPicker = "0.3.0"
 runtime = "1.10.4"
 foundationLayout = "1.10.4"
-foundationLayoutVersion = "1.10.4"
-material3 = "1.4.0"
 foundation = "1.10.4"
+materialKolor = "4.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -69,14 +68,13 @@ lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "
 swmansion-kmpWheelPicker = { module = "com.swmansion.kmpwheelpicker:kmp-wheel-picker", version.ref = "kmpWheelPicker" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
-androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayoutVersion" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
+
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }

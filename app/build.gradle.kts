@@ -105,6 +105,8 @@ dependencies {
     implementation(libs.swmansion.kmpWheelPicker)
 
     implementation(libs.core)
+
+    implementation(libs.materialKolor)
 }
 
 ksp {

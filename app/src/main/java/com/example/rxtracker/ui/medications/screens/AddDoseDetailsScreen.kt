@@ -1,6 +1,5 @@
 package com.example.rxtracker.ui.medications.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.R
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
@@ -30,7 +28,6 @@ import com.example.rxtracker.ui.medications.components.DetailRow
 import com.example.rxtracker.ui.medications.components.dialogs.DateSelectionDialog
 import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.medications.components.dialogs.TimeSelectionDialog
-import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formatQuantity
 import java.time.Instant
 import java.time.LocalDate
@@ -100,10 +97,10 @@ fun AddDoseDetailsScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         Icon(
-            painter = painterResource(id = R.drawable.pills),
+            painter = painterResource(id = R.drawable.rx),
             contentDescription = null,
             modifier = Modifier
-                .size(160.dp)
+                .size(120.dp)
                 .align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.weight(1f))

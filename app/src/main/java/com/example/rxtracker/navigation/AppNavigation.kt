@@ -28,6 +28,7 @@ import com.example.rxtracker.navigation.topbar.MainTopBar
 import com.example.rxtracker.navigation.topbar.SecondaryTopBar
 import com.example.rxtracker.ui.appointments.AppointmentsScreen
 import com.example.rxtracker.ui.home.HomeScreen
+import com.example.rxtracker.ui.home.HomeViewModel
 import com.example.rxtracker.ui.medications.AddMedicationsViewModel
 import com.example.rxtracker.ui.medications.MedicationSearchViewModel
 import com.example.rxtracker.ui.medications.screens.AddDoseDetailsScreen
@@ -129,7 +130,8 @@ fun AppNavigation() {
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(AppDestination.Home.route) {
-                HomeScreen()
+                val viewModel: HomeViewModel = hiltViewModel()
+                HomeScreen(viewModel)
             }
             composable(AppDestination.Medications.route) {
                 MedicationsScreen()

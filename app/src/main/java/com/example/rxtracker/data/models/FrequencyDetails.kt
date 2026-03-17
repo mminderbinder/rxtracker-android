@@ -54,5 +54,5 @@ object DayOfWeekSerializer : KSerializer<DayOfWeek> {
         value: DayOfWeek
     ) = encoder.encodeString(value.name)
 
-    override fun deserialize(decoder: Decoder) = java.time.DayOfWeek.valueOf(decoder.decodeString())
+    override fun deserialize(decoder: Decoder) = DayOfWeek.valueOf(decoder.decodeString())
 }

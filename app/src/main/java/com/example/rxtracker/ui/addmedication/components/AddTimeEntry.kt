@@ -1,7 +1,6 @@
-package com.example.rxtracker.ui.medications.components
+package com.example.rxtracker.ui.addmedication.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Trash2
-import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
+import com.example.rxtracker.ui.addmedication.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formatQuantity
 import java.time.LocalTime

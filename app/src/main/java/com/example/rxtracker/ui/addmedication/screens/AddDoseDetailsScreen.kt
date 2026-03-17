@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.screens
+package com.example.rxtracker.ui.addmedication.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,11 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.R
-import com.example.rxtracker.ui.medications.AddMedicationsViewModel
-import com.example.rxtracker.ui.medications.components.DetailRow
-import com.example.rxtracker.ui.medications.components.dialogs.DateSelectionDialog
-import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
-import com.example.rxtracker.ui.medications.components.dialogs.TimeSelectionDialog
+import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
+import com.example.rxtracker.ui.addmedication.components.DetailRow
+import com.example.rxtracker.ui.addmedication.components.dialogs.DateSelectionDialog
+import com.example.rxtracker.ui.addmedication.components.dialogs.QuantityDialog
+import com.example.rxtracker.ui.addmedication.components.dialogs.TimeSelectionDialog
 import com.example.rxtracker.utils.formatQuantity
 import java.time.Instant
 import java.time.LocalDate

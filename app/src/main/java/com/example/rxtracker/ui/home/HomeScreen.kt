@@ -150,9 +150,9 @@ fun HomeScreen(
                     item {
                         Text(
                             text = time.format(timeFormatter),
-                            style = MaterialTheme.typography.labelMedium,
+                            style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+                            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
                         )
                     }
                     items(dosesAtTime) { dose ->

@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.components.dialogs
+package com.example.rxtracker.ui.addmedication.components.dialogs
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api

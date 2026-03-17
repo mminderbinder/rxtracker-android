@@ -1,15 +1,13 @@
 package com.example.rxtracker.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.composables.icons.lucide.AlarmClock
-import com.composables.icons.lucide.CalendarFold
+import com.composables.icons.lucide.History
 import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.PillBottle
-import com.example.rxtracker.navigation.AppDestination.Appointments
+import com.example.rxtracker.navigation.AppDestination.History
 import com.example.rxtracker.navigation.AppDestination.Home
 import com.example.rxtracker.navigation.AppDestination.Medications
-import com.example.rxtracker.navigation.AppDestination.Reminders
 
 sealed class AppDestination(
     val route: String,
@@ -24,20 +22,14 @@ sealed class AppDestination(
 
     object Medications : AppDestination(
         route = "medications",
-        title = "Meds",
+        title = "Medications",
         icon = Lucide.PillBottle
     )
 
-    object Reminders : AppDestination(
-        route = "reminders",
-        title = "Reminders",
-        icon = Lucide.AlarmClock
-    )
-
-    object Appointments : AppDestination(
-        route = "appointments",
-        title = "Appointments",
-        icon = Lucide.CalendarFold
+    object History : AppDestination(
+        route = "history",
+        title = "History",
+        icon = Lucide.History
     )
 
     object Settings : AppDestination(
@@ -82,7 +74,7 @@ sealed class AppDestination(
 
     companion object {
         fun fromRoute(route: String?): AppDestination? = listOf(
-            Home, Medications, Reminders, Appointments,
+            Home, Medications, History,
             Settings, About, PrivacyPolicy, AddMedication,
             AddFrequency, AddDoseDetails, AddTimes, AddOptionalDetails
         ).find { it.route == route }
@@ -92,6 +84,5 @@ sealed class AppDestination(
 val bottomNavDestinations = listOf(
     Home,
     Medications,
-    Reminders,
-    Appointments
+    History
 )

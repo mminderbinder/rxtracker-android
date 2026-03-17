@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.components.dialogs
+package com.example.rxtracker.ui.addmedication.components.dialogs
 
 import androidx.compose.runtime.Composable
 

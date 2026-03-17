@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.components.dialogs
+package com.example.rxtracker.ui.addmedication.components.dialogs
 
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog

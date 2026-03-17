@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.screens
+package com.example.rxtracker.ui.addmedication.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.example.rxtracker.ui.medications.AddMedicationsViewModel
-import com.example.rxtracker.ui.medications.MedicationSearchViewModel
-import com.example.rxtracker.ui.medications.components.MedicationSearchBar
+import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
+import com.example.rxtracker.ui.addmedication.MedicationSearchViewModel
+import com.example.rxtracker.ui.addmedication.components.MedicationSearchBar
 
 @Composable
 fun AddMedicationScreen(

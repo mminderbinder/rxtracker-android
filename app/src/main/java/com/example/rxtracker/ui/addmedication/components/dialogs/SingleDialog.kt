@@ -1,43 +1,45 @@
-package com.example.rxtracker.ui.medications.components.dialogs
+package com.example.rxtracker.ui.addmedication.components.dialogs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.rxtracker.ui.addmedication.components.DialogWheelPicker
 import com.example.rxtracker.ui.theme.RXTrackerTheme
-import com.example.rxtracker.utils.displayText
-import java.time.DayOfWeek
+import com.swmansion.kmpwheelpicker.rememberWheelPickerState
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun WeekdaysDialog(
+fun SingleDialog(
+    title: String,
+    itemCount: Int,
+    initialIndex: Int,
+    friction: Float = 8f,
+    itemLabel: (Int) -> String,
     onDismiss: () -> Unit,
-    onConfirm: (selectedDays: Set<DayOfWeek>) -> Unit
+    onConfirm: (Int) -> Unit
 ) {
-    var selectedDays by remember { mutableStateOf(setOf<DayOfWeek>()) }
+    val state = rememberWheelPickerState(
+        itemCount = itemCount,
+        initialIndex = initialIndex
+    )
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -53,36 +55,37 @@ fun WeekdaysDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Select days",
+                    text = title,
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    DayOfWeek.entries.forEach { day ->
-                        FilterChip(
-                            selected = day in selectedDays,
-                            onClick = {
-                                selectedDays = if (day in selectedDays) {
-                                    selectedDays - day
-                                } else {
-                                    selectedDays + day
-                                }
-                            },
-                            label = { Text(day.displayText()) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(36.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer
+                                    .copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(8.dp)
                             )
-                        )
-                    }
+                    )
+
+                    DialogWheelPicker(
+                        state = state,
+                        itemLabel = itemLabel,
+                        friction = friction
+                    )
                 }
-                Spacer(modifier = Modifier.height(24.dp))
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -91,10 +94,8 @@ fun WeekdaysDialog(
                     TextButton(onClick = onDismiss) {
                         Text("Cancel")
                     }
-                    TextButton(
-                        onClick = { onConfirm(selectedDays) },
-                        enabled = selectedDays.isNotEmpty()
-                    ) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(onClick = { onConfirm(state.index) }) {
                         Text("OK")
                     }
                 }
@@ -105,11 +106,15 @@ fun WeekdaysDialog(
 
 @Preview(showBackground = true)
 @Composable
-fun WeekdaysDialogPreview() {
+fun SingleDialogPreview() {
     RXTrackerTheme {
-        WeekdaysDialog(
-            onDismiss = {},
-            onConfirm = {}
+        SingleDialog(
+            title = "Times per day",
+            itemCount = 7,
+            initialIndex = 0,
+            itemLabel = { "7 Days" },
+            onConfirm = {},
+            onDismiss = {}
         )
     }
 }

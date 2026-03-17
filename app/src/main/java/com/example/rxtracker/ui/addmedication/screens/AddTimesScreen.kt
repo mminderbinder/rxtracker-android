@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.screens
+package com.example.rxtracker.ui.addmedication.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,13 +21,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.FrequencyDetails
-import com.example.rxtracker.ui.medications.AddMedicationsViewModel
-import com.example.rxtracker.ui.medications.components.AddTimeEntry
-import com.example.rxtracker.ui.theme.RXTrackerTheme
+import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
+import com.example.rxtracker.ui.addmedication.components.AddTimeEntry
 
 @Composable
 fun AddTimesScreen(

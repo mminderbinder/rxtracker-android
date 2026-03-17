@@ -1,33 +1,33 @@
-package com.example.rxtracker.ui.medications.components.dialogs
+package com.example.rxtracker.ui.addmedication.components.dialogs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
-fun EveryXDaysDialog(
+fun EveryXHoursDialog(
     onDismiss: () -> Unit,
-    onConfirm: (days: Int) -> Unit
+    onConfirm: (hours: Int) -> Unit
 ) {
     SingleDialog(
-        title = "Select day interval",
-        itemCount = 89,
-        initialIndex = 0,
-        friction = 4f,
+        title = "Select hour interval",
+        itemCount = 12,
+        initialIndex = 5,
         itemLabel = { index ->
-            val days = index + 2
-            "$days days"
+            val hours = index + 1
+            "$hours ${if (hours == 1) "hour" else "hours"}"
         },
         onDismiss = onDismiss,
-        onConfirm = { onConfirm(it + 2) }
+        onConfirm = { onConfirm(it + 1) }
     )
 }
 
+
 @Preview(showBackground = true)
 @Composable
-fun EveryXDaysDialogPreview() {
+fun EveryXHoursDialogPreview() {
     RXTrackerTheme {
-        EveryXDaysDialog(
+        EveryXHoursDialog(
             onDismiss = {},
             onConfirm = {}
         )

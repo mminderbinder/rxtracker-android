@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.components
+package com.example.rxtracker.ui.addmedication.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -37,7 +37,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.X
 import com.example.rxtracker.data.models.Prescribable
-import com.example.rxtracker.ui.medications.MedicationSearchViewModel
+import com.example.rxtracker.ui.addmedication.MedicationSearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

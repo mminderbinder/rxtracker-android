@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications
+package com.example.rxtracker.ui.addmedication
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -230,8 +230,7 @@ class AddMedicationsViewModel @Inject constructor(
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isSaving = false,
-                    saveError = e.message ?:
-                    "An error occurred while attempting to save medication"
+                    saveError = e.message ?: "An error occurred while attempting to save medication"
                 )
             }
         }

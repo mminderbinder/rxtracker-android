@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.screens
+package com.example.rxtracker.ui.addmedication.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -36,16 +36,15 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.IntakeTime
-import com.example.rxtracker.ui.medications.AddMedicationsUiState
-import com.example.rxtracker.ui.medications.AddMedicationsViewModel
-import com.example.rxtracker.ui.medications.components.DetailRow
-import com.example.rxtracker.ui.medications.components.ToggleRow
-import com.example.rxtracker.ui.medications.components.dialogs.QuantityDialog
+import com.example.rxtracker.ui.addmedication.AddMedicationsUiState
+import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
+import com.example.rxtracker.ui.addmedication.components.DetailRow
+import com.example.rxtracker.ui.addmedication.components.ToggleRow
+import com.example.rxtracker.ui.addmedication.components.dialogs.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formLabel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

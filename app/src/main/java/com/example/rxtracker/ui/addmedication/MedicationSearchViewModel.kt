@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications
+package com.example.rxtracker.ui.addmedication
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

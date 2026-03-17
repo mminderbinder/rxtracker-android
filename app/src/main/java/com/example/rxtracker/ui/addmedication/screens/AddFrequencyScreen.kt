@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.screens
+package com.example.rxtracker.ui.addmedication.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,18 +16,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
-import com.example.rxtracker.ui.medications.AddMedicationsViewModel
-import com.example.rxtracker.ui.medications.components.FrequencyOption
-import com.example.rxtracker.ui.medications.components.dialogs.CyclicDialog
-import com.example.rxtracker.ui.medications.components.dialogs.EveryXDaysDialog
-import com.example.rxtracker.ui.medications.components.dialogs.EveryXHoursDialog
-import com.example.rxtracker.ui.medications.components.dialogs.MultipleDailyDialog
-import com.example.rxtracker.ui.medications.components.dialogs.WeekdaysDialog
-import com.example.rxtracker.ui.theme.RXTrackerTheme
+import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
+import com.example.rxtracker.ui.addmedication.components.FrequencyOption
+import com.example.rxtracker.ui.addmedication.components.dialogs.CyclicDialog
+import com.example.rxtracker.ui.addmedication.components.dialogs.EveryXDaysDialog
+import com.example.rxtracker.ui.addmedication.components.dialogs.EveryXHoursDialog
+import com.example.rxtracker.ui.addmedication.components.dialogs.MultipleDailyDialog
+import com.example.rxtracker.ui.addmedication.components.dialogs.WeekdaysDialog
 
 @Composable
 fun AddFrequencyScreen(

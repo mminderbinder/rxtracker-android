@@ -26,27 +26,25 @@ import com.composables.icons.lucide.Plus
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.navigation.topbar.MainTopBar
 import com.example.rxtracker.navigation.topbar.SecondaryTopBar
-import com.example.rxtracker.ui.appointments.AppointmentsScreen
+import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
+import com.example.rxtracker.ui.addmedication.MedicationSearchViewModel
+import com.example.rxtracker.ui.addmedication.screens.AddDoseDetailsScreen
+import com.example.rxtracker.ui.addmedication.screens.AddFrequencyScreen
+import com.example.rxtracker.ui.addmedication.screens.AddMedicationScreen
+import com.example.rxtracker.ui.addmedication.screens.AddOptionalDetailsScreen
+import com.example.rxtracker.ui.addmedication.screens.AddTimesScreen
+import com.example.rxtracker.ui.history.HistoryScreen
 import com.example.rxtracker.ui.home.HomeScreen
 import com.example.rxtracker.ui.home.HomeViewModel
-import com.example.rxtracker.ui.medications.AddMedicationsViewModel
-import com.example.rxtracker.ui.medications.MedicationSearchViewModel
-import com.example.rxtracker.ui.medications.screens.AddDoseDetailsScreen
-import com.example.rxtracker.ui.medications.screens.AddFrequencyScreen
-import com.example.rxtracker.ui.medications.screens.AddMedicationScreen
-import com.example.rxtracker.ui.medications.screens.AddOptionalDetailsScreen
-import com.example.rxtracker.ui.medications.screens.AddTimesScreen
-import com.example.rxtracker.ui.medications.screens.MedicationsScreen
+import com.example.rxtracker.ui.medications.MedicationsScreen
 import com.example.rxtracker.ui.menu.about.AboutScreen
 import com.example.rxtracker.ui.menu.privacy.PrivacyPolicyScreen
 import com.example.rxtracker.ui.menu.settings.SettingsScreen
-import com.example.rxtracker.ui.reminders.RemindersScreen
 
 private val mainRoutes = listOf(
     AppDestination.Home.route,
     AppDestination.Medications.route,
-    AppDestination.Reminders.route,
-    AppDestination.Appointments.route
+    AppDestination.History.route
 )
 
 private val secondaryRoutes = listOf(
@@ -136,11 +134,8 @@ fun AppNavigation() {
             composable(AppDestination.Medications.route) {
                 MedicationsScreen()
             }
-            composable(AppDestination.Reminders.route) {
-                RemindersScreen()
-            }
-            composable(AppDestination.Appointments.route) {
-                AppointmentsScreen()
+            composable(AppDestination.History.route) {
+                HistoryScreen()
             }
             composable(AppDestination.Settings.route) {
                 SettingsScreen()

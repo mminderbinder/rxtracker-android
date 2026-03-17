@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.medications.components.dialogs
+package com.example.rxtracker.ui.addmedication.components.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.rxtracker.ui.medications.components.DialogWheelPicker
+import com.example.rxtracker.ui.addmedication.components.DialogWheelPicker
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.swmansion.kmpwheelpicker.rememberWheelPickerState
 

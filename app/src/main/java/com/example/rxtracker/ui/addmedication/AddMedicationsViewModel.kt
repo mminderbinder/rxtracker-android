@@ -74,17 +74,25 @@ class AddMedicationsViewModel @Inject constructor(
     }
 
     fun updateStartTime(time: LocalTime) {
-        uiState = wipeFrom(
-            step = 4,
-            state = uiState.copy(doseDetails = uiState.doseDetails.copy(startTime = time))
+        val updatedState = uiState.copy(
+            doseDetails = uiState.doseDetails.copy(startTime = time)
         )
+        uiState = if (!requiresTimesScreen() && uiState.frequency.type != Frequency.AS_NEEDED) {
+            updatedState.copy(doseTimes = generateInitialTimes(updatedState))
+        } else {
+            wipeFrom(step = 4, state = updatedState)
+        }
     }
 
     fun updateQuantity(qty: Double) {
-        uiState = wipeFrom(
-            step = 4,
-            state = uiState.copy(doseDetails = uiState.doseDetails.copy(quantity = qty))
+        val updatedState = uiState.copy(
+            doseDetails = uiState.doseDetails.copy(quantity = qty)
         )
+        uiState = if (!requiresTimesScreen() && uiState.frequency.type != Frequency.AS_NEEDED) {
+            updatedState.copy(doseTimes = generateInitialTimes(updatedState))
+        } else {
+            wipeFrom(step = 4, state = updatedState)
+        }
     }
 
     // Screen 4
@@ -141,7 +149,7 @@ class AddMedicationsViewModel @Inject constructor(
         }
     }
 
-    fun generateInitialTimes(): List<DoseTime> {
+    fun generateInitialTimes(state: AddMedicationsUiState = uiState): List<DoseTime> {
         val startTime = uiState.doseDetails.startTime
         val quantity = uiState.doseDetails.quantity
 

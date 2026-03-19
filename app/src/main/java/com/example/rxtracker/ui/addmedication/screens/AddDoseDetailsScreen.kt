@@ -117,7 +117,7 @@ fun AddDoseDetailsScreen(
         TimeSelectionDialog(
             startTime = dose.startTime,
             onConfirm = { hour, minute ->
-                viewModel.updateStartTime(LocalTime.of(hour, minute))
+                viewModel.updateDoseDetails(time = LocalTime.of(hour, minute))
                 showTimePicker = false
             },
             onDismiss = { showTimePicker = false },
@@ -145,7 +145,7 @@ fun AddDoseDetailsScreen(
             max = 999.0,
             onDismiss = { showQuantityDialog = false },
             onConfirm = { newQty ->
-                viewModel.updateQuantity(newQty)
+                viewModel.updateDoseDetails(quantity = newQty)
                 showQuantityDialog = false
             }
         )

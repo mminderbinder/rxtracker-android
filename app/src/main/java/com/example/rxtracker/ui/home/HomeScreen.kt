@@ -45,13 +45,13 @@ private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
 fun HomeScreen(
     viewModel: HomeViewModel
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     val currentDate = remember { LocalDate.now() }
     val startDate = remember { currentDate.minusDays(500) }
     val endDate = remember { currentDate.plusDays(500) }
     val coroutineScope = rememberCoroutineScope()
 
-    val selectedDate by viewModel.selectedDate.collectAsState()
-    val doses by viewModel.dosesForDate.collectAsState()
 
     val state = rememberWeekCalendarState(
         startDate = startDate,
@@ -69,9 +69,9 @@ fun HomeScreen(
         )
     }
 
-    val groupedDoses = doses.groupBy { it.scheduledTime }
+    val groupedDoses = uiState.doses.groupBy { it.scheduledTime }
 
-    val showTodayButton = selectedDate != currentDate ||
+    val showTodayButton = uiState.selectedDate != currentDate ||
             !visibleWeek.days.any { it.date == currentDate }
 
     Column(
@@ -97,9 +97,9 @@ fun HomeScreen(
             dayContent = { day ->
                 CalendarDay(
                     date = day.date,
-                    isSelected = selectedDate == day.date,
+                    isSelected = uiState.selectedDate == day.date,
                     onClick = { date ->
-                        if (selectedDate != date) {
+                        if (uiState.selectedDate != date) {
                             viewModel.selectDate(date)
                         }
                     }
@@ -120,7 +120,7 @@ fun HomeScreen(
                 Text("Return to today")
             }
         }
-        if (doses.isEmpty()) {
+        if (uiState.doses.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -158,7 +158,7 @@ fun HomeScreen(
                     items(dosesAtTime) { dose ->
                         DoseCard(
                             dose = dose,
-                            selectedDate = selectedDate,
+                            selectedDate = uiState.selectedDate,
                             onTap = {/* TODO: launch bottom sheet */ },
                             onToggleTaken = { checked ->
                                 if (checked) viewModel.markTaken(dose)

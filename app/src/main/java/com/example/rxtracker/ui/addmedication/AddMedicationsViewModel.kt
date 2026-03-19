@@ -73,22 +73,19 @@ class AddMedicationsViewModel @Inject constructor(
         )
     }
 
-    fun updateStartTime(time: LocalTime) {
+    fun updateDoseDetails(
+        time: LocalTime = uiState.doseDetails.startTime,
+        quantity: Double = uiState.doseDetails.quantity
+    ) {
         val updatedState = uiState.copy(
-            doseDetails = uiState.doseDetails.copy(startTime = time)
+            doseDetails = uiState.doseDetails.copy(
+                startTime = time,
+                quantity = quantity
+            )
         )
-        uiState = if (!requiresTimesScreen() && uiState.frequency.type != Frequency.AS_NEEDED) {
-            updatedState.copy(doseTimes = generateInitialTimes(updatedState))
-        } else {
-            wipeFrom(step = 4, state = updatedState)
-        }
-    }
-
-    fun updateQuantity(qty: Double) {
-        val updatedState = uiState.copy(
-            doseDetails = uiState.doseDetails.copy(quantity = qty)
-        )
-        uiState = if (!requiresTimesScreen() && uiState.frequency.type != Frequency.AS_NEEDED) {
+        uiState = if (!requiresTimesScreen() &&
+            uiState.frequency.type != Frequency.AS_NEEDED
+        ) {
             updatedState.copy(doseTimes = generateInitialTimes(updatedState))
         } else {
             wipeFrom(step = 4, state = updatedState)
@@ -150,10 +147,10 @@ class AddMedicationsViewModel @Inject constructor(
     }
 
     fun generateInitialTimes(state: AddMedicationsUiState = uiState): List<DoseTime> {
-        val startTime = uiState.doseDetails.startTime
-        val quantity = uiState.doseDetails.quantity
+        val startTime = state.doseDetails.startTime
+        val quantity = state.doseDetails.quantity
 
-        val generated = when (val details = uiState.frequency.details) {
+        val generated = when (val details = state.frequency.details) {
             is FrequencyDetails.EveryXHours -> {
                 val offsetHours = generateSequence(0) { it + details.hours }
                     .takeWhile { it <= 12 }
@@ -176,24 +173,14 @@ class AddMedicationsViewModel @Inject constructor(
                 }
             }
 
-            else -> listOf(
-                DoseTime(
-                    time = startTime,
-                    quantity = quantity
-                )
-            )
+            else -> listOf(DoseTime(time = startTime, quantity = quantity))
         }
+
         return generated.ifEmpty {
-            listOf(
-                DoseTime(
-                    time = startTime,
-                    quantity = quantity
-                )
-            )
+            listOf(DoseTime(time = startTime, quantity = quantity))
         }
     }
-
-
+    
     fun toUserMedication(): UserMedication {
         val info = uiState.medicationInfo
         val freq = uiState.frequency

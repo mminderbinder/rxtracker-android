@@ -10,35 +10,55 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val scheduledDoseRepository: ScheduledDoseRepository
 ) : ViewModel() {
-    private val _selectedDate = MutableStateFlow(LocalDate.now())
-    val selectedDate: StateFlow<LocalDate> = _selectedDate.asStateFlow()
+
+    private val _uiState = MutableStateFlow(HomeUiState())
+    val uiState: StateFlow<HomeUiState> = _uiState
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val dosesForDate: StateFlow<List<ScheduledDoseWithMedication>> =
-        _selectedDate
-            .flatMapLatest { date ->
-                scheduledDoseRepository.getDosesForDate(date)
+    private val dosesForDate = _uiState
+        .map { it.selectedDate }
+        .flatMapLatest { date -> scheduledDoseRepository.getDosesForDate(date) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    init {
+        viewModelScope.launch {
+            dosesForDate.collect { dosesForDate ->
+                _uiState.update {
+                    it.copy(
+                        doses = resolveLateStatuses(
+                            dosesForDate,
+                            it.selectedDate
+                        )
+                    )
+                }
             }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyList()
-            )
+        }
+    }
 
     fun selectDate(date: LocalDate) {
-        _selectedDate.value = date
+        _uiState.update { it.copy(selectedDate = date) }
+    }
+
+    fun selectDose(dose: ScheduledDoseWithMedication?) {
+        _uiState.update { it.copy(selectedDose = dose) }
     }
 
     fun markTaken(dose: ScheduledDoseWithMedication) {
@@ -52,10 +72,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun unmarkAsTaken(dose: ScheduledDoseWithMedication) {
+        val isToday = _uiState.value.selectedDate == LocalDate.now()
         viewModelScope.launch {
             scheduledDoseRepository.updateStatus(
                 id = dose.id,
-                status = DoseStatus.PENDING,
+                status = if (isToday) DoseStatus.PENDING else DoseStatus.NOT_LOGGED,
                 takenAt = null
             )
         }
@@ -72,12 +93,28 @@ class HomeViewModel @Inject constructor(
     }
 
     fun unskipDose(dose: ScheduledDoseWithMedication) {
+        val isToday = _uiState.value.selectedDate == LocalDate.now()
         viewModelScope.launch {
             scheduledDoseRepository.updateStatus(
                 id = dose.id,
-                status = DoseStatus.PENDING,
+                status = if (isToday) DoseStatus.PENDING else DoseStatus.NOT_LOGGED,
                 takenAt = null
             )
+        }
+    }
+
+    private fun resolveLateStatuses(
+        doses: List<ScheduledDoseWithMedication>,
+        selectedDate: LocalDate
+    ): List<ScheduledDoseWithMedication> {
+        if (selectedDate != LocalDate.now()) return doses
+        val now = LocalTime.now()
+        return doses.map { dose ->
+            if (dose.status == DoseStatus.PENDING && dose.scheduledTime.isBefore(now)) {
+                dose.copy(status = DoseStatus.LATE)
+            } else {
+                dose
+            }
         }
     }
 }

@@ -1,13 +1,16 @@
 package com.example.rxtracker.ui.home.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -18,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.DoseStatus
@@ -27,7 +31,6 @@ import com.example.rxtracker.utils.formatQuantity
 import com.example.rxtracker.utils.resolveFormIcon
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 @Composable
 fun DoseCard(
@@ -37,27 +40,61 @@ fun DoseCard(
     onToggleTaken: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     val today = LocalDate.now()
     val isFutureDate = selectedDate.isAfter(today)
     val isTaken = dose.status == DoseStatus.TAKEN
     val isSkipped = dose.status == DoseStatus.SKIPPED
+    val isNotLogged = dose.status == DoseStatus.NOT_LOGGED
+    val isLate = dose.status == DoseStatus.LATE
 
-    val contentAlpha = if (isSkipped) 0.5f else 1f
+    val isDimmed = isTaken || isSkipped || isFutureDate
+    val contentAlpha = if (isDimmed) 0.5f else 1f
+    val textDecoration =
+        if (isTaken || isSkipped) TextDecoration.LineThrough else TextDecoration.None
 
-    val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT)
+    val formatter = DateTimeFormatter.ofPattern("h:mm a")
 
-    val containerColor = when (dose.status) {
-        DoseStatus.TAKEN -> MaterialTheme.colorScheme.secondaryContainer
-        DoseStatus.MISSED -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
-        DoseStatus.SKIPPED -> MaterialTheme.colorScheme.surfaceVariant
-        DoseStatus.PENDING -> MaterialTheme.colorScheme.surfaceContainerLow
+    val containerColor = when {
+        isTaken || isSkipped -> MaterialTheme.colorScheme.surfaceVariant
+        else -> MaterialTheme.colorScheme.surfaceContainerLow
     }
+
+    val border = when {
+        isLate -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.error)
+        isNotLogged -> BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+        )
+
+        else -> CardDefaults.outlinedCardBorder()
+    }
+
+    val statusText = when (dose.status) {
+        DoseStatus.TAKEN -> dose.takenAt?.let { "Taken at ${it.format(formatter)}" } ?: "Taken"
+        DoseStatus.SKIPPED -> "Skipped"
+        DoseStatus.LATE -> "Late"
+        DoseStatus.NOT_LOGGED -> "Not Logged"
+        DoseStatus.PENDING -> if (isFutureDate) "Upcoming" else "Pending"
+    }
+
+    val statusColor = when (dose.status) {
+        DoseStatus.TAKEN -> MaterialTheme.colorScheme.primary.copy(alpha = contentAlpha)
+        DoseStatus.LATE -> MaterialTheme.colorScheme.error
+        DoseStatus.SKIPPED -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
+        DoseStatus.NOT_LOGGED -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+        DoseStatus.PENDING -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
+    }
+
+    val showCheckbox = !isFutureDate && !isSkipped && !isNotLogged
 
     OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
+            .heightIn(min = 80.dp)
             .clickable { onTap() },
-        colors = CardDefaults.outlinedCardColors(containerColor = containerColor)
+        colors = CardDefaults.outlinedCardColors(containerColor = containerColor),
+        border = border
     ) {
         Row(
             modifier = Modifier
@@ -66,11 +103,11 @@ fun DoseCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Form icon — far left
             Icon(
                 painter = painterResource(id = resolveFormIcon(dose.form)),
                 contentDescription = dose.form,
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = contentAlpha)
+                tint = if (isLate) MaterialTheme.colorScheme.error
+                else MaterialTheme.colorScheme.primary.copy(alpha = contentAlpha)
             )
 
             // Medication info — middle
@@ -78,57 +115,44 @@ fun DoseCard(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                // Line 1 — name
                 Text(
                     text = dose.name,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = FontWeight.Medium,
-                        textDecoration = if (isSkipped) TextDecoration.LineThrough else TextDecoration.None
+                        textDecoration = textDecoration,
                     ),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = contentAlpha)
+                    color = statusColor,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
 
-                // Line 2 — strength + quantity
                 Text(
                     text = buildString {
                         if (dose.strength.isNotBlank()) append("${dose.strength} · ")
                         append(formatQuantity(dose.quantity, dose.form))
                     },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
+                    style = MaterialTheme.typography.bodySmall.copy(textDecoration = textDecoration),
+                    color = statusColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-
-                // Line 3 — status line
-                val statusText = when (dose.status) {
-                    DoseStatus.TAKEN -> dose.takenAt?.let { "Taken at ${it.format(formatter)}" }
-                    DoseStatus.SKIPPED -> "Skipped"
-                    DoseStatus.MISSED -> "Missed"
-                    DoseStatus.PENDING -> null
-                }
-
-                statusText?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = when (dose.status) {
-                            DoseStatus.TAKEN -> MaterialTheme.colorScheme.primary
-                            DoseStatus.MISSED -> MaterialTheme.colorScheme.error
-                            else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
-                        }
-                    )
-                }
+                Text(
+                    text = statusText,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = statusColor
+                )
             }
 
-            // Checkbox — far right, hidden for future dates
-            if (!isFutureDate) {
+            if (showCheckbox) {
                 Checkbox(
                     checked = isTaken,
-                    onCheckedChange = { checked ->
-                        if (!isSkipped) onToggleTaken(checked)
-                    },
-                    enabled = !isSkipped
+                    onCheckedChange = { checked -> onToggleTaken(checked) },
+                    colors = if (isLate) CheckboxDefaults.colors(
+                        uncheckedColor = MaterialTheme.colorScheme.error,
+                        checkmarkColor = MaterialTheme.colorScheme.error
+                    ) else CheckboxDefaults.colors()
                 )
             }
         }

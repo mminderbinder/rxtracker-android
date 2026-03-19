@@ -33,6 +33,14 @@ interface ScheduledDoseDao {
     suspend fun updateStatus(id: Long, status: DoseStatus, takenAt: LocalDateTime?)
 
     @Query(
+        "UPDATE scheduled_doses " +
+                "SET status = 'NOT_LOGGED' " +
+                "WHERE status = 'PENDING' " +
+                "AND scheduledDate < :today"
+    )
+    suspend fun markPastPendingAsNotLogged(today: LocalDate)
+
+    @Query(
         "SELECT * FROM scheduled_doses " +
                 "WHERE medicationId = :medicationId " +
                 "AND scheduledDate >= :fromDate " +

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -73,7 +75,7 @@ fun SingleDialog(
                             .height(36.dp)
                             .background(
                                 color = MaterialTheme.colorScheme.primaryContainer
-                                    .copy(alpha = 0.1f),
+                                    .copy(alpha = 0.35f),
                                 shape = RoundedCornerShape(8.dp)
                             )
                     )
@@ -87,6 +89,10 @@ fun SingleDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
@@ -95,7 +101,7 @@ fun SingleDialog(
                         Text("Cancel")
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    TextButton(onClick = { onConfirm(state.index) }) {
+                    FilledTonalButton(onClick = { onConfirm(state.index) }) {
                         Text("OK")
                     }
                 }

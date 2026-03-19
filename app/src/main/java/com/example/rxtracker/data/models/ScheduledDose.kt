@@ -25,5 +25,6 @@ data class ScheduledDose(
     val scheduledTime: LocalTime,
     val quantity: Double,
     val status: DoseStatus = DoseStatus.PENDING,
-    val takenAt: LocalDateTime? = null
+    val takenAt: LocalDateTime? = null,
+    val notes: String? = null
 )

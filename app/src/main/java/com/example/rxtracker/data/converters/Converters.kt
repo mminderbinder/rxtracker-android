@@ -18,7 +18,7 @@ class Converters {
     fun fromLocalDate(date: LocalDate?): String? = date?.toString()
 
     @TypeConverter
-    fun toLocalDate(value: String?): LocalDate? = value.let { LocalDate.parse(it) }
+    fun toLocalDate(value: String?): LocalDate? = value?.let { LocalDate.parse(it) }
 
     @TypeConverter
     fun fromLocalTime(time: LocalTime): String = time.toString()
@@ -27,10 +27,10 @@ class Converters {
     fun toLocalTime(value: String): LocalTime = LocalTime.parse(value)
 
     @TypeConverter
-    fun fromLocalDateTime(dt: LocalDateTime): String = dt.toString()
+    fun fromLocalDateTime(dt: LocalDateTime?): String? = dt?.toString()
 
     @TypeConverter
-    fun toLocalDateTime(value: String): LocalDateTime = LocalDateTime.parse(value)
+    fun toLocalDateTime(value: String?): LocalDateTime? = value?.let { LocalDateTime.parse(it) }
 
     @TypeConverter
     fun fromFrequency(freq: Frequency): String = freq.name

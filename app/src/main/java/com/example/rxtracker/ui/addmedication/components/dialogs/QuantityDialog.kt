@@ -1,16 +1,18 @@
 package com.example.rxtracker.ui.addmedication.components.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -21,9 +23,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.rxtracker.ui.addmedication.components.QuantityCounter
+import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
 fun QuantityDialog(
@@ -55,30 +59,42 @@ fun QuantityDialog(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    QuantityCounter(
-                        quantity = quantity,
-                        onQuantityChange = { quantity = it },
-                        min = min,
-                        max = max
-                    )
-                }
+                QuantityCounter(
+                    quantity = quantity,
+                    onQuantityChange = { quantity = it },
+                    min = min,
+                    max = max
+                )
                 Spacer(modifier = Modifier.height(16.dp))
+
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) { Text("Cancel") }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TextButton(onClick = { onConfirm(quantity) }) { Text("OK") }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    FilledTonalButton(onClick = { onConfirm(quantity) }) { Text("OK") }
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuantityDialogPreview() {
+    RXTrackerTheme {
+        QuantityDialog(
+            initialQuantity = 1.0,
+            title = "Quantity",
+            min = 0.5,
+            max = 20.0,
+            onDismiss = {},
+            onConfirm = {}
+        )
     }
 }

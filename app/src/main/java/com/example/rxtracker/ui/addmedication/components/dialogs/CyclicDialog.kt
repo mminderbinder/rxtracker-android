@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -83,7 +85,7 @@ fun CyclicDialog(
                                     .height(36.dp)
                                     .background(
                                         color = MaterialTheme.colorScheme.primaryContainer
-                                            .copy(alpha = 0.1f),
+                                            .copy(alpha = 0.35f),
                                         shape = RoundedCornerShape(8.dp)
                                     )
                             )
@@ -119,7 +121,7 @@ fun CyclicDialog(
                                     .height(36.dp)
                                     .background(
                                         color = MaterialTheme.colorScheme.primaryContainer
-                                            .copy(alpha = 0.1f),
+                                            .copy(alpha = 0.35f),
                                         shape = RoundedCornerShape(8.dp)
                                     )
                             )
@@ -137,6 +139,10 @@ fun CyclicDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
@@ -145,7 +151,7 @@ fun CyclicDialog(
                         Text("Cancel")
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    TextButton(onClick = {
+                    FilledTonalButton(onClick = {
                         onConfirm(intakeState.index + 1, pauseState.index + 1)
                     }) {
                         Text("OK")

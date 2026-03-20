@@ -340,7 +340,7 @@ fun DoseBottomSheet(
                             )
                             SheetActionRow(
                                 icon = Lucide.Pencil,
-                                label = "Input time",
+                                label = "Add time taken",
                                 onClick = { showTakeAtTimeDialog = true }
                             )
                         }
@@ -381,8 +381,6 @@ fun DoseBottomSheet(
                         }
                     }
                 }
-
-                // Actions — past dates
                 if (isPastDate) {
                     when {
                         isTaken -> {

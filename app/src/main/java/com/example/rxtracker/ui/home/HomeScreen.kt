@@ -29,15 +29,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.R
+import com.example.rxtracker.data.models.DoseStatus
+import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.home.components.DoseBottomSheet
 import com.example.rxtracker.ui.home.components.DoseCard
+import com.example.rxtracker.ui.home.components.ResolvedDosesAccordion
 import com.example.rxtracker.utils.getWeekPageTitle
 import com.example.rxtracker.utils.rememberFirstVisibleWeekAfterScroll
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
@@ -69,7 +73,13 @@ fun HomeScreen(
         )
     }
 
-    val groupedDoses = uiState.doses.groupBy { it.scheduledTime }
+    val activeDoses: Map<LocalTime, List<ScheduledDoseWithMedication>> = uiState.doses
+        .filter { it.status !in listOf(DoseStatus.TAKEN, DoseStatus.SKIPPED) }
+        .groupBy { it.scheduledTime }
+
+    val resolvedDoses: List<ScheduledDoseWithMedication> = uiState.doses
+        .filter { it.status in listOf(DoseStatus.TAKEN, DoseStatus.SKIPPED) }
+        .sortedBy { it.scheduledTime }
 
     val showTodayButton = uiState.selectedDate != currentDate ||
             !visibleWeek.days.any { it.date == currentDate }
@@ -146,31 +156,36 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                groupedDoses.forEach { (time, dosesAtTime) ->
+                if (resolvedDoses.isNotEmpty()) {
+                    item {
+                        ResolvedDosesAccordion(
+                            doses = resolvedDoses,
+                            selectedDate = uiState.selectedDate,
+                            onTap = { viewModel.selectDose(it) }
+                        )
+                    }
+                }
+                activeDoses.forEach { (time, dosesAtTime) ->
                     item {
                         Text(
                             text = time.format(timeFormatter),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
                         )
                     }
                     items(dosesAtTime) { dose ->
                         DoseCard(
                             dose = dose,
                             selectedDate = uiState.selectedDate,
-                            onTap = { viewModel.selectDose(dose) },
-                            onToggleTaken = { checked ->
-                                if (checked) viewModel.markTaken(dose)
-                                else viewModel.unmarkAsTaken(dose)
-                            }
+                            onTap = { viewModel.selectDose(dose) }
                         )
                     }
                 }
             }
         }
     }
-    
+
     uiState.selectedDose?.let { dose ->
         DoseBottomSheet(
             dose = dose,
@@ -190,11 +205,3 @@ fun HomeScreen(
         )
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun HomeScreenPreview() {
-//    RXTrackerTheme {
-//        HomeScreen()
-//    }
-//}

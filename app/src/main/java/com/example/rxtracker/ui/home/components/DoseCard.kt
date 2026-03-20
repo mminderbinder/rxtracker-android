@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -38,7 +36,6 @@ fun DoseCard(
     dose: ScheduledDoseWithMedication,
     selectedDate: LocalDate,
     onTap: () -> Unit,
-    onToggleTaken: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val today = LocalDate.now()
@@ -50,7 +47,8 @@ fun DoseCard(
 
     val isDimmed = isTaken || isSkipped || isFutureDate
     val contentAlpha = if (isDimmed) 0.5f else 1f
-    val textDecoration = if (isTaken || isSkipped) TextDecoration.LineThrough else TextDecoration.None
+    val textDecoration =
+        if (isTaken || isSkipped) TextDecoration.LineThrough else TextDecoration.None
 
     val containerColor = when {
         isTaken || isSkipped -> MaterialTheme.colorScheme.surfaceVariant
@@ -59,7 +57,11 @@ fun DoseCard(
 
     val border = when {
         isLate -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.error)
-        isNotLogged -> BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f))
+        isNotLogged -> BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+        )
+
         else -> CardDefaults.outlinedCardBorder()
     }
 
@@ -74,81 +76,80 @@ fun DoseCard(
     }
 
     val statusText = when (dose.status) {
-        DoseStatus.TAKEN -> dose.takenAt?.let { "Taken at ${it.toLocalTime().format(timeFormatter)}" } ?: "Taken"
+        DoseStatus.TAKEN -> dose.takenAt?.let {
+            "Taken at ${
+                it.toLocalTime().format(timeFormatter)
+            }"
+        } ?: "Taken"
+
         DoseStatus.SKIPPED -> "Skipped"
         DoseStatus.LATE -> "Late"
         DoseStatus.NOT_LOGGED -> "Not logged"
         DoseStatus.PENDING -> if (isFutureDate) "Upcoming" else "Pending"
     }
 
-    val showCheckbox = !isFutureDate && !isSkipped && !isNotLogged
-
-    // Outer row — card left, checkbox right
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+    OutlinedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 80.dp)
+            .clickable { onTap() },
+        colors = CardDefaults.outlinedCardColors(containerColor = containerColor),
+        border = border
     ) {
-        OutlinedCard(
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .heightIn(min = 80.dp)
-                .clickable { onTap() },
-            colors = CardDefaults.outlinedCardColors(containerColor = containerColor),
-            border = border
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            Icon(
+                painter = painterResource(id = resolveFormIcon(dose.form)),
+                contentDescription = dose.form,
+                tint = contentColor
+            )
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = resolveFormIcon(dose.form)),
-                    contentDescription = dose.form,
-                    tint = contentColor
+                Text(
+                    text = dose.name,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Medium,
+                        textDecoration = textDecoration
+                    ),
+                    color = contentColor,
+                    maxLines = 2
                 )
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = buildString {
+                        if (dose.strength.isNotBlank()) append("${dose.strength} · ")
+                        append(formatQuantity(dose.quantity, dose.form))
+                    },
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        textDecoration = textDecoration
+                    ),
+                    color = secondaryContentColor,
+                    maxLines = 1
+                )
+                Text(
+                    text = statusText,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = secondaryContentColor
+                )
+                if (!dose.doseNotes.isNullOrBlank()) {
                     Text(
-                        text = dose.name,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontWeight = FontWeight.Medium,
-                            textDecoration = textDecoration
-                        ),
-                        color = contentColor,
-                        maxLines = 2
-                    )
-                    Text(
-                        text = buildString {
-                            if (dose.strength.isNotBlank()) append("${dose.strength} · ")
-                            append(formatQuantity(dose.quantity, dose.form))
-                        },
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            textDecoration = textDecoration
-                        ),
+                        text = dose.doseNotes,
+                        style = MaterialTheme.typography.bodySmall,
                         color = secondaryContentColor,
-                        maxLines = 1
-                    )
-                    Text(
-                        text = statusText,
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = secondaryContentColor
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
             }
-        }
-
-        if (showCheckbox) {
-            Checkbox(
-                checked = isTaken,
-                onCheckedChange = { checked -> onToggleTaken(checked) },
-                colors = if (isLate) CheckboxDefaults.colors(
-                    uncheckedColor = MaterialTheme.colorScheme.error,
-                    checkmarkColor = MaterialTheme.colorScheme.error
-                ) else CheckboxDefaults.colors()
-            )
         }
     }
 }
@@ -172,8 +173,7 @@ fun DoseCardPreview() {
                 doseNotes = "Take with food"
             ),
             selectedDate = LocalDate.now(),
-            onTap = {},
-            onToggleTaken = {}
+            onTap = {}
         )
     }
 }

@@ -2,6 +2,7 @@ package com.example.rxtracker.ui.home.components
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -90,11 +92,7 @@ fun DoseBottomSheet(
     onQuantityChange: (Double) -> Unit,
     onNotesChange: (String?) -> Unit
 ) {
-    val state = rememberModalBottomSheetState(initialDetent = SheetDetent.Hidden)
-
-    LaunchedEffect(Unit) {
-        state.animateTo(SheetDetent.FullyExpanded)
-    }
+    val state = rememberModalBottomSheetState(initialDetent = SheetDetent.FullyExpanded)
 
     val today = LocalDate.now()
     val isToday = selectedDate == today
@@ -155,7 +153,6 @@ fun DoseBottomSheet(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Header
                 Row(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -225,8 +222,6 @@ fun DoseBottomSheet(
                             )
                         }
                     }
-
-                    // Status chip
                     val (chipColor, chipTextColor, chipLabel) = when (dose.status) {
                         DoseStatus.TAKEN -> Triple(
                             MaterialTheme.colorScheme.primaryContainer,
@@ -269,7 +264,6 @@ fun DoseBottomSheet(
                     }
                 }
 
-                // Notes — above actions divider
                 SheetActionRow(
                     icon = Lucide.Pencil,
                     label = if (notes.isNullOrBlank()) "Add notes" else "Edit notes",
@@ -301,7 +295,7 @@ fun DoseBottomSheet(
                         isTaken -> {
                             SheetActionRow(
                                 icon = Lucide.X,
-                                label = "Undo Taken",
+                                label = "Undo",
                                 onClick = {
                                     onUntake()
                                     state.targetDetent = SheetDetent.Hidden
@@ -340,7 +334,7 @@ fun DoseBottomSheet(
                             )
                             SheetActionRow(
                                 icon = Lucide.Pencil,
-                                label = "Add time taken",
+                                label = "Input time",
                                 onClick = { showTakeAtTimeDialog = true }
                             )
                         }
@@ -360,7 +354,13 @@ fun DoseBottomSheet(
                                     if (isSkipped) onUnskip() else onSkip()
                                     state.targetDetent = SheetDetent.Hidden
                                 },
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                colors = if (!isSkipped) ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.error
+                                ) else ButtonDefaults.outlinedButtonColors(),
+                                border = if (!isSkipped) BorderStroke(
+                                    1.dp, MaterialTheme.colorScheme.error
+                                ) else ButtonDefaults.outlinedButtonBorder
                             ) {
                                 Text(if (isSkipped) "Unskip" else "Skip")
                             }
@@ -381,6 +381,7 @@ fun DoseBottomSheet(
                         }
                     }
                 }
+
                 if (isPastDate) {
                     when {
                         isTaken -> {
@@ -436,7 +437,6 @@ fun DoseBottomSheet(
                     }
                 }
 
-                // Future — read only
                 if (isFutureDate) {
                     Text(
                         text = "No actions available for future doses",
@@ -446,11 +446,9 @@ fun DoseBottomSheet(
                     )
                 }
 
-                Spacer(
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .height(16.dp)
-                )
+                Spacer(modifier = Modifier
+                    .navigationBarsPadding()
+                    .height(16.dp))
             }
         }
     }

@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.DoseStatus
@@ -32,6 +31,8 @@ import com.example.rxtracker.utils.resolveFormIcon
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
+
 @Composable
 fun DoseCard(
     dose: ScheduledDoseWithMedication,
@@ -40,7 +41,6 @@ fun DoseCard(
     onToggleTaken: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     val today = LocalDate.now()
     val isFutureDate = selectedDate.isAfter(today)
     val isTaken = dose.status == DoseStatus.TAKEN
@@ -50,10 +50,7 @@ fun DoseCard(
 
     val isDimmed = isTaken || isSkipped || isFutureDate
     val contentAlpha = if (isDimmed) 0.5f else 1f
-    val textDecoration =
-        if (isTaken || isSkipped) TextDecoration.LineThrough else TextDecoration.None
-
-    val formatter = DateTimeFormatter.ofPattern("h:mm a")
+    val textDecoration = if (isTaken || isSkipped) TextDecoration.LineThrough else TextDecoration.None
 
     val containerColor = when {
         isTaken || isSkipped -> MaterialTheme.colorScheme.surfaceVariant
@@ -62,99 +59,96 @@ fun DoseCard(
 
     val border = when {
         isLate -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.error)
-        isNotLogged -> BorderStroke(
-            1.dp,
-            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
-        )
-
+        isNotLogged -> BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f))
         else -> CardDefaults.outlinedCardBorder()
     }
 
-    val statusText = when (dose.status) {
-        DoseStatus.TAKEN -> dose.takenAt?.let { "Taken at ${it.format(formatter)}" } ?: "Taken"
-        DoseStatus.SKIPPED -> "Skipped"
-        DoseStatus.LATE -> "Late"
-        DoseStatus.NOT_LOGGED -> "Not Logged"
-        DoseStatus.PENDING -> if (isFutureDate) "Upcoming" else "Pending"
+    val contentColor = when {
+        isLate -> MaterialTheme.colorScheme.error
+        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = contentAlpha)
     }
 
-    val statusColor = when (dose.status) {
-        DoseStatus.TAKEN -> MaterialTheme.colorScheme.primary.copy(alpha = contentAlpha)
-        DoseStatus.LATE -> MaterialTheme.colorScheme.error
-        DoseStatus.SKIPPED -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
-        DoseStatus.NOT_LOGGED -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-        DoseStatus.PENDING -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
+    val secondaryContentColor = when {
+        isLate -> MaterialTheme.colorScheme.error
+        else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
+    }
+
+    val statusText = when (dose.status) {
+        DoseStatus.TAKEN -> dose.takenAt?.let { "Taken at ${it.toLocalTime().format(timeFormatter)}" } ?: "Taken"
+        DoseStatus.SKIPPED -> "Skipped"
+        DoseStatus.LATE -> "Late"
+        DoseStatus.NOT_LOGGED -> "Not logged"
+        DoseStatus.PENDING -> if (isFutureDate) "Upcoming" else "Pending"
     }
 
     val showCheckbox = !isFutureDate && !isSkipped && !isNotLogged
 
-    OutlinedCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 80.dp)
-            .clickable { onTap() },
-        colors = CardDefaults.outlinedCardColors(containerColor = containerColor),
-        border = border
+    // Outer row — card left, checkbox right
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
+        OutlinedCard(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                .weight(1f)
+                .heightIn(min = 80.dp)
+                .clickable { onTap() },
+            colors = CardDefaults.outlinedCardColors(containerColor = containerColor),
+            border = border
         ) {
-            Icon(
-                painter = painterResource(id = resolveFormIcon(dose.form)),
-                contentDescription = dose.form,
-                tint = if (isLate) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.primary.copy(alpha = contentAlpha)
-            )
-
-            // Medication info — middle
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = dose.name,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.Medium,
-                        textDecoration = textDecoration,
-                    ),
-                    color = statusColor,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+                Icon(
+                    painter = painterResource(id = resolveFormIcon(dose.form)),
+                    contentDescription = dose.form,
+                    tint = contentColor
                 )
-
-                Text(
-                    text = buildString {
-                        if (dose.strength.isNotBlank()) append("${dose.strength} · ")
-                        append(formatQuantity(dose.quantity, dose.form))
-                    },
-                    style = MaterialTheme.typography.bodySmall.copy(textDecoration = textDecoration),
-                    color = statusColor,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = statusText,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Medium
-                    ),
-                    color = statusColor
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = dose.name,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Medium,
+                            textDecoration = textDecoration
+                        ),
+                        color = contentColor,
+                        maxLines = 2
+                    )
+                    Text(
+                        text = buildString {
+                            if (dose.strength.isNotBlank()) append("${dose.strength} · ")
+                            append(formatQuantity(dose.quantity, dose.form))
+                        },
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            textDecoration = textDecoration
+                        ),
+                        color = secondaryContentColor,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = statusText,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = secondaryContentColor
+                    )
+                }
             }
+        }
 
-            if (showCheckbox) {
-                Checkbox(
-                    checked = isTaken,
-                    onCheckedChange = { checked -> onToggleTaken(checked) },
-                    colors = if (isLate) CheckboxDefaults.colors(
-                        uncheckedColor = MaterialTheme.colorScheme.error,
-                        checkmarkColor = MaterialTheme.colorScheme.error
-                    ) else CheckboxDefaults.colors()
-                )
-            }
+        if (showCheckbox) {
+            Checkbox(
+                checked = isTaken,
+                onCheckedChange = { checked -> onToggleTaken(checked) },
+                colors = if (isLate) CheckboxDefaults.colors(
+                    uncheckedColor = MaterialTheme.colorScheme.error,
+                    checkmarkColor = MaterialTheme.colorScheme.error
+                ) else CheckboxDefaults.colors()
+            )
         }
     }
 }
@@ -174,7 +168,8 @@ fun DoseCardPreview() {
                 takenAt = null,
                 name = "Ibuprofen",
                 strength = "200mg",
-                form = "Capsule"
+                form = "Capsule",
+                doseNotes = "Take with food"
             ),
             selectedDate = LocalDate.now(),
             onTap = {},

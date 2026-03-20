@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.addmedication.components
+package com.example.rxtracker.ui.shared
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

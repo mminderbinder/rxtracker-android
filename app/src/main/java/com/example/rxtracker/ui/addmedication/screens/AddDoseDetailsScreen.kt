@@ -26,8 +26,8 @@ import com.example.rxtracker.R
 import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
 import com.example.rxtracker.ui.addmedication.components.DetailRow
 import com.example.rxtracker.ui.addmedication.components.dialogs.DateSelectionDialog
-import com.example.rxtracker.ui.addmedication.components.dialogs.QuantityDialog
-import com.example.rxtracker.ui.addmedication.components.dialogs.TimeSelectionDialog
+import com.example.rxtracker.ui.shared.QuantityDialog
+import com.example.rxtracker.ui.shared.TimeSelectionDialog
 import com.example.rxtracker.utils.formatQuantity
 import java.time.Instant
 import java.time.LocalDate

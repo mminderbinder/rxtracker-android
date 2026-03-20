@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.R
 import com.example.rxtracker.ui.home.components.CalendarDay
+import com.example.rxtracker.ui.home.components.DoseBottomSheet
 import com.example.rxtracker.ui.home.components.DoseCard
 import com.example.rxtracker.utils.getWeekPageTitle
 import com.example.rxtracker.utils.rememberFirstVisibleWeekAfterScroll
@@ -51,7 +52,6 @@ fun HomeScreen(
     val startDate = remember { currentDate.minusDays(500) }
     val endDate = remember { currentDate.plusDays(500) }
     val coroutineScope = rememberCoroutineScope()
-
 
     val state = rememberWeekCalendarState(
         startDate = startDate,
@@ -106,6 +106,7 @@ fun HomeScreen(
                 )
             }
         )
+
         AnimatedVisibility(visible = showTodayButton) {
             TextButton(
                 onClick = {
@@ -120,14 +121,13 @@ fun HomeScreen(
                 Text("Return to today")
             }
         }
+
         if (uiState.doses.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         painter = painterResource(R.drawable.schedule),
                         contentDescription = null,
@@ -135,7 +135,7 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "No medications today",
+                        text = "No medications scheduled",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -159,7 +159,7 @@ fun HomeScreen(
                         DoseCard(
                             dose = dose,
                             selectedDate = uiState.selectedDate,
-                            onTap = {/* TODO: launch bottom sheet */ },
+                            onTap = { viewModel.selectDose(dose) },
                             onToggleTaken = { checked ->
                                 if (checked) viewModel.markTaken(dose)
                                 else viewModel.unmarkAsTaken(dose)
@@ -169,6 +169,25 @@ fun HomeScreen(
                 }
             }
         }
+    }
+    
+    uiState.selectedDose?.let { dose ->
+        DoseBottomSheet(
+            dose = dose,
+            selectedDate = uiState.selectedDate,
+            onDismiss = { viewModel.selectDose(null) },
+            onTakeOnTime = {
+                viewModel.takeAtTime(dose, dose.scheduledTime.atDate(uiState.selectedDate))
+            },
+            onTakeNow = { viewModel.markTaken(dose) },
+            onTakeAtTime = { takenAt -> viewModel.takeAtTime(dose, takenAt) },
+            onUntake = { viewModel.unmarkAsTaken(dose) },
+            onSkip = { viewModel.skipDose(dose) },
+            onUnskip = { viewModel.unskipDose(dose) },
+            onPostpone = { newTime -> viewModel.rescheduleDose(dose, newTime.toLocalTime()) },
+            onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },
+            onNotesChange = { notes -> viewModel.updateDoseNotes(dose, notes) }
+        )
     }
 }
 

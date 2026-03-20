@@ -9,6 +9,7 @@ import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Dao
 interface ScheduledDoseDao {
@@ -26,6 +27,14 @@ interface ScheduledDoseDao {
     fun getDosesForDate(date: LocalDate): Flow<List<ScheduledDoseWithMedication>>
 
     @Query(
+        "SELECT * FROM scheduled_doses " +
+                "WHERE medicationId = :medicationId " +
+                "AND scheduledDate >= :fromDate " +
+                "ORDER BY scheduledDate ASC"
+    )
+    suspend fun getFutureDoses(medicationId: Long, fromDate: LocalDate): List<ScheduledDose>
+
+    @Query(
         "UPDATE scheduled_doses " +
                 "SET status = :status, takenAt = :takenAt " +
                 "WHERE id = :id"
@@ -41,12 +50,26 @@ interface ScheduledDoseDao {
     suspend fun markPastPendingAsNotLogged(today: LocalDate)
 
     @Query(
-        "SELECT * FROM scheduled_doses " +
-                "WHERE medicationId = :medicationId " +
-                "AND scheduledDate >= :fromDate " +
-                "ORDER BY scheduledDate ASC"
+        "UPDATE scheduled_doses " +
+                "SET quantity = :quantity " +
+                "WHERE id = :id"
     )
-    suspend fun getFutureDoses(medicationId: Long, fromDate: LocalDate): List<ScheduledDose>
+    suspend fun updateQuantity(id: Long, quantity: Double)
+
+    @Query(
+        "UPDATE scheduled_doses " +
+                "SET scheduledTime = :newTime " +
+                "WHERE id = :id"
+    )
+    suspend fun updateScheduledTime(id: Long, newTime: LocalTime)
+
+    @Query(
+        "UPDATE scheduled_doses " +
+                "SET doseNotes = :notes " +
+                "WHERE id = :id"
+    )
+    suspend fun updateDoseNotes(id: Long, notes: String?)
+
 
     @Query(
         "DELETE from scheduled_doses " +

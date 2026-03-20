@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.addmedication.components.dialogs
+package com.example.rxtracker.ui.shared
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,6 +13,7 @@ import java.time.LocalTime
 @Composable
 fun TimeSelectionDialog(
     startTime: LocalTime,
+    title: String = "Select time",
     onConfirm: (hour: Int, minute: Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -23,6 +24,7 @@ fun TimeSelectionDialog(
     )
     AlertDialog(
         onDismissRequest = onDismiss,
+        title = { Text(title) },
         confirmButton = {
             TextButton(onClick = {
                 onConfirm(pickerState.hour, pickerState.minute)

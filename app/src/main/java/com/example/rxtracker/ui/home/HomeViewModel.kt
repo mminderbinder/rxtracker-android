@@ -40,13 +40,14 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            dosesForDate.collect { dosesForDate ->
-                _uiState.update {
-                    it.copy(
-                        doses = resolveLateStatuses(
-                            dosesForDate,
-                            it.selectedDate
-                        )
+            dosesForDate.collect { doses ->
+                val resolved = resolveLateStatuses(doses, _uiState.value.selectedDate)
+                _uiState.update { state ->
+                    state.copy(
+                        doses = resolved,
+                        selectedDose = state.selectedDose?.let { selected ->
+                            resolved.find { it.id == selected.id }
+                        }
                     )
                 }
             }
@@ -100,6 +101,34 @@ class HomeViewModel @Inject constructor(
                 status = if (isToday) DoseStatus.PENDING else DoseStatus.NOT_LOGGED,
                 takenAt = null
             )
+        }
+    }
+
+    fun takeAtTime(dose: ScheduledDoseWithMedication, takenAt: LocalDateTime) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatus(
+                id = dose.id,
+                status = DoseStatus.TAKEN,
+                takenAt = takenAt
+            )
+        }
+    }
+
+    fun rescheduleDose(dose: ScheduledDoseWithMedication, newTime: LocalTime) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateScheduledTime(dose.id, newTime)
+        }
+    }
+
+    fun updateQuantity(dose: ScheduledDoseWithMedication, quantity: Double) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateQuantity(dose.id, quantity)
+        }
+    }
+
+    fun updateDoseNotes(dose: ScheduledDoseWithMedication, doseNotes: String?) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateDoseNotes(dose.id, doseNotes)
         }
     }
 

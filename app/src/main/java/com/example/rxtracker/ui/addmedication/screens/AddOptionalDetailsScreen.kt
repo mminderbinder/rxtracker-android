@@ -40,7 +40,7 @@ import com.example.rxtracker.ui.addmedication.AddMedicationsUiState
 import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
 import com.example.rxtracker.ui.addmedication.components.DetailRow
 import com.example.rxtracker.ui.addmedication.components.ToggleRow
-import com.example.rxtracker.ui.addmedication.components.dialogs.QuantityDialog
+import com.example.rxtracker.ui.shared.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formLabel
 import kotlinx.coroutines.delay

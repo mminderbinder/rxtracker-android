@@ -12,6 +12,7 @@ data class ScheduledDoseWithMedication(
     val quantity: Double,
     val status: DoseStatus,
     val takenAt: LocalDateTime?,
+    val doseNotes: String?,
     val name: String,
     val strength: String,
     val form: String

@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Trash2
-import com.example.rxtracker.ui.addmedication.components.dialogs.QuantityDialog
+import com.example.rxtracker.ui.shared.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formatQuantity
 import java.time.LocalTime

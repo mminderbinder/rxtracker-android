@@ -131,7 +131,6 @@ fun HomeScreen(
                 Text("Return to today")
             }
         }
-
         if (uiState.doses.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),

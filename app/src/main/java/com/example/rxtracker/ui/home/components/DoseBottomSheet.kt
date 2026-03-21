@@ -2,7 +2,6 @@ package com.example.rxtracker.ui.home.components
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -137,8 +135,6 @@ fun DoseBottomSheet(
                 .fillMaxWidth()
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-
-                // Drag handle
                 DragIndication(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -289,7 +285,6 @@ fun DoseBottomSheet(
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-                // Actions — today
                 if (isToday) {
                     when {
                         isTaken -> {
@@ -354,13 +349,7 @@ fun DoseBottomSheet(
                                     if (isSkipped) onUnskip() else onSkip()
                                     state.targetDetent = SheetDetent.Hidden
                                 },
-                                modifier = Modifier.weight(1f),
-                                colors = if (!isSkipped) ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.error
-                                ) else ButtonDefaults.outlinedButtonColors(),
-                                border = if (!isSkipped) BorderStroke(
-                                    1.dp, MaterialTheme.colorScheme.error
-                                ) else ButtonDefaults.outlinedButtonBorder
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Text(if (isSkipped) "Unskip" else "Skip")
                             }

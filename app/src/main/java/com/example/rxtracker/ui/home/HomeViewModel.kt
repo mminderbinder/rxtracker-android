@@ -40,6 +40,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            scheduledDoseRepository.markPastPendingAsNotLogged(LocalDate.now())
             dosesForDate.collect { doses ->
                 val resolved = resolveLateStatuses(doses, _uiState.value.selectedDate)
                 _uiState.update { state ->

@@ -2,6 +2,7 @@ package com.example.rxtracker.ui.home.components
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -117,7 +119,7 @@ fun DoseBottomSheet(
 
     ModalBottomSheet(state = state) {
         Scrim(
-            scrimColor = Color.Black.copy(alpha = 0.3f),
+            scrimColor = Color.Black.copy(alpha = 0.8f),
             enter = fadeIn(),
             exit = fadeOut()
         )
@@ -135,6 +137,8 @@ fun DoseBottomSheet(
                 .fillMaxWidth()
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
+
+                // Drag handle
                 DragIndication(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -149,6 +153,7 @@ fun DoseBottomSheet(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Header
                 Row(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -208,9 +213,7 @@ fun DoseBottomSheet(
                         )
                         if (isTaken && dose.takenAt != null) {
                             Text(
-                                text = "Taken at ${
-                                    dose.takenAt.toLocalTime().format(timeFormatter)
-                                }",
+                                text = "Taken at ${dose.takenAt.toLocalTime().format(timeFormatter)}",
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontWeight = FontWeight.Medium
                                 ),
@@ -218,31 +221,28 @@ fun DoseBottomSheet(
                             )
                         }
                     }
+
                     val (chipColor, chipTextColor, chipLabel) = when (dose.status) {
                         DoseStatus.TAKEN -> Triple(
                             MaterialTheme.colorScheme.primaryContainer,
                             MaterialTheme.colorScheme.onPrimaryContainer,
                             "Taken"
                         )
-
                         DoseStatus.SKIPPED -> Triple(
                             MaterialTheme.colorScheme.surfaceVariant,
                             MaterialTheme.colorScheme.onSurfaceVariant,
                             "Skipped"
                         )
-
                         DoseStatus.LATE -> Triple(
                             MaterialTheme.colorScheme.errorContainer,
                             MaterialTheme.colorScheme.onErrorContainer,
                             "Late"
                         )
-
                         DoseStatus.NOT_LOGGED -> Triple(
                             MaterialTheme.colorScheme.surfaceVariant,
                             MaterialTheme.colorScheme.onSurfaceVariant,
                             "Not Logged"
                         )
-
                         DoseStatus.PENDING -> Triple(Color.Unspecified, Color.Unspecified, "")
                     }
                     if (chipLabel.isNotEmpty()) {
@@ -296,8 +296,15 @@ fun DoseBottomSheet(
                                     state.targetDetent = SheetDetent.Hidden
                                 }
                             )
+                            SheetActionRow(
+                                icon = Lucide.X,
+                                label = "Skip",
+                                onClick = {
+                                    onSkip()
+                                    state.targetDetent = SheetDetent.Hidden
+                                }
+                            )
                         }
-
                         isSkipped -> {
                             SheetActionRow(
                                 icon = Lucide.X,
@@ -308,7 +315,6 @@ fun DoseBottomSheet(
                                 }
                             )
                         }
-
                         else -> {
                             SheetActionRow(
                                 icon = Lucide.Check,
@@ -329,7 +335,7 @@ fun DoseBottomSheet(
                             )
                             SheetActionRow(
                                 icon = Lucide.Pencil,
-                                label = "Set time",
+                                label = "Input time",
                                 onClick = { showTakeAtTimeDialog = true }
                             )
                         }
@@ -349,7 +355,13 @@ fun DoseBottomSheet(
                                     if (isSkipped) onUnskip() else onSkip()
                                     state.targetDetent = SheetDetent.Hidden
                                 },
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                colors = if (!isSkipped) ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.error
+                                ) else ButtonDefaults.outlinedButtonColors(),
+                                border = if (!isSkipped) BorderStroke(
+                                    1.dp, MaterialTheme.colorScheme.error
+                                ) else ButtonDefaults.outlinedButtonBorder
                             ) {
                                 Text(if (isSkipped) "Unskip" else "Skip")
                             }
@@ -383,8 +395,15 @@ fun DoseBottomSheet(
                                     state.targetDetent = SheetDetent.Hidden
                                 }
                             )
+                            SheetActionRow(
+                                icon = Lucide.X,
+                                label = "Skip",
+                                onClick = {
+                                    onSkip()
+                                    state.targetDetent = SheetDetent.Hidden
+                                }
+                            )
                         }
-
                         isSkipped -> {
                             SheetActionRow(
                                 icon = Lucide.X,
@@ -396,7 +415,6 @@ fun DoseBottomSheet(
                                 }
                             )
                         }
-
                         isNotLogged -> {
                             SheetActionRow(
                                 icon = Lucide.Pencil,
@@ -421,7 +439,6 @@ fun DoseBottomSheet(
                                 }
                             }
                         }
-
                         else -> Unit
                     }
                 }
@@ -435,11 +452,7 @@ fun DoseBottomSheet(
                     )
                 }
 
-                Spacer(
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .height(16.dp)
-                )
+                Spacer(modifier = Modifier.navigationBarsPadding().height(16.dp))
             }
         }
     }

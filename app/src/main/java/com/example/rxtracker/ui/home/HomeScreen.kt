@@ -131,6 +131,7 @@ fun HomeScreen(
                 Text("Return to today")
             }
         }
+
         if (uiState.doses.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -155,15 +156,6 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                if (resolvedDoses.isNotEmpty()) {
-                    item {
-                        ResolvedDosesAccordion(
-                            doses = resolvedDoses,
-                            selectedDate = uiState.selectedDate,
-                            onTap = { viewModel.selectDose(it) }
-                        )
-                    }
-                }
                 activeDoses.forEach { (time, dosesAtTime) ->
                     item {
                         Text(
@@ -178,6 +170,16 @@ fun HomeScreen(
                             dose = dose,
                             selectedDate = uiState.selectedDate,
                             onTap = { viewModel.selectDose(dose) }
+                        )
+                    }
+                }
+                if (resolvedDoses.isNotEmpty()) {
+                    item {
+                        ResolvedDosesAccordion(
+                            doses = resolvedDoses,
+                            selectedDate = uiState.selectedDate,
+                            onTap = { viewModel.selectDose(it) },
+                            modifier = Modifier.padding(top = 8.dp)
                         )
                     }
                 }

@@ -107,6 +107,10 @@ dependencies {
     implementation(libs.core)
 
     implementation(libs.materialKolor)
+
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 }
 
 ksp {

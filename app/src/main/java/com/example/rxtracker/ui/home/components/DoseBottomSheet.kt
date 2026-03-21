@@ -334,7 +334,7 @@ fun DoseBottomSheet(
                             )
                             SheetActionRow(
                                 icon = Lucide.Pencil,
-                                label = "Input time",
+                                label = "Set time",
                                 onClick = { showTakeAtTimeDialog = true }
                             )
                         }
@@ -446,9 +446,11 @@ fun DoseBottomSheet(
                     )
                 }
 
-                Spacer(modifier = Modifier
-                    .navigationBarsPadding()
-                    .height(16.dp))
+                Spacer(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .height(16.dp)
+                )
             }
         }
     }

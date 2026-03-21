@@ -29,7 +29,10 @@ class ScheduledDoseRepository @Inject constructor(
 
     suspend fun updateDoseNotes(id: Long, doseNotes: String?) =
         scheduledDoseDao.updateDoseNotes(id, doseNotes)
-    
+
+    suspend fun markPastPendingAsNotLogged(date: LocalDate) =
+        scheduledDoseDao.markPastPendingAsNotLogged(date)
+
     suspend fun deleteFutureDoses(medicationId: Long, fromDate: LocalDate) =
         scheduledDoseDao.deleteFutureDoses(medicationId, fromDate)
 

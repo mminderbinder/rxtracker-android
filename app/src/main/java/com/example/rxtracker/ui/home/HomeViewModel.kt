@@ -63,12 +63,26 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(selectedDose = dose) }
     }
 
+    fun selectBatchDoses(doses: List<ScheduledDoseWithMedication>) {
+        _uiState.update { it.copy(selectedBatchDoses = doses) }
+    }
+
     fun markTaken(dose: ScheduledDoseWithMedication) {
         viewModelScope.launch {
             scheduledDoseRepository.updateStatus(
                 id = dose.id,
                 status = DoseStatus.TAKEN,
                 takenAt = LocalDateTime.now()
+            )
+        }
+    }
+
+    fun takeAtTime(dose: ScheduledDoseWithMedication, takenAt: LocalDateTime) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatus(
+                id = dose.id,
+                status = DoseStatus.TAKEN,
+                takenAt = takenAt
             )
         }
     }
@@ -105,31 +119,52 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun takeAtTime(dose: ScheduledDoseWithMedication, takenAt: LocalDateTime) {
-        viewModelScope.launch {
-            scheduledDoseRepository.updateStatus(
-                id = dose.id,
-                status = DoseStatus.TAKEN,
-                takenAt = takenAt
-            )
-        }
-    }
-
     fun rescheduleDose(dose: ScheduledDoseWithMedication, newTime: LocalTime) {
         viewModelScope.launch {
             scheduledDoseRepository.updateScheduledTime(dose.id, newTime)
         }
     }
 
-    fun updateQuantity(dose: ScheduledDoseWithMedication, quantity: Double) {
+    fun updateDoseQuantity(dose: ScheduledDoseWithMedication, quantity: Double) {
         viewModelScope.launch {
             scheduledDoseRepository.updateQuantity(dose.id, quantity)
         }
     }
 
-    fun updateDoseNotes(dose: ScheduledDoseWithMedication, doseNotes: String?) {
+    fun updateDoseNotes(dose: ScheduledDoseWithMedication, notes: String?) {
         viewModelScope.launch {
-            scheduledDoseRepository.updateDoseNotes(dose.id, doseNotes)
+            scheduledDoseRepository.updateDoseNotes(dose.id, notes)
+        }
+    }
+
+    fun markBatchTaken(doses: List<ScheduledDoseWithMedication>) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatusBatch(
+                ids = doses.map { it.id },
+                status = DoseStatus.TAKEN,
+                takenAt = LocalDateTime.now()
+            )
+        }
+    }
+
+    fun skipBatch(doses: List<ScheduledDoseWithMedication>) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatusBatch(
+                ids = doses.map { it.id },
+                status = DoseStatus.SKIPPED,
+                takenAt = null
+            )
+        }
+    }
+
+    fun undoBatch(doses: List<ScheduledDoseWithMedication>) {
+        val isToday = _uiState.value.selectedDate == LocalDate.now()
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatusBatch(
+                ids = doses.map { it.id },
+                status = if (isToday) DoseStatus.PENDING else DoseStatus.NOT_LOGGED,
+                takenAt = null
+            )
         }
     }
 

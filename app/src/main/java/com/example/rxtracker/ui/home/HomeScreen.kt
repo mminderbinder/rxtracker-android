@@ -31,9 +31,11 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.R
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
+import com.example.rxtracker.ui.home.components.BatchDoseBottomSheet
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.home.components.DoseBottomSheet
 import com.example.rxtracker.ui.home.components.DoseCard
+import com.example.rxtracker.ui.home.components.DoseTimeHeader
 import com.example.rxtracker.ui.home.components.ResolvedDosesAccordion
 import com.example.rxtracker.utils.getWeekPageTitle
 import com.example.rxtracker.utils.rememberFirstVisibleWeekAfterScroll
@@ -42,9 +44,6 @@ import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-
-private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
 
 @Composable
 fun HomeScreen(
@@ -158,11 +157,10 @@ fun HomeScreen(
             ) {
                 activeDoses.forEach { (time, dosesAtTime) ->
                     item {
-                        Text(
-                            text = time.format(timeFormatter),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+                        DoseTimeHeader(
+                            time = time,
+                            doses = dosesAtTime,
+                            onSelectAll = { viewModel.selectBatchDoses(dosesAtTime) }
                         )
                     }
                     items(dosesAtTime) { dose ->
@@ -173,13 +171,13 @@ fun HomeScreen(
                         )
                     }
                 }
+
                 if (resolvedDoses.isNotEmpty()) {
                     item {
                         ResolvedDosesAccordion(
                             doses = resolvedDoses,
                             selectedDate = uiState.selectedDate,
-                            onTap = { viewModel.selectDose(it) },
-                            modifier = Modifier.padding(top = 8.dp)
+                            onTap = { viewModel.selectDose(it) }
                         )
                     }
                 }
@@ -201,8 +199,19 @@ fun HomeScreen(
             onSkip = { viewModel.skipDose(dose) },
             onUnskip = { viewModel.unskipDose(dose) },
             onPostpone = { newTime -> viewModel.rescheduleDose(dose, newTime.toLocalTime()) },
-            onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },
+            onQuantityChange = { qty -> viewModel.updateDoseQuantity(dose, qty) },
             onNotesChange = { notes -> viewModel.updateDoseNotes(dose, notes) }
+        )
+    }
+
+    if (uiState.selectedBatchDoses.isNotEmpty()) {
+        BatchDoseBottomSheet(
+            doses = uiState.selectedBatchDoses,
+            selectedDate = uiState.selectedDate,
+            onDismiss = { viewModel.selectBatchDoses(emptyList()) },
+            onTakeAll = { viewModel.markBatchTaken(uiState.selectedBatchDoses) },
+            onSkipAll = { viewModel.skipBatch(uiState.selectedBatchDoses) },
+            onUndoAll = { viewModel.undoBatch(uiState.selectedBatchDoses) }
         )
     }
 }

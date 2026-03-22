@@ -50,6 +50,15 @@ interface ScheduledDoseDao {
     suspend fun markPastPendingAsNotLogged(today: LocalDate)
 
     @Query(
+        "" +
+                "UPDATE scheduled_doses " +
+                "SET status = :status, takenAt = :takenAt " +
+                "WHERE id " +
+                "IN (:ids)"
+    )
+    suspend fun updateStatusBatch(ids: List<Long>, status: DoseStatus, takenAt: LocalDateTime?)
+
+    @Query(
         "UPDATE scheduled_doses " +
                 "SET quantity = :quantity " +
                 "WHERE id = :id"

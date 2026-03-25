@@ -1,6 +1,5 @@
 package com.example.rxtracker.ui.addmedication.screens
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,10 +17,6 @@ fun AddMedicationScreen(
     addViewModel: AddMedicationsViewModel,
     onContinue: () -> Unit,
 ) {
-    BackHandler {
-
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

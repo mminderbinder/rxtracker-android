@@ -22,13 +22,19 @@ class ScheduledDoseRepository @Inject constructor(
         scheduledDoseDao.updateStatus(id, status, takenAt)
 
     suspend fun updateScheduledTime(id: Long, newTime: LocalTime) =
-        scheduledDoseDao.updateScheduledTime(id, newTime)
+        scheduledDoseDao.updateScheduledTime(id, newTime, DoseStatus.PENDING)
 
     suspend fun updateQuantity(id: Long, quantity: Double) =
         scheduledDoseDao.updateQuantity(id, quantity)
 
     suspend fun updateDoseNotes(id: Long, doseNotes: String?) =
         scheduledDoseDao.updateDoseNotes(id, doseNotes)
+
+    suspend fun updateStatusBatch(ids: List<Long>, status: DoseStatus, takenAt: LocalDateTime?) =
+        scheduledDoseDao.updateStatusBatch(ids, status, takenAt)
+
+    suspend fun updateScheduledTimeBatch(ids: List<Long>, newTime: LocalTime) =
+        scheduledDoseDao.updateScheduledTimeBatch(ids, newTime)
 
     suspend fun markPastPendingAsNotLogged(date: LocalDate) =
         scheduledDoseDao.markPastPendingAsNotLogged(date)

@@ -63,6 +63,10 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(selectedDose = dose) }
     }
 
+    fun selectBatchDoses(doses: List<ScheduledDoseWithMedication>) {
+        _uiState.update { it.copy(selectedBatchDoses = doses) }
+    }
+
     fun markTaken(dose: ScheduledDoseWithMedication) {
         viewModelScope.launch {
             scheduledDoseRepository.updateStatus(

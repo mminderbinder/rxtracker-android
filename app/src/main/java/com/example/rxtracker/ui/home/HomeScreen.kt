@@ -32,9 +32,9 @@ import com.example.rxtracker.R
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.home.components.CalendarDay
-import com.example.rxtracker.ui.home.components.DoseBottomSheet
 import com.example.rxtracker.ui.home.components.DoseCard
 import com.example.rxtracker.ui.home.components.ResolvedDosesAccordion
+import com.example.rxtracker.ui.home.components.SingleDoseBottomSheet
 import com.example.rxtracker.utils.getWeekPageTitle
 import com.example.rxtracker.utils.rememberFirstVisibleWeekAfterScroll
 import com.kizitonwose.calendar.compose.WeekCalendar
@@ -186,9 +186,8 @@ fun HomeScreen(
             }
         }
     }
-
     uiState.selectedDose?.let { dose ->
-        DoseBottomSheet(
+        SingleDoseBottomSheet(
             dose = dose,
             selectedDate = uiState.selectedDate,
             onDismiss = { viewModel.selectDose(null) },
@@ -197,10 +196,10 @@ fun HomeScreen(
             },
             onTakeNow = { viewModel.markTaken(dose) },
             onTakeAtTime = { takenAt -> viewModel.takeAtTime(dose, takenAt) },
-            onUntake = { viewModel.unmarkAsTaken(dose) },
+            onUndoTake = { viewModel.unmarkAsTaken(dose) },
             onSkip = { viewModel.skipDose(dose) },
             onUnskip = { viewModel.unskipDose(dose) },
-            onPostpone = { newTime -> viewModel.rescheduleDose(dose, newTime.toLocalTime()) },
+            onReschedule = { newTime -> viewModel.rescheduleDose(dose, newTime.toLocalTime()) },
             onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },
             onNotesChange = { notes -> viewModel.updateDoseNotes(dose, notes) }
         )

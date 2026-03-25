@@ -29,14 +29,12 @@ import com.example.rxtracker.ui.addmedication.components.dialogs.DateSelectionDi
 import com.example.rxtracker.ui.shared.QuantityDialog
 import com.example.rxtracker.ui.shared.TimeSelectionDialog
 import com.example.rxtracker.utils.formatQuantity
+import com.example.rxtracker.utils.getFormattedDate
+import com.example.rxtracker.utils.getFormattedTime
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-private val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
-private val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,16 +71,14 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Start Date",
-            value = if (dose.startDate == LocalDate.now()) "Today" else dose.startDate.format(
-                dateFormatter
-            ),
+            value = if (dose.startDate == LocalDate.now()) "Today" else getFormattedDate(dose.startDate),
             onClick = { showDatePicker = true }
         )
 
         HorizontalDivider()
         DetailRow(
             label = "Earliest dose time",
-            value = dose.startTime.format(timeFormatter),
+            value = getFormattedTime(dose.startTime),
             onClick = { showTimePicker = true }
         )
 

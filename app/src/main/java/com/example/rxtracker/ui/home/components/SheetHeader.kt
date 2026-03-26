@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,6 +24,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Pencil
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.utils.formatQuantity
@@ -34,40 +37,64 @@ import com.example.rxtracker.utils.resolveFormIcon
 fun SingleDoseSheetHeader(
     dose: ScheduledDoseWithMedication,
     onQuantityTap: () -> Unit,
+    onEditTap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isTaken = dose.status == DoseStatus.TAKEN
+
+    val (chipColor, chipTextColor, chipLabel) = when (dose.status) {
+        DoseStatus.TAKEN -> Triple(
+            MaterialTheme.colorScheme.primaryContainer,
+            MaterialTheme.colorScheme.onPrimaryContainer,
+            "Taken"
+        )
+        DoseStatus.SKIPPED -> Triple(
+            MaterialTheme.colorScheme.surfaceVariant,
+            MaterialTheme.colorScheme.onSurfaceVariant,
+            "Skipped"
+        )
+        DoseStatus.LATE -> Triple(
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer,
+            "Late"
+        )
+        DoseStatus.NOT_LOGGED -> Triple(
+            MaterialTheme.colorScheme.surfaceVariant,
+            MaterialTheme.colorScheme.onSurfaceVariant,
+            "Not Logged"
+        )
+        DoseStatus.PENDING -> Triple(Color.Unspecified, Color.Unspecified, "")
+    }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primaryContainer,
-            modifier = Modifier.size(48.dp)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    painter = painterResource(id = resolveFormIcon(dose.form)),
-                    contentDescription = dose.form,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = dose.name,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
+            if (chipLabel.isNotEmpty()) {
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = chipColor
+                ) {
+                    Text(
+                        text = chipLabel,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = chipTextColor,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                    )
+                }
+            }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -75,7 +102,7 @@ fun SingleDoseSheetHeader(
                 if (dose.strength.isNotBlank()) {
                     Text(
                         text = "${dose.strength} ·",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -85,7 +112,7 @@ fun SingleDoseSheetHeader(
                 ) {
                     Text(
                         text = formatQuantity(dose.quantity, dose.form),
-                        style = MaterialTheme.typography.bodySmall.copy(
+                        style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Medium,
                             textDecoration = TextDecoration.Underline
                         )
@@ -107,44 +134,20 @@ fun SingleDoseSheetHeader(
                 )
             }
         }
-        val (chipColor, chipTextColor, chipLabel) = when (dose.status) {
-            DoseStatus.TAKEN -> Triple(
-                MaterialTheme.colorScheme.primaryContainer,
-                MaterialTheme.colorScheme.onPrimaryContainer,
-                "Taken"
-            )
-
-            DoseStatus.SKIPPED -> Triple(
-                MaterialTheme.colorScheme.surfaceVariant,
-                MaterialTheme.colorScheme.onSurfaceVariant,
-                "Skipped"
-            )
-
-            DoseStatus.LATE -> Triple(
-                MaterialTheme.colorScheme.errorContainer,
-                MaterialTheme.colorScheme.onErrorContainer,
-                "Late"
-            )
-
-            DoseStatus.NOT_LOGGED -> Triple(
-                MaterialTheme.colorScheme.surfaceVariant,
-                MaterialTheme.colorScheme.onSurfaceVariant,
-                "Not Logged"
-            )
-
-            DoseStatus.PENDING -> Triple(Color.Unspecified, Color.Unspecified, "")
-        }
-        if (chipLabel.isNotEmpty()) {
-            Surface(
-                shape = RoundedCornerShape(50),
-                color = chipColor
-            ) {
-                Text(
-                    text = chipLabel,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = chipTextColor,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                )
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            modifier = Modifier.size(40.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                IconButton(onClick = onEditTap) {
+                    Icon(
+                        imageVector = Lucide.Pencil,
+                        contentDescription = "Edit notes",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
             }
         }
     }

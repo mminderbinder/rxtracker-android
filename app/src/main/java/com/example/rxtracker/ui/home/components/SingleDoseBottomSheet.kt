@@ -1,23 +1,22 @@
 package com.example.rxtracker.ui.home.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,6 +25,7 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
+import com.composables.icons.lucide.RotateCcw
 import com.composables.icons.lucide.X
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
@@ -76,123 +76,91 @@ fun SingleDoseBottomSheet(
 
         SingleDoseSheetHeader(
             dose = dose,
-            onQuantityTap = { showQuantityDialog = true }
+            onQuantityTap = { showQuantityDialog = true },
+            onEditTap = { showNotesDialog = true }
         )
 
-        SheetActionRow(
-            icon = Lucide.Pencil,
-            label = if (notes.isNullOrBlank()) "Add notes" else "Edit notes",
-            onClick = { showNotesDialog = true },
-            modifier = Modifier.padding(top = 4.dp)
-        )
         if (!notes.isNullOrBlank()) {
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = notes!!,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                )
-            }
+            Text(
+                text = notes!!,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+            )
         }
 
         if (isFutureDate) return@BaseBottomSheet
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         if (isToday) {
             when {
                 isTaken -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        RowOption(
-                            icon = Lucide.X,
-                            label = "Undo Take",
-                            onClick = {
-                                onUndoTake()
-                                state.targetDetent = SheetDetent.Hidden
-                            }
-                        )
-                        RowOption(
-                            icon = Lucide.Pencil,
-                            label = "Set time",
-                            onClick = { showTakeAtTimeDialog = true }
-                        )
-                    }
+                    SheetActionRow(
+                        icon = Lucide.RotateCcw,
+                        label = "Undo Take",
+                        onClick = {
+                            onUndoTake()
+                            state.targetDetent = SheetDetent.Hidden
+                        }
+                    )
+                    SheetActionRow(
+                        icon = Lucide.Pencil,
+                        label = "Add time taken",
+                        onClick = { showTakeAtTimeDialog = true }
+                    )
                 }
 
                 isSkipped -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        RowOption(
-                            icon = Lucide.Check,
-                            label = "Take on time",
-                            sublabel = getFormattedTime(dose.scheduledTime),
-                            onClick = {
-                                onTakeOnTime()
-                                state.targetDetent = SheetDetent.Hidden
-                            }
-                        )
-                        RowOption(
-                            icon = Lucide.Clock,
-                            label = "Take now",
-                            onClick = {
-                                onTakeNow()
-                                state.targetDetent = SheetDetent.Hidden
-                            }
-                        )
-                        RowOption(
-                            icon = Lucide.Pencil,
-                            label = "Set time",
-                            onClick = { showTakeAtTimeDialog = true }
-                        )
-                    }
+                    SheetActionRow(
+                        icon = Lucide.Check,
+                        label = "Take on time",
+                        sublabel = getFormattedTime(dose.scheduledTime),
+                        onClick = {
+                            onTakeOnTime()
+                            state.targetDetent = SheetDetent.Hidden
+                        }
+                    )
+                    SheetActionRow(
+                        icon = Lucide.Clock,
+                        label = "Take now",
+                        onClick = {
+                            onTakeNow()
+                            state.targetDetent = SheetDetent.Hidden
+                        }
+                    )
+                    SheetActionRow(
+                        icon = Lucide.Pencil,
+                        label = "Add time",
+                        onClick = { showTakeAtTimeDialog = true }
+                    )
                 }
 
                 else -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        RowOption(
-                            icon = Lucide.Check,
-                            label = "Take on time",
-                            sublabel = getFormattedTime(dose.scheduledTime),
-                            onClick = {
-                                onTakeOnTime()
-                                state.targetDetent = SheetDetent.Hidden
-                            }
-                        )
-                        RowOption(
-                            icon = Lucide.Clock,
-                            label = "Take now",
-                            onClick = {
-                                onTakeNow()
-                                state.targetDetent = SheetDetent.Hidden
-                            }
-                        )
-                        RowOption(
-                            icon = Lucide.Pencil,
-                            label = "Set time",
-                            onClick = { showTakeAtTimeDialog = true }
-                        )
-                    }
+                    SheetActionRow(
+                        icon = Lucide.Check,
+                        label = "Take on time",
+                        sublabel = getFormattedTime(dose.scheduledTime),
+                        onClick = {
+                            onTakeOnTime()
+                            state.targetDetent = SheetDetent.Hidden
+                        }
+                    )
+                    SheetActionRow(
+                        icon = Lucide.Clock,
+                        label = "Take now",
+                        onClick = {
+                            onTakeNow()
+                            state.targetDetent = SheetDetent.Hidden
+                        }
+                    )
+                    SheetActionRow(
+                        icon = Lucide.Pencil,
+                        label = "Add time",
+                        onClick = { showTakeAtTimeDialog = true }
+                    )
                 }
             }
         }
@@ -200,137 +168,83 @@ fun SingleDoseBottomSheet(
         if (isPastDate) {
             when {
                 isTaken -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        RowOption(
-                            icon = Lucide.X,
-                            label = "Undo Take",
-                            onClick = {
-                                onUndoTake()
-                                state.targetDetent = SheetDetent.Hidden
-                            }
-                        )
-                        RowOption(
-                            icon = Lucide.Pencil,
-                            label = "Set time",
-                            onClick = { showTakeAtTimeDialog = true }
-                        )
-                        RowOption(
-                            icon = Lucide.X,
-                            label = "Skip",
-                            onClick = {
-                                onSkip()
-                                state.targetDetent = SheetDetent.Hidden
-                            }
-                        )
-                    }
+                    SheetActionRow(
+                        icon = Lucide.RotateCcw,
+                        label = "Undo Take",
+                        onClick = {
+                            onUndoTake()
+                            state.targetDetent = SheetDetent.Hidden
+                        }
+                    )
+                    SheetActionRow(
+                        icon = Lucide.Pencil,
+                        label = "Add time",
+                        onClick = { showTakeAtTimeDialog = true }
+                    )
+                    SheetActionRow(
+                        icon = Lucide.X,
+                        label = "Skip",
+                        onClick = {
+                            onSkip()
+                            state.targetDetent = SheetDetent.Hidden
+                        }
+                    )
                 }
 
                 isSkipped -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        RowOption(
-                            icon = Lucide.Pencil,
-                            label = "Set time",
-                            onClick = { showTakeAtTimeDialog = true }
-                        )
-                        RowOption(
-                            icon = Lucide.X,
-                            label = "Unskip",
-                            onClick = {
-                                onUnskip()
-                                state.targetDetent = SheetDetent.Hidden
-                            }
-                        )
-                    }
+                    SheetActionRow(
+                        icon = Lucide.Pencil,
+                        label = "Add time",
+                        onClick = { showTakeAtTimeDialog = true }
+                    )
+                    SheetActionRow(
+                        icon = Lucide.RotateCcw,
+                        label = "Unskip",
+                        onClick = {
+                            onUnskip()
+                            state.targetDetent = SheetDetent.Hidden
+                        }
+                    )
                 }
 
                 isNotLogged -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        RowOption(
-                            icon = Lucide.X,
-                            label = "Skip",
-                            onClick = {
-                                onSkip()
-                                state.targetDetent = SheetDetent.Hidden
-                            }
-                        )
-                        RowOption(
-                            icon = Lucide.Pencil,
-                            label = "Set time",
-                            onClick = { showTakeAtTimeDialog = true }
-                        )
-                    }
+                    SheetActionRow(
+                        icon = Lucide.Pencil,
+                        label = "Set time",
+                        onClick = { showTakeAtTimeDialog = true }
+                    )
+                    SheetActionRow(
+                        icon = Lucide.X,
+                        label = "Skip",
+                        onClick = {
+                            onSkip()
+                            state.targetDetent = SheetDetent.Hidden
+                        }
+                    )
                 }
             }
         }
 
         if (isToday) {
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                when {
-                    isTaken -> {
-                        OutlinedButton(
-                            onClick = { onSkip() },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Skip")
-                        }
-                        OutlinedButton(
-                            onClick = { showRescheduleDialog = true },
-                            modifier = Modifier.weight(1f)
-                        ) { Text("Reschedule") }
+                TextButton(
+                    onClick = {
+                        if (isSkipped) onUnskip() else onSkip()
+                        state.targetDetent = SheetDetent.Hidden
                     }
-
-                    isSkipped -> {
-                        OutlinedButton(
-                            onClick = {
-                                onUnskip()
-                                state.targetDetent = SheetDetent.Hidden
-                            },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
-                            ),
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
-                        ) { Text("Unskip") }
-                        OutlinedButton(
-                            onClick = { showRescheduleDialog = true },
-                            modifier = Modifier.weight(1f)
-                        ) { Text("Reschedule") }
-                    }
-
-                    else -> {
-                        OutlinedButton(
-                            onClick = {
-                                onSkip()
-                                state.targetDetent = SheetDetent.Hidden
-                            },
-                            modifier = Modifier.weight(1f)
-                        ) { Text("Skip") }
-                        OutlinedButton(
-                            onClick = { showRescheduleDialog = true },
-                            modifier = Modifier.weight(1f)
-                        ) { Text("Reschedule") }
-                    }
+                ) {
+                    Text(if (isSkipped) "Unskip" else "Skip")
+                }
+                TextButton(onClick = { showRescheduleDialog = true }) {
+                    Text("Reschedule")
                 }
             }
         }

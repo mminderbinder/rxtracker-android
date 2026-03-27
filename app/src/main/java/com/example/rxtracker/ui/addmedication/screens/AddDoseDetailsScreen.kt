@@ -25,16 +25,17 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.R
 import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
 import com.example.rxtracker.ui.addmedication.components.DetailRow
-import com.example.rxtracker.ui.addmedication.components.dialogs.DateSelectionDialog
+import com.example.rxtracker.ui.shared.DateWheelPicker
 import com.example.rxtracker.ui.shared.QuantityDialog
-import com.example.rxtracker.ui.shared.TimeSelectionDialog
+import com.example.rxtracker.ui.shared.TimeWheelPicker
 import com.example.rxtracker.utils.formatQuantity
 import com.example.rxtracker.utils.getFormattedDate
 import com.example.rxtracker.utils.getFormattedTime
-import java.time.Instant
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalTime
+import kotlinx.datetime.toKotlinLocalDate
+import kotlinx.datetime.toKotlinLocalTime
 import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,27 +111,23 @@ fun AddDoseDetailsScreen(
     }
 
     if (showTimePicker) {
-        TimeSelectionDialog(
-            startTime = dose.startTime,
-            onConfirm = { hour, minute ->
-                viewModel.updateDoseDetails(time = LocalTime.of(hour, minute))
+        TimeWheelPicker(
+            startTime = dose.startTime.toKotlinLocalTime(),
+            onConfirm = { time ->
+                viewModel.updateDoseDetails(time = time.toJavaLocalTime())
                 showTimePicker = false
             },
-            onDismiss = { showTimePicker = false },
+            onDismiss = { showTimePicker = false }
         )
     }
     if (showDatePicker) {
-        DateSelectionDialog(
-            startDate = dose.startDate,
-            onConfirm = { millis ->
-                viewModel.updateStartDate(
-                    Instant.ofEpochMilli(millis)
-                        .atZone(ZoneId.of("UTC"))
-                        .toLocalDate()
-                )
+        DateWheelPicker(
+            startDate = dose.startDate.toKotlinLocalDate(),
+            onConfirm = { date ->
+                viewModel.updateStartDate(date.toJavaLocalDate())
                 showDatePicker = false
             },
-            onDismiss = { showDatePicker = false },
+            onDismiss = { showDatePicker = false }
         )
     }
     if (showQuantityDialog) {

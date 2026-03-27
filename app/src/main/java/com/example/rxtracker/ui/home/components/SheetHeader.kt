@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -30,7 +29,6 @@ import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.utils.formatQuantity
 import com.example.rxtracker.utils.getFormattedTime
-import com.example.rxtracker.utils.resolveFormIcon
 
 
 @Composable
@@ -48,21 +46,31 @@ fun SingleDoseSheetHeader(
             MaterialTheme.colorScheme.onPrimaryContainer,
             "Taken"
         )
+
         DoseStatus.SKIPPED -> Triple(
             MaterialTheme.colorScheme.surfaceVariant,
             MaterialTheme.colorScheme.onSurfaceVariant,
             "Skipped"
         )
+
         DoseStatus.LATE -> Triple(
             MaterialTheme.colorScheme.errorContainer,
             MaterialTheme.colorScheme.onErrorContainer,
             "Late"
         )
+
         DoseStatus.NOT_LOGGED -> Triple(
             MaterialTheme.colorScheme.surfaceVariant,
             MaterialTheme.colorScheme.onSurfaceVariant,
             "Not Logged"
         )
+
+        DoseStatus.RESCHEDULED -> Triple(
+            MaterialTheme.colorScheme.surfaceVariant,
+            MaterialTheme.colorScheme.onSurfaceVariant,
+            "Rescheduled"
+        )
+
         DoseStatus.PENDING -> Triple(Color.Unspecified, Color.Unspecified, "")
     }
 
@@ -124,9 +132,9 @@ fun SingleDoseSheetHeader(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            if (isTaken && dose.takenAt != null) {
+            if (isTaken && dose.resolvedAt != null) {
                 Text(
-                    text = "Taken at ${getFormattedTime(dose.takenAt.toLocalTime())}",
+                    text = "Taken at ${getFormattedTime(dose.resolvedAt.toLocalTime())}",
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.Medium
                     ),

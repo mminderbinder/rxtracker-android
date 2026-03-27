@@ -36,10 +36,10 @@ interface ScheduledDoseDao {
 
     @Query(
         "UPDATE scheduled_doses " +
-                "SET status = :status, takenAt = :takenAt " +
+                "SET status = :status, resolvedAt = :resolvedAt " +
                 "WHERE id = :id"
     )
-    suspend fun updateStatus(id: Long, status: DoseStatus, takenAt: LocalDateTime?)
+    suspend fun updateStatus(id: Long, status: DoseStatus, resolvedAt: LocalDateTime?)
 
     @Query(
         "UPDATE scheduled_doses " +
@@ -63,6 +63,7 @@ interface ScheduledDoseDao {
     )
     suspend fun updateScheduledTime(id: Long, newTime: LocalTime, status: DoseStatus)
 
+
     @Query(
         "UPDATE scheduled_doses " +
                 "SET doseNotes = :notes " +
@@ -80,7 +81,7 @@ interface ScheduledDoseDao {
 
     @Query(
         "UPDATE scheduled_doses " +
-                "SET status = :status, takenAt = :takenAt " +
+                "SET status = :status, resolvedAt = :takenAt " +
                 "WHERE id " +
                 "IN (:ids)"
     )

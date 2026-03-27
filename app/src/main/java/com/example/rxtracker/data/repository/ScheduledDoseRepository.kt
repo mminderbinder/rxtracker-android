@@ -23,7 +23,7 @@ class ScheduledDoseRepository @Inject constructor(
 
     suspend fun updateScheduledTime(id: Long, newTime: LocalTime) =
         scheduledDoseDao.updateScheduledTime(id, newTime, DoseStatus.PENDING)
-
+    
     suspend fun updateQuantity(id: Long, quantity: Double) =
         scheduledDoseDao.updateQuantity(id, quantity)
 

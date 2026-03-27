@@ -6,10 +6,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,14 +30,20 @@ import com.composables.icons.lucide.RotateCcw
 import com.composables.icons.lucide.X
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
+import com.example.rxtracker.ui.shared.DateTimeWheelPicker
 import com.example.rxtracker.ui.shared.NotesDialog
 import com.example.rxtracker.ui.shared.QuantityDialog
-import com.example.rxtracker.ui.shared.TimeSelectionDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.getFormattedTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
+import kotlin.time.Clock
+import kotlinx.datetime.LocalDateTime as LocalDateTimeKotlinx
 
 @Composable
 fun SingleDoseBottomSheet(
@@ -232,18 +239,25 @@ fun SingleDoseBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(
+                OutlinedButton(
                     onClick = {
                         if (isSkipped) onUnskip() else onSkip()
                         state.targetDetent = SheetDetent.Hidden
-                    }
+                    },
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text(if (isSkipped) "Unskip" else "Skip")
                 }
-                TextButton(onClick = { showRescheduleDialog = true }) {
+                Spacer(modifier = Modifier.width(4.dp))
+                OutlinedButton(
+                    onClick = {
+                        showRescheduleDialog = true
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
                     Text("Reschedule")
                 }
             }
@@ -251,26 +265,21 @@ fun SingleDoseBottomSheet(
     }
 
     if (showTakeAtTimeDialog) {
-        TimeSelectionDialog(
-            startTime = dose.scheduledTime,
-            title = if (isPastDate) "Select time taken" else "Input time taken",
-            onDismiss = { showTakeAtTimeDialog = false },
-            onConfirm = { hour, minute ->
-                val takenAt = LocalDateTime.of(selectedDate, LocalTime.of(hour, minute))
-                onTakeAtTime(takenAt)
-                showTakeAtTimeDialog = false
-            }
-        )
+
     }
 
     if (showRescheduleDialog) {
-        TimeSelectionDialog(
-            startTime = dose.scheduledTime,
+        val scheduledDateTime =
+            LocalDateTime.of(selectedDate, dose.scheduledTime).toKotlinLocalDateTime()
+        val min = LocalDateTimeKotlinx(scheduledDateTime.date, LocalTime(0, 0))
+
+        DateTimeWheelPicker(
+            startDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+            minDateTime = min,
             title = "Reschedule to",
             onDismiss = { showRescheduleDialog = false },
-            onConfirm = { hour, minute ->
-                val newTime = LocalDateTime.of(selectedDate, LocalTime.of(hour, minute))
-                onReschedule(newTime)
+            onConfirm = { date ->
+                onReschedule(date.toJavaLocalDateTime())
                 showRescheduleDialog = false
             }
         )
@@ -316,11 +325,12 @@ fun SingleDoseBottomSheetPreview() {
                 scheduledTime = LocalDate.now().atTime(12, 0).toLocalTime(),
                 quantity = 2.0,
                 status = DoseStatus.PENDING,
-                takenAt = null,
+                resolvedAt = null,
                 name = "Paracetamol",
                 strength = "500mg",
                 form = "Tablet",
-                doseNotes = null
+                doseNotes = null,
+                rescheduledDate = null,
             ),
             selectedDate = LocalDate.now(),
             onDismiss = {},

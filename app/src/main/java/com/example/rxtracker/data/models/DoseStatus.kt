@@ -5,5 +5,6 @@ enum class DoseStatus {
     TAKEN,
     SKIPPED,
     LATE,
-    NOT_LOGGED
+    NOT_LOGGED,
+    RESCHEDULED
 }

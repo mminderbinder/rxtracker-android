@@ -9,6 +9,11 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import java.time.LocalTime
 
+@Deprecated(
+    "Currently marked for deprecation. Use TimeWheelPicker, DateTimeWheelPicker instead",
+    level = DeprecationLevel.WARNING
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeSelectionDialog(

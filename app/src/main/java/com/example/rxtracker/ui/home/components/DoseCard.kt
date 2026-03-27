@@ -76,7 +76,7 @@ fun DoseCard(
     }
 
     val statusText = when (dose.status) {
-        DoseStatus.TAKEN -> dose.takenAt?.let {
+        DoseStatus.TAKEN -> dose.resolvedAt?.let {
             "Taken at ${
                 it.toLocalTime().format(timeFormatter)
             }"
@@ -86,6 +86,7 @@ fun DoseCard(
         DoseStatus.LATE -> "Late"
         DoseStatus.NOT_LOGGED -> "Not logged"
         DoseStatus.PENDING -> if (isFutureDate) "Upcoming" else "Pending"
+        DoseStatus.RESCHEDULED -> "Rescheduled"
     }
 
     OutlinedCard(
@@ -166,11 +167,13 @@ fun DoseCardPreview() {
                 scheduledTime = LocalDate.now().atTime(12, 0).toLocalTime(),
                 quantity = 1.0,
                 status = DoseStatus.PENDING,
-                takenAt = null,
+                resolvedAt = null,
                 name = "Ibuprofen",
                 strength = "200mg",
                 form = "Capsule",
-                doseNotes = "Take with food"
+                doseNotes = "Take with food",
+                rescheduledDate = null
+
             ),
             selectedDate = LocalDate.now(),
             onTap = {}

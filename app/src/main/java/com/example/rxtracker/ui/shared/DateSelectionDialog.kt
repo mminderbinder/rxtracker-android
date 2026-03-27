@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.addmedication.components.dialogs
+package com.example.rxtracker.ui.shared
 
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -8,6 +8,11 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import java.time.LocalDate
 import java.time.ZoneId
+
+@Deprecated(
+    "Currently marked for deprecation. Use DateWheelPicker, DateTimeWheelPicker instead",
+    level = DeprecationLevel.WARNING
+)
 
 @Composable
 fun DateSelectionDialog(

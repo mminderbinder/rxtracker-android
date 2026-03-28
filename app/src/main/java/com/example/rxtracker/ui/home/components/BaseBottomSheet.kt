@@ -32,15 +32,13 @@ import com.composables.core.ModalBottomSheetState
 import com.composables.core.Scrim
 import com.composables.core.Sheet
 import com.composables.core.SheetDetent
-import com.composables.core.rememberModalBottomSheetState
 
 @Composable
 fun BaseBottomSheet(
+    state: ModalBottomSheetState,
     onDismiss: () -> Unit,
     content: @Composable (state: ModalBottomSheetState) -> Unit
 ) {
-    val state = rememberModalBottomSheetState(initialDetent = SheetDetent.FullyExpanded)
-
     LaunchedEffect(state.currentDetent) {
         if (state.currentDetent == SheetDetent.Hidden) onDismiss()
     }

@@ -44,12 +44,7 @@ class HomeViewModel @Inject constructor(
             dosesForDate.collect { doses ->
                 val resolved = resolveLateStatuses(doses, _uiState.value.selectedDate)
                 _uiState.update { state ->
-                    state.copy(
-                        doses = resolved,
-                        selectedDose = state.selectedDose?.let { selected ->
-                            resolved.find { it.id == selected.id }
-                        }
-                    )
+                    state.copy(doses = resolved)
                 }
             }
         }

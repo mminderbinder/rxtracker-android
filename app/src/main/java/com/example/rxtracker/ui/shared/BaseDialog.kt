@@ -50,6 +50,8 @@ fun BaseDialog(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(16.dp)
                 )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Spacer(modifier = Modifier.height(8.dp))
 
                 content()
 

@@ -33,8 +33,10 @@ import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.home.components.DoseCard
+import com.example.rxtracker.ui.home.components.ResolvedDoseBottomSheet
 import com.example.rxtracker.ui.home.components.ResolvedDosesAccordion
-import com.example.rxtracker.ui.home.components.SingleDoseBottomSheet
+import com.example.rxtracker.ui.home.components.UnresolvedDoseBottomSheet
+import com.example.rxtracker.utils.getFormattedTime
 import com.example.rxtracker.utils.getWeekPageTitle
 import com.example.rxtracker.utils.rememberFirstVisibleWeekAfterScroll
 import com.kizitonwose.calendar.compose.WeekCalendar
@@ -42,9 +44,6 @@ import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-
-private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
 
 @Composable
 fun HomeScreen(
@@ -79,7 +78,7 @@ fun HomeScreen(
 
     val resolvedDoses: List<ScheduledDoseWithMedication> = uiState.doses
         .filter { it.status in listOf(DoseStatus.TAKEN, DoseStatus.SKIPPED) }
-        .sortedBy { it.scheduledTime }
+        .sortedBy { it.resolvedAt }
 
     val showTodayButton = uiState.selectedDate != currentDate ||
             !visibleWeek.days.any { it.date == currentDate }
@@ -159,7 +158,7 @@ fun HomeScreen(
                 activeDoses.forEach { (time, dosesAtTime) ->
                     item {
                         Text(
-                            text = time.format(timeFormatter),
+                            text = getFormattedTime(time),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
@@ -186,22 +185,52 @@ fun HomeScreen(
             }
         }
     }
+
     uiState.selectedDose?.let { dose ->
-        SingleDoseBottomSheet(
-            dose = dose,
-            selectedDate = uiState.selectedDate,
-            onDismiss = { viewModel.selectDose(null) },
-            onTakeOnTime = {
-                viewModel.takeAtTime(dose, dose.scheduledTime.atDate(uiState.selectedDate))
-            },
-            onTakeNow = { viewModel.markTaken(dose) },
-            onTakeAtTime = { takenAt -> viewModel.takeAtTime(dose, takenAt) },
-            onUndoTake = { viewModel.unmarkAsTaken(dose) },
-            onSkip = { viewModel.skipDose(dose) },
-            onUnskip = { viewModel.unskipDose(dose) },
-            onReschedule = { newTime -> viewModel.rescheduleDose(dose, newTime.toLocalTime()) },
-            onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },
-            onNotesChange = { notes -> viewModel.updateDoseNotes(dose, notes) }
-        )
+        when {
+            dose.status in listOf(DoseStatus.TAKEN, DoseStatus.SKIPPED) -> {
+                ResolvedDoseBottomSheet(
+                    dose = dose,
+                    onDismiss = { viewModel.selectDose(null) },
+                    onTakeAtTime = { takenAt -> viewModel.takeAtTime(dose, takenAt) },
+                    onUndoTake = { viewModel.unmarkAsTaken(dose) },
+                    onSkip = { viewModel.skipDose(dose) },
+                    onUndoSkip = { viewModel.unskipDose(dose) },
+                    onReschedule = { newTime ->
+                        viewModel.rescheduleDose(
+                            dose,
+                            newTime.toLocalTime()
+                        )
+                    },
+                    onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },
+                    onNotesChange = { notes -> viewModel.updateDoseNotes(dose, notes) }
+                )
+            }
+
+            uiState.selectedDate.isAfter(LocalDate.now()) -> {
+                // TODO: FutureDoseDialog
+            }
+
+            else -> {
+                UnresolvedDoseBottomSheet(
+                    dose = dose,
+                    onDismiss = { viewModel.selectDose(null) },
+                    onTakeOnTime = {
+                        viewModel.takeAtTime(dose, dose.scheduledTime.atDate(uiState.selectedDate))
+                    },
+                    onTakeNow = { viewModel.markTaken(dose) },
+                    onTakeAtTime = { takenAt -> viewModel.takeAtTime(dose, takenAt) },
+                    onSkip = { viewModel.skipDose(dose) },
+                    onReschedule = { newTime ->
+                        viewModel.rescheduleDose(
+                            dose,
+                            newTime.toLocalTime()
+                        )
+                    },
+                    onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },
+                    onNotesChange = { notes -> viewModel.updateDoseNotes(dose, notes) }
+                )
+            }
+        }
     }
 }

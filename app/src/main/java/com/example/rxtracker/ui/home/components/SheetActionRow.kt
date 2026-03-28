@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,17 +31,27 @@ fun SheetActionRow(
     label: String,
     sublabel: String? = null,
     enabled: Boolean = true,
+    contentColor: Color? = null,
     onClick: () -> Unit
 ) {
-    val iconTint = if (enabled)
-        MaterialTheme.colorScheme.onSurfaceVariant
-    else
-        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+    val iconTint = when {
+        !enabled -> (contentColor ?: MaterialTheme.colorScheme.onSurfaceVariant).copy(alpha = 0.38f)
+        contentColor != null -> contentColor
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
 
-    val textColor = if (enabled)
-        MaterialTheme.colorScheme.onSurface
-    else
-        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    val textColor = when {
+        !enabled -> (contentColor ?: MaterialTheme.colorScheme.onSurface).copy(alpha = 0.38f)
+        contentColor != null -> contentColor
+        else -> MaterialTheme.colorScheme.onSurface
+    }
+
+    val containerColor = when {
+        !enabled && contentColor != null -> contentColor.copy(alpha = 0.06f)
+        !enabled -> MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.38f)
+        contentColor != null -> contentColor.copy(alpha = 0.12f)
+        else -> MaterialTheme.colorScheme.surfaceContainerHigh
+    }
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -52,10 +63,7 @@ fun SheetActionRow(
     ) {
         Surface(
             shape = CircleShape,
-            color = if (enabled)
-                MaterialTheme.colorScheme.surfaceContainerHigh
-            else
-                MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.38f),
+            color = containerColor,
             modifier = Modifier.size(48.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {

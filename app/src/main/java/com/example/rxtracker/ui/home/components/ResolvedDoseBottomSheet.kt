@@ -1,13 +1,11 @@
 package com.example.rxtracker.ui.home.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,9 +20,8 @@ import com.composables.core.rememberModalBottomSheetState
 import com.composables.icons.lucide.AlarmClock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
-import com.composables.icons.lucide.Redo
 import com.composables.icons.lucide.RotateCcw
-import com.composeunstyled.Text
+import com.composables.icons.lucide.X
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.shared.DateTimeWheelPicker
@@ -90,73 +87,54 @@ fun ResolvedDoseBottomSheet(
 
         when {
             isTaken -> {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    RowOption(
-                        icon = Lucide.RotateCcw,
-                        label = "Undo take",
-                        onClick = {
-                            onUndoTake()
-                            state.targetDetent = SheetDetent.Hidden
-                        }
-                    )
-                    RowOption(
-                        icon = Lucide.Redo,
-                        label = "Skip",
-                        onClick = {
-                            onSkip()
-                            state.targetDetent = SheetDetent.Hidden
-                        }
-                    )
-                    RowOption(
-                        icon = Lucide.AlarmClock,
-                        label = "Reschedule",
-                        onClick = {
-                            showRescheduleDialog = true
-                        }
-                    )
-                }
+                SheetActionRow(
+                    icon = Lucide.RotateCcw,
+                    label = "Undo take",
+                    onClick = {
+                        onUndoTake()
+                        state.targetDetent = SheetDetent.Hidden
+                    }
+                )
+                SheetActionRow(
+                    icon = Lucide.X,
+                    label = "Skip",
+                    onClick = {
+                        onSkip()
+                        state.targetDetent = SheetDetent.Hidden
+                    }
+                )
+                SheetActionRow(
+                    icon = Lucide.AlarmClock,
+                    label = "Reschedule",
+                    onClick = { showRescheduleDialog = true }
+                )
             }
 
             isSkipped -> {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    RowOption(
-                        icon = Lucide.Pencil,
-                        label = "Set time",
-                        onClick = {
-                            showTakeAtTimeDialog = true
-                        }
-                    )
-                    RowOption(
-                        icon = Lucide.RotateCcw,
-                        label = "Unskip",
-                        onClick = {
-                            onUndoSkip()
-                            state.targetDetent = SheetDetent.Hidden
-                        }
-                    )
-                    RowOption(
-                        icon = Lucide.AlarmClock,
-                        label = "Reschedule",
-                        onClick = {
-                            showRescheduleDialog = true
-                        }
-                    )
-                }
+                SheetActionRow(
+                    icon = Lucide.Pencil,
+                    label = "Set time",
+                    onClick = { showTakeAtTimeDialog = true }
+                )
+                SheetActionRow(
+                    icon = Lucide.RotateCcw,
+                    label = "Unskip",
+                    onClick = {
+                        onUndoSkip()
+                        state.targetDetent = SheetDetent.Hidden
+                    }
+                )
+                SheetActionRow(
+                    icon = Lucide.AlarmClock,
+                    label = "Reschedule",
+                    onClick = { showRescheduleDialog = true }
+                )
             }
 
             else -> return@BaseBottomSheet
         }
     }
+
     if (showTakeAtTimeDialog) {
         DateTimeWheelPicker(
             startDateTime = now,
@@ -184,6 +162,7 @@ fun ResolvedDoseBottomSheet(
             }
         )
     }
+
     if (showNotesDialog) {
         NotesDialog(
             initialNotes = notes,

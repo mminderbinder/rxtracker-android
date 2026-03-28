@@ -1,24 +1,17 @@
 package com.example.rxtracker.ui.home.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,8 +22,7 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
-import com.composables.icons.lucide.Redo
-import com.composeunstyled.Text
+import com.composables.icons.lucide.X
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.shared.DateTimeWheelPicker
@@ -58,6 +50,7 @@ fun UnresolvedDoseBottomSheet(
     onNotesChange: (String?) -> Unit
 ) {
     val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    val scheduledTime = LocalDateTime.of(dose.scheduledDate, dose.scheduledTime)
 
     val state = rememberModalBottomSheetState(initialDetent = SheetDetent.FullyExpanded)
 
@@ -100,18 +93,22 @@ fun UnresolvedDoseBottomSheet(
                 state.targetDetent = SheetDetent.Hidden
             }
         )
-        SheetActionRow(
-            icon = Lucide.Check,
-            label = "Take on time",
-            sublabel = getFormattedTime(dose.scheduledTime),
-            onClick = {
-                onTakeOnTime()
-                state.targetDetent = SheetDetent.Hidden
-            }
-        )
+
+        if (now.toJavaLocalDateTime().isAfter(scheduledTime)) {
+            SheetActionRow(
+                icon = Lucide.Check,
+                label = "Take on time",
+                sublabel = getFormattedTime(dose.scheduledTime),
+                onClick = {
+                    onTakeOnTime()
+                    state.targetDetent = SheetDetent.Hidden
+                }
+            )
+        }
+
         SheetActionRow(
             icon = Lucide.Pencil,
-            label = "Add time taken",
+            label = "Set time",
             onClick = { showTakeAtTimeDialog = true }
         )
 
@@ -119,41 +116,20 @@ fun UnresolvedDoseBottomSheet(
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         Spacer(modifier = Modifier.height(4.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedButton(
-                onClick = {
-                    onSkip()
-                    state.targetDetent = SheetDetent.Hidden
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Lucide.Redo,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Skip")
+        SheetActionRow(
+            icon = Lucide.X,
+            label = "Skip",
+            onClick = {
+                onSkip()
+                state.targetDetent = SheetDetent.Hidden
             }
-            OutlinedButton(
-                onClick = { showRescheduleDialog = true },
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Lucide.AlarmClock,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Reschedule")
-            }
-        }
+        )
+
+        SheetActionRow(
+            icon = Lucide.AlarmClock,
+            label = "Reschedule",
+            onClick = { showRescheduleDialog = true }
+        )
     }
 
     if (showTakeAtTimeDialog) {

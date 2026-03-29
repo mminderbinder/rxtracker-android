@@ -5,9 +5,9 @@ import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDose
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,12 +18,12 @@ class ScheduledDoseRepository @Inject constructor(
     fun getDosesForDate(date: LocalDate): Flow<List<ScheduledDoseWithMedication>> =
         scheduledDoseDao.getDosesForDate(date)
 
-    suspend fun updateStatus(id: Long, status: DoseStatus, takenAt: LocalDateTime?) =
-        scheduledDoseDao.updateStatus(id, status, takenAt)
+    suspend fun updateStatus(id: Long, status: DoseStatus, resolvedAt: LocalDateTime?) =
+        scheduledDoseDao.updateStatus(id, status, resolvedAt)
 
-    suspend fun updateScheduledTime(id: Long, newTime: LocalTime) =
-        scheduledDoseDao.updateScheduledTime(id, newTime, DoseStatus.PENDING)
-    
+    suspend fun updateRescheduledDateAndTime(id: Long, newDate: LocalDate, newTime: LocalTime) =
+        scheduledDoseDao.updateRescheduledDateAndTime(id, newDate, newTime, DoseStatus.RESCHEDULED)
+
     suspend fun updateQuantity(id: Long, quantity: Double) =
         scheduledDoseDao.updateQuantity(id, quantity)
 

@@ -28,12 +28,10 @@ import com.example.rxtracker.ui.shared.DateTimeWheelPicker
 import com.example.rxtracker.ui.shared.NotesDialog
 import com.example.rxtracker.ui.shared.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toLocalDateTime
-import java.time.LocalDate
-import java.time.LocalDateTime
-import kotlin.time.Clock
+import com.example.rxtracker.utils.now
+import com.example.rxtracker.utils.today
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 @Composable
 fun ResolvedDoseBottomSheet(
@@ -47,8 +45,7 @@ fun ResolvedDoseBottomSheet(
     onQuantityChange: (Double) -> Unit,
     onNotesChange: (String?) -> Unit
 ) {
-    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-
+    val now = now()
     val state = rememberModalBottomSheetState(initialDetent = SheetDetent.FullyExpanded)
 
     var showQuantityDialog by remember { mutableStateOf(false) }
@@ -64,7 +61,7 @@ fun ResolvedDoseBottomSheet(
         notes = dose.doseNotes
     }
 
-    BaseBottomSheet(state = state, onDismiss = onDismiss) {
+    BaseBottomSheet(state = state, onDismiss = onDismiss) { sheetState ->
 
         SingleDoseSheetHeader(
             dose = dose,
@@ -92,7 +89,7 @@ fun ResolvedDoseBottomSheet(
                     label = "Undo take",
                     onClick = {
                         onUndoTake()
-                        state.targetDetent = SheetDetent.Hidden
+                        sheetState.targetDetent = SheetDetent.Hidden
                     }
                 )
                 SheetActionRow(
@@ -100,7 +97,7 @@ fun ResolvedDoseBottomSheet(
                     label = "Skip",
                     onClick = {
                         onSkip()
-                        state.targetDetent = SheetDetent.Hidden
+                        sheetState.targetDetent = SheetDetent.Hidden
                     }
                 )
                 SheetActionRow(
@@ -121,7 +118,7 @@ fun ResolvedDoseBottomSheet(
                     label = "Unskip",
                     onClick = {
                         onUndoSkip()
-                        state.targetDetent = SheetDetent.Hidden
+                        sheetState.targetDetent = SheetDetent.Hidden
                     }
                 )
                 SheetActionRow(
@@ -142,7 +139,7 @@ fun ResolvedDoseBottomSheet(
             title = "Taken at",
             onDismiss = { showTakeAtTimeDialog = false },
             onConfirm = { dt ->
-                onTakeAtTime(dt.toJavaLocalDateTime())
+                onTakeAtTime(dt)
                 showTakeAtTimeDialog = false
                 state.targetDetent = SheetDetent.Hidden
             }
@@ -156,7 +153,7 @@ fun ResolvedDoseBottomSheet(
             title = "Reschedule to",
             onDismiss = { showRescheduleDialog = false },
             onConfirm = { dt ->
-                onReschedule(dt.toJavaLocalDateTime())
+                onReschedule(dt)
                 showRescheduleDialog = false
                 state.targetDetent = SheetDetent.Hidden
             }
@@ -198,8 +195,8 @@ fun ResolvedDoseBottomSheetPreview() {
             dose = ScheduledDoseWithMedication(
                 id = 1,
                 medicationId = 1,
-                scheduledDate = LocalDate.now(),
-                scheduledTime = LocalDate.now().atTime(12, 0).toLocalTime(),
+                scheduledDate = today(),
+                scheduledTime = LocalTime(12, 0),
                 quantity = 2.0,
                 status = DoseStatus.SKIPPED,
                 resolvedAt = null,

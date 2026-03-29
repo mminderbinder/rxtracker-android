@@ -134,7 +134,7 @@ fun SingleDoseSheetHeader(
             )
             if (isTaken && dose.resolvedAt != null) {
                 Text(
-                    text = "Taken at ${getFormattedTime(dose.resolvedAt.toLocalTime())}",
+                    text = "Taken at ${getFormattedTime(dose.resolvedAt.time)}",
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.Medium
                     ),

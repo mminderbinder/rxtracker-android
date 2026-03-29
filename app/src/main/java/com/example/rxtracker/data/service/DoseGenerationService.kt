@@ -4,11 +4,12 @@ import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.ScheduledDose
 import com.example.rxtracker.data.models.UserMedication
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import com.example.rxtracker.utils.plusDays
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.daysUntil
 
 object DoseGenerationService {
-    private const val ROLLING_WINDOW_DAYS = 60L
+    private const val ROLLING_WINDOW_DAYS = 60
 
     fun generate(
         medication: UserMedication,
@@ -26,7 +27,7 @@ object DoseGenerationService {
         val doses = mutableListOf<ScheduledDose>()
         var current = fromDate
 
-        while (!current.isAfter(windowEnd)) {
+        while (current <= windowEnd) {
             if (shouldDoseOnDate(medication, current)) {
                 val dosesForDay = generateDosesForDay(medication, current)
                 doses.addAll(dosesForDay)
@@ -37,7 +38,7 @@ object DoseGenerationService {
     }
 
     private fun shouldDoseOnDate(medication: UserMedication, date: LocalDate): Boolean {
-        val daysSinceStart = ChronoUnit.DAYS.between(medication.startDate, date)
+        val daysSinceStart = medication.startDate.daysUntil(date).toLong()
         if (daysSinceStart < 0) return false
 
         return when (val details = medication.frequencyDetails) {

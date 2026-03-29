@@ -2,12 +2,15 @@ package com.example.rxtracker.utils
 
 import com.kizitonwose.calendar.core.Week
 import com.kizitonwose.calendar.core.yearMonth
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.format
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.LocalTime
 import java.time.Month
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -42,11 +45,23 @@ fun getWeekPageTitle(week: Week): String {
 }
 
 fun getFormattedTime(time: LocalTime): String {
-    val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
-    return time.format(timeFormatter)
+    val format = LocalTime.Format {
+        amPmHour(padding = Padding.NONE)
+        char(':')
+        minute()
+        char(' ')
+        amPmMarker("AM", "PM")
+    }
+    return time.format(format)
 }
 
 fun getFormattedDate(date: LocalDate): String {
-    val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-    return date.format(dateFormatter)
+    val format = LocalDate.Format {
+        monthName(MonthNames.ENGLISH_ABBREVIATED)
+        char(' ')
+        day()
+        chars(", ")
+        year()
+    }
+    return date.format(format)
 }

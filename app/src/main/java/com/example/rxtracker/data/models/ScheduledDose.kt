@@ -4,9 +4,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 @Entity(
     tableName = "scheduled_doses",
@@ -23,6 +23,8 @@ data class ScheduledDose(
     val medicationId: Long,
     val scheduledDate: LocalDate,
     val scheduledTime: LocalTime,
+    val rescheduledDate: LocalDate? = null,
+    val rescheduledTime: LocalTime? = null,
     val quantity: Double,
     val status: DoseStatus = DoseStatus.PENDING,
     val resolvedAt: LocalDateTime? = null,

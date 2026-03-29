@@ -11,10 +11,11 @@ import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.IntakeTime
 import com.example.rxtracker.data.models.UserMedication
 import com.example.rxtracker.data.repository.MedicationRepository
+import com.example.rxtracker.utils.plusHours
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -157,7 +158,7 @@ class AddMedicationsViewModel @Inject constructor(
                     .toList()
                 offsetHours.map { offset ->
                     DoseTime(
-                        time = startTime.plusHours(offset.toLong()),
+                        time = startTime.plusHours(offset),
                         quantity = quantity
                     )
                 }
@@ -167,7 +168,7 @@ class AddMedicationsViewModel @Inject constructor(
                 val intervalHours = 12 / (details.timesPerDay - 1).coerceAtLeast(1)
                 (0 until details.timesPerDay).map { i ->
                     DoseTime(
-                        time = startTime.plusHours((i * intervalHours).toLong()),
+                        time = startTime.plusHours((i * intervalHours)),
                         quantity = quantity
                     )
                 }
@@ -180,7 +181,7 @@ class AddMedicationsViewModel @Inject constructor(
             listOf(DoseTime(time = startTime, quantity = quantity))
         }
     }
-    
+
     fun toUserMedication(): UserMedication {
         val info = uiState.medicationInfo
         val freq = uiState.frequency

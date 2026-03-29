@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,9 +13,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,12 +29,15 @@ import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Trash2
 import com.example.rxtracker.ui.shared.QuantityDialog
+import com.example.rxtracker.ui.shared.TimeWheelPicker
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formatQuantity
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import com.example.rxtracker.utils.getFormattedTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
-private val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +74,7 @@ fun AddTimeEntry(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = time.format(timeFormatter),
+                text = getFormattedTime(time),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Medium,
                     textDecoration = TextDecoration.Underline
@@ -125,23 +124,13 @@ fun AddTimeEntry(
         )
     }
     if (showPicker) {
-        val pickerState = rememberTimePickerState(
-            initialHour = time.hour,
-            initialMinute = time.minute,
-            is24Hour = false
-        )
-        AlertDialog(
-            onDismissRequest = { showPicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    onTimeChange(LocalTime.of(pickerState.hour, pickerState.minute))
-                    showPicker = false
-                }) { Text("OK") }
+        TimeWheelPicker(
+            startTime = time,
+            onConfirm = { time ->
+                onTimeChange(time)
+                showPicker = false
             },
-            dismissButton = {
-                TextButton(onClick = { showPicker = false }) { Text("Cancel") }
-            },
-            text = { TimePicker(state = pickerState) }
+            onDismiss = { showPicker = false }
         )
     }
 }
@@ -151,7 +140,7 @@ fun AddTimeEntry(
 fun AddTimesEntryPreview() {
     RXTrackerTheme {
         AddTimeEntry(
-            time = LocalTime.now(),
+            time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time,
             quantity = 2.0,
             medicationForm = "tablet",
             onTimeChange = {},

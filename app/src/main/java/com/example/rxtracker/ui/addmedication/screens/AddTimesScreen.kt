@@ -26,6 +26,7 @@ import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
 import com.example.rxtracker.ui.addmedication.components.AddTimeEntry
+import com.example.rxtracker.utils.plusHours
 
 @Composable
 fun AddTimesScreen(
@@ -133,7 +134,7 @@ fun AddTimesScreen(
                             val nextOffset = intervalHours * doseTimes.size
                             viewModel.updateDoseTimes(
                                 doseTimes + DoseTime(
-                                    time = dose.startTime.plusHours(nextOffset.toLong()),
+                                    time = dose.startTime.plusHours(nextOffset),
                                     quantity = dose.quantity
                                 )
                             )

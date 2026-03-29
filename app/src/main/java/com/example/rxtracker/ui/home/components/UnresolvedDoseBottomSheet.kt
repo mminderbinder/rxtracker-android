@@ -30,12 +30,10 @@ import com.example.rxtracker.ui.shared.NotesDialog
 import com.example.rxtracker.ui.shared.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.getFormattedTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toLocalDateTime
-import java.time.LocalDate
-import java.time.LocalDateTime
-import kotlin.time.Clock
+import com.example.rxtracker.utils.now
+import com.example.rxtracker.utils.today
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 @Composable
 fun UnresolvedDoseBottomSheet(
@@ -49,8 +47,8 @@ fun UnresolvedDoseBottomSheet(
     onQuantityChange: (Double) -> Unit,
     onNotesChange: (String?) -> Unit
 ) {
-    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-    val scheduledTime = LocalDateTime.of(dose.scheduledDate, dose.scheduledTime)
+    val now = now()
+    val scheduledTime = LocalDateTime(date = dose.scheduledDate, time = dose.scheduledTime)
 
     val state = rememberModalBottomSheetState(initialDetent = SheetDetent.FullyExpanded)
 
@@ -64,7 +62,7 @@ fun UnresolvedDoseBottomSheet(
         notes = dose.doseNotes
     }
 
-    BaseBottomSheet(state = state, onDismiss = onDismiss) { state ->
+    BaseBottomSheet(state = state, onDismiss = onDismiss) { sheetState ->
 
         SingleDoseSheetHeader(
             dose = dose,
@@ -90,25 +88,25 @@ fun UnresolvedDoseBottomSheet(
             label = "Take now",
             onClick = {
                 onTakeNow()
-                state.targetDetent = SheetDetent.Hidden
+                sheetState.targetDetent = SheetDetent.Hidden
             }
         )
 
-        if (now.toJavaLocalDateTime().isAfter(scheduledTime)) {
+        if (now > scheduledTime) {
             SheetActionRow(
                 icon = Lucide.Check,
                 label = "Take on time",
                 sublabel = getFormattedTime(dose.scheduledTime),
                 onClick = {
                     onTakeOnTime()
-                    state.targetDetent = SheetDetent.Hidden
+                    sheetState.targetDetent = SheetDetent.Hidden
                 }
             )
         }
 
         SheetActionRow(
             icon = Lucide.Pencil,
-            label = "Set time",
+            label = "Set time taken",
             onClick = { showTakeAtTimeDialog = true }
         )
 
@@ -121,7 +119,7 @@ fun UnresolvedDoseBottomSheet(
             label = "Skip",
             onClick = {
                 onSkip()
-                state.targetDetent = SheetDetent.Hidden
+                sheetState.targetDetent = SheetDetent.Hidden
             }
         )
 
@@ -139,7 +137,7 @@ fun UnresolvedDoseBottomSheet(
             title = "Taken at",
             onDismiss = { showTakeAtTimeDialog = false },
             onConfirm = { dt ->
-                onTakeAtTime(dt.toJavaLocalDateTime())
+                onTakeAtTime(dt)
                 showTakeAtTimeDialog = false
                 state.targetDetent = SheetDetent.Hidden
             }
@@ -153,7 +151,7 @@ fun UnresolvedDoseBottomSheet(
             title = "Reschedule to",
             onDismiss = { showRescheduleDialog = false },
             onConfirm = { dt ->
-                onReschedule(dt.toJavaLocalDateTime())
+                onReschedule(dt)
                 showRescheduleDialog = false
                 state.targetDetent = SheetDetent.Hidden
             }
@@ -195,8 +193,8 @@ fun UnresolvedDoseBottomSheetPreview() {
             dose = ScheduledDoseWithMedication(
                 id = 1,
                 medicationId = 1,
-                scheduledDate = LocalDate.now(),
-                scheduledTime = LocalDate.now().atTime(12, 0).toLocalTime(),
+                scheduledDate = today(),
+                scheduledTime = LocalTime(12, 0),
                 quantity = 2.0,
                 status = DoseStatus.PENDING,
                 resolvedAt = null,

@@ -1,5 +1,6 @@
 package com.example.rxtracker.data.models
 
+import kotlinx.datetime.DayOfWeek
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -9,7 +10,6 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonClassDiscriminator
-import java.time.DayOfWeek
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable

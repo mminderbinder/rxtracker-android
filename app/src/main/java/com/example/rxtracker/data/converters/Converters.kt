@@ -6,10 +6,10 @@ import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.IntakeTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.serialization.json.Json
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 class Converters {
     private val json = Json { ignoreUnknownKeys = true }

@@ -4,8 +4,9 @@ import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.data.models.FrequencyDetails
 import com.example.rxtracker.data.models.IntakeTime
-import java.time.LocalDate
-import java.time.LocalTime
+import com.example.rxtracker.utils.today
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 
 data class MedicationInfo(
     val name: String = "",
@@ -21,8 +22,8 @@ data class FrequencyState(
 )
 
 data class DoseDetailsState(
-    val startDate: LocalDate = LocalDate.now(),
-    val startTime: LocalTime = LocalTime.of(8, 0),
+    val startDate: LocalDate = today(),
+    val startTime: LocalTime = LocalTime(8, 0),
     val quantity: Double = 1.0
 )
 

@@ -25,11 +25,12 @@ import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formatQuantity
+import com.example.rxtracker.utils.getFormattedTime
 import com.example.rxtracker.utils.resolveFormIcon
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import com.example.rxtracker.utils.today
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 
-private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
 
 @Composable
 fun DoseCard(
@@ -38,8 +39,8 @@ fun DoseCard(
     onTap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val today = LocalDate.now()
-    val isFutureDate = selectedDate.isAfter(today)
+    val today = today()
+    val isFutureDate = selectedDate > today
     val isTaken = dose.status == DoseStatus.TAKEN
     val isSkipped = dose.status == DoseStatus.SKIPPED
     val isNotLogged = dose.status == DoseStatus.NOT_LOGGED
@@ -52,7 +53,7 @@ fun DoseCard(
 
     val containerColor = when {
         isTaken || isSkipped -> MaterialTheme.colorScheme.surfaceVariant
-        else -> MaterialTheme.colorScheme.surfaceContainerLow
+        else -> MaterialTheme.colorScheme.surface
     }
 
     val border = when {
@@ -78,15 +79,26 @@ fun DoseCard(
     val statusText = when (dose.status) {
         DoseStatus.TAKEN -> dose.resolvedAt?.let {
             "Taken at ${
-                it.toLocalTime().format(timeFormatter)
+                getFormattedTime(it.time)
             }"
         } ?: "Taken"
 
-        DoseStatus.SKIPPED -> "Skipped"
+        DoseStatus.SKIPPED -> dose.resolvedAt?.let {
+            "Skipped at ${
+                getFormattedTime(it.time)
+            }"
+        } ?: "Skipped"
+
         DoseStatus.LATE -> "Late"
         DoseStatus.NOT_LOGGED -> "Not logged"
         DoseStatus.PENDING -> if (isFutureDate) "Upcoming" else "Pending"
-        DoseStatus.RESCHEDULED -> "Rescheduled"
+        DoseStatus.RESCHEDULED -> {
+            val date = dose.rescheduledDate
+            val time = dose.rescheduledTime
+            if (date != null && time != null)
+                "Rescheduled to $date at ${getFormattedTime(time)}"
+            else "Rescheduled"
+        }
     }
 
     OutlinedCard(
@@ -163,8 +175,8 @@ fun DoseCardPreview() {
             dose = ScheduledDoseWithMedication(
                 id = 1,
                 medicationId = 1,
-                scheduledDate = LocalDate.now(),
-                scheduledTime = LocalDate.now().atTime(12, 0).toLocalTime(),
+                scheduledDate = today(),
+                scheduledTime = LocalTime(12, 0),
                 quantity = 1.0,
                 status = DoseStatus.PENDING,
                 resolvedAt = null,
@@ -175,7 +187,7 @@ fun DoseCardPreview() {
                 rescheduledDate = null
 
             ),
-            selectedDate = LocalDate.now(),
+            selectedDate = today(),
             onTap = {}
         )
     }

@@ -1,15 +1,17 @@
 package com.example.rxtracker.data.models
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+
 
 data class ScheduledDoseWithMedication(
     val id: Long,
     val medicationId: Long,
     val scheduledDate: LocalDate,
-    val rescheduledDate: LocalDateTime?,
     val scheduledTime: LocalTime,
+    val rescheduledDate: LocalDate? = null,
+    val rescheduledTime: LocalTime? = null,
     val quantity: Double,
     val status: DoseStatus,
     val resolvedAt: LocalDateTime?,

@@ -7,9 +7,9 @@ import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDose
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 @Dao
 interface ScheduledDoseDao {
@@ -58,10 +58,15 @@ interface ScheduledDoseDao {
 
     @Query(
         "UPDATE scheduled_doses " +
-                "SET scheduledTime = :newTime, status = :status " +
+                "SET rescheduledDate = :newDate, rescheduledTime = :newTime, status = :status " +
                 "WHERE id = :id"
     )
-    suspend fun updateScheduledTime(id: Long, newTime: LocalTime, status: DoseStatus)
+    suspend fun updateRescheduledDateAndTime(
+        id: Long,
+        newDate: LocalDate,
+        newTime: LocalTime,
+        status: DoseStatus
+    )
 
 
     @Query(

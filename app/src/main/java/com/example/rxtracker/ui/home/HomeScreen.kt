@@ -42,8 +42,10 @@ import com.example.rxtracker.utils.rememberFirstVisibleWeekAfterScroll
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.atDate
+import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
-import java.time.LocalTime
 
 @Composable
 fun HomeScreen(
@@ -72,9 +74,10 @@ fun HomeScreen(
         )
     }
 
-    val activeDoses: Map<LocalTime, List<ScheduledDoseWithMedication>> = uiState.doses
-        .filter { it.status !in listOf(DoseStatus.TAKEN, DoseStatus.SKIPPED) }
-        .groupBy { it.scheduledTime }
+    val activeDoses: Map<LocalTime, List<ScheduledDoseWithMedication>> =
+        uiState.doses
+            .filter { it.status !in listOf(DoseStatus.TAKEN, DoseStatus.SKIPPED) }
+            .groupBy { it.scheduledTime }
 
     val resolvedDoses: List<ScheduledDoseWithMedication> = uiState.doses
         .filter { it.status in listOf(DoseStatus.TAKEN, DoseStatus.SKIPPED) }
@@ -167,7 +170,7 @@ fun HomeScreen(
                     items(dosesAtTime) { dose ->
                         DoseCard(
                             dose = dose,
-                            selectedDate = uiState.selectedDate,
+                            selectedDate = uiState.selectedDate.toKotlinLocalDate(),
                             onTap = { viewModel.selectDose(dose) }
                         )
                     }
@@ -176,7 +179,7 @@ fun HomeScreen(
                     item {
                         ResolvedDosesAccordion(
                             doses = resolvedDoses,
-                            selectedDate = uiState.selectedDate,
+                            selectedDate = uiState.selectedDate.toKotlinLocalDate(),
                             onTap = { viewModel.selectDose(it) },
                             modifier = Modifier.padding(top = 8.dp)
                         )
@@ -196,10 +199,10 @@ fun HomeScreen(
                     onUndoTake = { viewModel.unmarkAsTaken(dose) },
                     onSkip = { viewModel.skipDose(dose) },
                     onUndoSkip = { viewModel.unskipDose(dose) },
-                    onReschedule = { newTime ->
+                    onReschedule = { newDateTime ->
                         viewModel.rescheduleDose(
                             dose,
-                            newTime.toLocalTime()
+                            newDateTime
                         )
                     },
                     onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },
@@ -207,7 +210,7 @@ fun HomeScreen(
                 )
             }
 
-            uiState.selectedDate.isAfter(LocalDate.now()) -> {
+            uiState.selectedDate > LocalDate.now() -> {
                 // TODO: FutureDoseDialog
             }
 
@@ -216,15 +219,18 @@ fun HomeScreen(
                     dose = dose,
                     onDismiss = { viewModel.selectDose(null) },
                     onTakeOnTime = {
-                        viewModel.takeAtTime(dose, dose.scheduledTime.atDate(uiState.selectedDate))
+                        viewModel.takeAtTime(
+                            dose,
+                            dose.scheduledTime.atDate(uiState.selectedDate.toKotlinLocalDate())
+                        )
                     },
-                    onTakeNow = { viewModel.markTaken(dose) },
+                    onTakeNow = { viewModel.takeNow(dose) },
                     onTakeAtTime = { takenAt -> viewModel.takeAtTime(dose, takenAt) },
                     onSkip = { viewModel.skipDose(dose) },
-                    onReschedule = { newTime ->
+                    onReschedule = { newDateTime ->
                         viewModel.rescheduleDose(
                             dose,
-                            newTime.toLocalTime()
+                            newDateTime
                         )
                     },
                     onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },

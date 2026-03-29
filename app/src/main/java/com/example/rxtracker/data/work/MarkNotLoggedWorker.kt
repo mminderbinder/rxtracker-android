@@ -5,9 +5,9 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.rxtracker.data.repository.ScheduledDoseRepository
+import com.example.rxtracker.utils.today
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import java.time.LocalDate
 
 @HiltWorker
 class MarkNotLoggedWorker @AssistedInject constructor(
@@ -17,7 +17,7 @@ class MarkNotLoggedWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        repository.markPastPendingAsNotLogged(LocalDate.now())
+        repository.markPastPendingAsNotLogged(today())
         return Result.success()
     }
 }

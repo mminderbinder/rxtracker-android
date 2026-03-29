@@ -50,7 +50,6 @@ fun MainTopBar(navController: NavController) {
                     tint = contentColor
                 )
                 Text("RxTracker")
-
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

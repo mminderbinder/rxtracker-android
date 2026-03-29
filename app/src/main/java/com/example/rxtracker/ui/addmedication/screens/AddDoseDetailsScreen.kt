@@ -31,10 +31,6 @@ import com.example.rxtracker.ui.shared.TimeWheelPicker
 import com.example.rxtracker.utils.formatQuantity
 import com.example.rxtracker.utils.getFormattedDate
 import com.example.rxtracker.utils.getFormattedTime
-import kotlinx.datetime.toJavaLocalDate
-import kotlinx.datetime.toJavaLocalTime
-import kotlinx.datetime.toKotlinLocalDate
-import kotlinx.datetime.toKotlinLocalTime
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -112,9 +108,9 @@ fun AddDoseDetailsScreen(
 
     if (showTimePicker) {
         TimeWheelPicker(
-            startTime = dose.startTime.toKotlinLocalTime(),
+            startTime = dose.startTime,
             onConfirm = { time ->
-                viewModel.updateDoseDetails(time = time.toJavaLocalTime())
+                viewModel.updateDoseDetails(time)
                 showTimePicker = false
             },
             onDismiss = { showTimePicker = false }
@@ -122,9 +118,9 @@ fun AddDoseDetailsScreen(
     }
     if (showDatePicker) {
         DateWheelPicker(
-            startDate = dose.startDate.toKotlinLocalDate(),
+            startDate = dose.startDate,
             onConfirm = { date ->
-                viewModel.updateStartDate(date.toJavaLocalDate())
+                viewModel.updateStartDate(date)
                 showDatePicker = false
             },
             onDismiss = { showDatePicker = false }

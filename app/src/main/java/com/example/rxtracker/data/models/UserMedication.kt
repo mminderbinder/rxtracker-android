@@ -2,7 +2,8 @@ package com.example.rxtracker.data.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDate
+import com.example.rxtracker.utils.today
+import kotlinx.datetime.LocalDate
 
 @Entity(tableName = "medications")
 data class UserMedication(
@@ -11,7 +12,7 @@ data class UserMedication(
     val strength: String = "",
     val form: String = "",
     val frequencyType: Frequency,
-    val startDate: LocalDate = LocalDate.now(),
+    val startDate: LocalDate = today(),
     val endDate: LocalDate? = null,
     val frequencyDetails: FrequencyDetails,
     val doseTimes: List<DoseTime> = mutableListOf(),

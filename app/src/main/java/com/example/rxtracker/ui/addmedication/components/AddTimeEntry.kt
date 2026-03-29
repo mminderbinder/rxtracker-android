@@ -29,7 +29,7 @@ import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Trash2
 import com.example.rxtracker.ui.shared.QuantityDialog
-import com.example.rxtracker.ui.shared.TimeWheelPicker
+import com.example.rxtracker.ui.shared.TimeSelectionDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formatQuantity
 import com.example.rxtracker.utils.getFormattedTime
@@ -124,10 +124,10 @@ fun AddTimeEntry(
         )
     }
     if (showPicker) {
-        TimeWheelPicker(
+        TimeSelectionDialog(
             startTime = time,
-            onConfirm = { time ->
-                onTimeChange(time)
+            onConfirm = { hour, minute ->
+                onTimeChange(LocalTime(hour, minute))
                 showPicker = false
             },
             onDismiss = { showPicker = false }

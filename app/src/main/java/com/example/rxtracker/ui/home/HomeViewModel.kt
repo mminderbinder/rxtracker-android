@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.toKotlinLocalDate
 import javax.inject.Inject
 import java.time.LocalDate as LocalDateJava
@@ -119,12 +120,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun rescheduleDose(dose: ScheduledDoseWithMedication, newDateTime: LocalDateTime) {
+    fun rescheduleDose(dose: ScheduledDoseWithMedication, newTime: LocalTime) {
         viewModelScope.launch {
-            scheduledDoseRepository.updateRescheduledDateAndTime(
+            scheduledDoseRepository.updateRescheduledTime(
                 dose.id,
-                newDateTime.date,
-                newDateTime.time
+                newTime
             )
         }
     }

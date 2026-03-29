@@ -194,6 +194,7 @@ fun HomeScreen(
             dose.status in listOf(DoseStatus.TAKEN, DoseStatus.SKIPPED) -> {
                 ResolvedDoseBottomSheet(
                     dose = dose,
+                    selectedDate = uiState.selectedDate.toKotlinLocalDate(),
                     onDismiss = { viewModel.selectDose(null) },
                     onTakeAtTime = { takenAt -> viewModel.takeAtTime(dose, takenAt) },
                     onUndoTake = { viewModel.unmarkAsTaken(dose) },
@@ -217,6 +218,7 @@ fun HomeScreen(
             else -> {
                 UnresolvedDoseBottomSheet(
                     dose = dose,
+                    selectedDate = uiState.selectedDate.toKotlinLocalDate(),
                     onDismiss = { viewModel.selectDose(null) },
                     onTakeOnTime = {
                         viewModel.takeAtTime(

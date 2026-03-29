@@ -25,25 +25,27 @@ import com.composables.icons.lucide.Pencil
 import com.composables.icons.lucide.X
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
-import com.example.rxtracker.ui.shared.DateTimeWheelPicker
 import com.example.rxtracker.ui.shared.NotesDialog
 import com.example.rxtracker.ui.shared.QuantityDialog
+import com.example.rxtracker.ui.shared.TimeSelectionDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.getFormattedTime
 import com.example.rxtracker.utils.now
 import com.example.rxtracker.utils.today
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 
 @Composable
 fun UnresolvedDoseBottomSheet(
     dose: ScheduledDoseWithMedication,
+    selectedDate: LocalDate,
     onDismiss: () -> Unit,
     onTakeOnTime: () -> Unit,
     onTakeNow: () -> Unit,
     onTakeAtTime: (LocalDateTime) -> Unit,
     onSkip: () -> Unit,
-    onReschedule: (LocalDateTime) -> Unit,
+    onReschedule: (LocalTime) -> Unit,
     onQuantityChange: (Double) -> Unit,
     onNotesChange: (String?) -> Unit
 ) {
@@ -131,30 +133,26 @@ fun UnresolvedDoseBottomSheet(
     }
 
     if (showTakeAtTimeDialog) {
-        DateTimeWheelPicker(
-            startDateTime = now,
-            maxDateTime = now,
-            title = "Taken at",
-            onDismiss = { showTakeAtTimeDialog = false },
-            onConfirm = { dt ->
-                onTakeAtTime(dt)
+        TimeSelectionDialog(
+            startTime = dose.scheduledTime,
+            onConfirm = { hour, minute ->
+                onTakeAtTime(LocalDateTime(selectedDate, LocalTime(hour, minute)))
                 showTakeAtTimeDialog = false
                 state.targetDetent = SheetDetent.Hidden
-            }
+            },
+            onDismiss = { showTakeAtTimeDialog = false }
         )
     }
 
     if (showRescheduleDialog) {
-        DateTimeWheelPicker(
-            startDateTime = now,
-            minDateTime = now,
-            title = "Reschedule to",
-            onDismiss = { showRescheduleDialog = false },
-            onConfirm = { dt ->
-                onReschedule(dt)
+        TimeSelectionDialog(
+            startTime = dose.scheduledTime,
+            onConfirm = { hour, minute ->
+                onReschedule(LocalTime(hour, minute))
                 showRescheduleDialog = false
                 state.targetDetent = SheetDetent.Hidden
-            }
+            },
+            onDismiss = { showRescheduleDialog = false }
         )
     }
 
@@ -198,12 +196,12 @@ fun UnresolvedDoseBottomSheetPreview() {
                 quantity = 2.0,
                 status = DoseStatus.PENDING,
                 resolvedAt = null,
-                rescheduledDate = null,
                 name = "Paracetamol",
                 strength = "500mg",
                 form = "Tablet",
                 doseNotes = null
             ),
+            selectedDate = today(),
             onDismiss = {},
             onTakeOnTime = {},
             onTakeNow = {},

@@ -2,6 +2,7 @@ package com.example.rxtracker.ui.home.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,8 @@ fun DoseCard(
     val isNotLogged = dose.status == DoseStatus.NOT_LOGGED
     val isLate = dose.status == DoseStatus.LATE
 
+    val darkTheme = isSystemInDarkTheme()
+
     val isDimmed = isTaken || isSkipped || isFutureDate
     val contentAlpha = if (isDimmed) 0.5f else 1f
     val textDecoration =
@@ -53,7 +56,8 @@ fun DoseCard(
 
     val containerColor = when {
         isTaken || isSkipped -> MaterialTheme.colorScheme.surfaceVariant
-        else -> MaterialTheme.colorScheme.surface
+        else -> if (darkTheme) MaterialTheme.colorScheme.surfaceContainerHigh
+        else MaterialTheme.colorScheme.surface
     }
 
     val border = when {
@@ -92,13 +96,11 @@ fun DoseCard(
         DoseStatus.LATE -> "Late"
         DoseStatus.NOT_LOGGED -> "Not logged"
         DoseStatus.PENDING -> if (isFutureDate) "Upcoming" else "Pending"
-        DoseStatus.RESCHEDULED -> {
-            val date = dose.rescheduledDate
-            val time = dose.rescheduledTime
-            if (date != null && time != null)
-                "Rescheduled to $date at ${getFormattedTime(time)}"
-            else "Rescheduled"
-        }
+        DoseStatus.RESCHEDULED -> dose.rescheduledTime?.let {
+            "Rescheduled to ${
+                getFormattedTime(it)
+            }"
+        } ?: "Rescheduled"
     }
 
     OutlinedCard(
@@ -184,8 +186,6 @@ fun DoseCardPreview() {
                 strength = "200mg",
                 form = "Capsule",
                 doseNotes = "Take with food",
-                rescheduledDate = null
-
             ),
             selectedDate = today(),
             onTap = {}

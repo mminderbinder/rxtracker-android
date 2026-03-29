@@ -7,12 +7,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import java.time.LocalTime
-
-@Deprecated(
-    "Currently marked for deprecation. Use TimeWheelPicker, DateTimeWheelPicker instead",
-    level = DeprecationLevel.WARNING
-)
+import kotlinx.datetime.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

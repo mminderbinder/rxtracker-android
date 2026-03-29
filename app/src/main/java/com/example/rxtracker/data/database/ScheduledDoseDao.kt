@@ -58,12 +58,11 @@ interface ScheduledDoseDao {
 
     @Query(
         "UPDATE scheduled_doses " +
-                "SET rescheduledDate = :newDate, rescheduledTime = :newTime, status = :status " +
+                "SET rescheduledTime = :newTime, status = :status " +
                 "WHERE id = :id"
     )
     suspend fun updateRescheduledDateAndTime(
         id: Long,
-        newDate: LocalDate,
         newTime: LocalTime,
         status: DoseStatus
     )

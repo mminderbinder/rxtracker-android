@@ -25,13 +25,14 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtracker.R
 import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
 import com.example.rxtracker.ui.addmedication.components.DetailRow
-import com.example.rxtracker.ui.shared.DateWheelPicker
+import com.example.rxtracker.ui.shared.DateSelectionDialog
 import com.example.rxtracker.ui.shared.QuantityDialog
-import com.example.rxtracker.ui.shared.TimeWheelPicker
+import com.example.rxtracker.ui.shared.TimeSelectionDialog
 import com.example.rxtracker.utils.formatQuantity
 import com.example.rxtracker.utils.getFormattedDate
 import com.example.rxtracker.utils.getFormattedTime
-import java.time.LocalDate
+import com.example.rxtracker.utils.today
+import kotlinx.datetime.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +69,7 @@ fun AddDoseDetailsScreen(
         HorizontalDivider()
         DetailRow(
             label = "Start Date",
-            value = if (dose.startDate == LocalDate.now()) "Today" else getFormattedDate(dose.startDate),
+            value = if (dose.startDate == today()) "Today" else getFormattedDate(dose.startDate),
             onClick = { showDatePicker = true }
         )
 
@@ -107,21 +108,20 @@ fun AddDoseDetailsScreen(
     }
 
     if (showTimePicker) {
-        TimeWheelPicker(
+        TimeSelectionDialog(
             startTime = dose.startTime,
-            onConfirm = { time ->
-                viewModel.updateDoseDetails(time)
+            onConfirm = { hour, minute ->
+                viewModel.updateDoseDetails(time = LocalTime(hour, minute))
                 showTimePicker = false
             },
             onDismiss = { showTimePicker = false }
         )
     }
     if (showDatePicker) {
-        DateWheelPicker(
+        DateSelectionDialog(
             startDate = dose.startDate,
             onConfirm = { date ->
                 viewModel.updateStartDate(date)
-                showDatePicker = false
             },
             onDismiss = { showDatePicker = false }
         )

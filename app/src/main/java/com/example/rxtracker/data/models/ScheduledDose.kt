@@ -23,7 +23,6 @@ data class ScheduledDose(
     val medicationId: Long,
     val scheduledDate: LocalDate,
     val scheduledTime: LocalTime,
-    val rescheduledDate: LocalDate? = null,
     val rescheduledTime: LocalTime? = null,
     val quantity: Double,
     val status: DoseStatus = DoseStatus.PENDING,

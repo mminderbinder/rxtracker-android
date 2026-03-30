@@ -81,9 +81,9 @@ fun UnresolvedDoseBottomSheet(
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         Spacer(modifier = Modifier.height(4.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
 
         SheetActionRow(
             icon = Lucide.Clock,
@@ -112,10 +112,8 @@ fun UnresolvedDoseBottomSheet(
             onClick = { showTakeAtTimeDialog = true }
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-        Spacer(modifier = Modifier.height(4.dp))
-
+        
         SheetActionRow(
             icon = Lucide.X,
             label = "Skip",

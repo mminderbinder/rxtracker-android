@@ -41,6 +41,7 @@ fun SingleDoseSheetHeader(
     val isTaken = dose.status == DoseStatus.TAKEN
 
     val (chipColor, chipTextColor, chipLabel) = when (dose.status) {
+
         DoseStatus.TAKEN -> Triple(
             MaterialTheme.colorScheme.primaryContainer,
             MaterialTheme.colorScheme.onPrimaryContainer,

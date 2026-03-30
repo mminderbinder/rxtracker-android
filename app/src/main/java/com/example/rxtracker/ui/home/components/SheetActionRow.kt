@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Timer
@@ -32,6 +33,7 @@ fun SheetActionRow(
     sublabel: String? = null,
     enabled: Boolean = true,
     contentColor: Color? = null,
+    verticalPadding: Dp = 14.dp,
     onClick: () -> Unit
 ) {
     val iconTint = when {
@@ -59,19 +61,19 @@ fun SheetActionRow(
         modifier = modifier
             .clickable(enabled = enabled, onClick = onClick)
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 14.dp)
+            .padding(horizontal = 24.dp, vertical = verticalPadding)
     ) {
         Surface(
             shape = CircleShape,
             color = containerColor,
-            modifier = Modifier.size(48.dp)
+            modifier = Modifier.size(40.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }

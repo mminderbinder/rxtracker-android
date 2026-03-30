@@ -8,9 +8,17 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+
+@Immutable
+data class ExtendedColorScheme(
+    val success: ColorFamily,
+    val warning: ColorFamily,
+)
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -240,6 +248,103 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
+val LocalExtendedColorScheme = staticCompositionLocalOf {
+    ExtendedColorScheme(
+        success = unspecified_scheme,
+        warning = unspecified_scheme
+    )
+}
+
+val extendedLight = ExtendedColorScheme(
+    success = ColorFamily(
+        successLight,
+        onSuccessLight,
+        successContainerLight,
+        onSuccessContainerLight,
+    ),
+    warning = ColorFamily(
+        warningLight,
+        onWarningLight,
+        warningContainerLight,
+        onWarningContainerLight,
+    ),
+)
+
+val extendedDark = ExtendedColorScheme(
+    success = ColorFamily(
+        successDark,
+        onSuccessDark,
+        successContainerDark,
+        onSuccessContainerDark,
+    ),
+    warning = ColorFamily(
+        warningDark,
+        onWarningDark,
+        warningContainerDark,
+        onWarningContainerDark,
+    ),
+)
+
+val extendedLightMediumContrast = ExtendedColorScheme(
+    success = ColorFamily(
+        successLightMediumContrast,
+        onSuccessLightMediumContrast,
+        successContainerLightMediumContrast,
+        onSuccessContainerLightMediumContrast,
+    ),
+    warning = ColorFamily(
+        warningLightMediumContrast,
+        onWarningLightMediumContrast,
+        warningContainerLightMediumContrast,
+        onWarningContainerLightMediumContrast,
+    ),
+)
+
+val extendedLightHighContrast = ExtendedColorScheme(
+    success = ColorFamily(
+        successLightHighContrast,
+        onSuccessLightHighContrast,
+        successContainerLightHighContrast,
+        onSuccessContainerLightHighContrast,
+    ),
+    warning = ColorFamily(
+        warningLightHighContrast,
+        onWarningLightHighContrast,
+        warningContainerLightHighContrast,
+        onWarningContainerLightHighContrast,
+    ),
+)
+
+val extendedDarkMediumContrast = ExtendedColorScheme(
+    success = ColorFamily(
+        successDarkMediumContrast,
+        onSuccessDarkMediumContrast,
+        successContainerDarkMediumContrast,
+        onSuccessContainerDarkMediumContrast,
+    ),
+    warning = ColorFamily(
+        warningDarkMediumContrast,
+        onWarningDarkMediumContrast,
+        warningContainerDarkMediumContrast,
+        onWarningContainerDarkMediumContrast,
+    ),
+)
+
+val extendedDarkHighContrast = ExtendedColorScheme(
+    success = ColorFamily(
+        successDarkHighContrast,
+        onSuccessDarkHighContrast,
+        successContainerDarkHighContrast,
+        onSuccessContainerDarkHighContrast,
+    ),
+    warning = ColorFamily(
+        warningDarkHighContrast,
+        onWarningDarkHighContrast,
+        warningContainerDarkHighContrast,
+        onWarningContainerDarkHighContrast,
+    ),
+)
+
 @Immutable
 data class ColorFamily(
     val color: Color,
@@ -269,10 +374,14 @@ fun RXTrackerTheme(
         else -> lightScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = AppTypography,
-        content = content
-    )
+    val extendedColorScheme = if (darkTheme) extendedDark else extendedLight
+
+    CompositionLocalProvider(LocalExtendedColorScheme provides extendedColorScheme) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = AppTypography,
+            content = content
+        )
+    }
 }
 

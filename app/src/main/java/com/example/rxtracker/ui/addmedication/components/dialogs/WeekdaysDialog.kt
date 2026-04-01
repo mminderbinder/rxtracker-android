@@ -97,7 +97,7 @@ fun WeekdaysDialog(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = day.name,
+                                    text = day.name.lowercase().replaceFirstChar { it.uppercase() },
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 if (isSelected) {

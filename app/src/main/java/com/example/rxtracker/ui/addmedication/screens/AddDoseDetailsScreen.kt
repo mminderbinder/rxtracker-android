@@ -122,6 +122,7 @@ fun AddDoseDetailsScreen(
             startDate = dose.startDate,
             onConfirm = { date ->
                 viewModel.updateStartDate(date)
+                showDatePicker = false
             },
             onDismiss = { showDatePicker = false }
         )

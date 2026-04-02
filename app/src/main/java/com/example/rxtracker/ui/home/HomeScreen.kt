@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -28,11 +29,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.SquareCheck
 import com.example.rxtracker.R
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.home.components.DoseCard
+import com.example.rxtracker.ui.home.components.DoseTimeHeader
 import com.example.rxtracker.ui.home.components.ResolvedDoseBottomSheet
 import com.example.rxtracker.ui.home.components.ResolvedDosesAccordion
 import com.example.rxtracker.ui.home.components.UnresolvedDoseBottomSheet
@@ -156,15 +160,15 @@ fun HomeScreen(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 activeDoses.forEach { (time, dosesAtTime) ->
                     item {
-                        Text(
-                            text = getFormattedTime(time),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+                        DoseTimeHeader(
+                            title = getFormattedTime(time),
+                            onSelectAll = if (dosesAtTime.size > 1) {{
+
+                            }} else null
                         )
                     }
                     items(dosesAtTime) { dose ->

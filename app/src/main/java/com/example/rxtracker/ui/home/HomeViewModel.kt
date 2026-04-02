@@ -29,7 +29,6 @@ import java.time.LocalDate as LocalDateJava
 class HomeViewModel @Inject constructor(
     private val scheduledDoseRepository: ScheduledDoseRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState
 
@@ -94,7 +93,7 @@ class HomeViewModel @Inject constructor(
             scheduledDoseRepository.updateStatus(
                 id = dose.id,
                 status = DoseStatus.SKIPPED,
-                resolvedAt = null
+                resolvedAt = now()
             )
         }
     }

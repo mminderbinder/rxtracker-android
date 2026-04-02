@@ -28,7 +28,6 @@ import com.example.rxtracker.ui.shared.NotesDialog
 import com.example.rxtracker.ui.shared.QuantityDialog
 import com.example.rxtracker.ui.shared.TimeSelectionDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
-import com.example.rxtracker.utils.now
 import com.example.rxtracker.utils.today
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -47,7 +46,6 @@ fun ResolvedDoseBottomSheet(
     onQuantityChange: (Double) -> Unit,
     onNotesChange: (String?) -> Unit
 ) {
-    val now = now()
     val state = rememberModalBottomSheetState(initialDetent = SheetDetent.FullyExpanded)
 
     var showQuantityDialog by remember { mutableStateOf(false) }

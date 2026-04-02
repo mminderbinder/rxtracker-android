@@ -9,8 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,19 +54,16 @@ fun ResolvedDoseBottomSheet(
     var showRescheduleDialog by remember { mutableStateOf(false) }
     var showTakeAtTimeDialog by remember { mutableStateOf(false) }
     var showNotesDialog by remember { mutableStateOf(false) }
-    var notes by remember { mutableStateOf(dose.doseNotes) }
+    var notes by rememberSaveable(dose.id) { mutableStateOf(dose.doseNotes) }
+    var doseQuantity by rememberSaveable(dose.id) { mutableDoubleStateOf(dose.quantity) }
 
     val isTaken = dose.status == DoseStatus.TAKEN
     val isSkipped = dose.status == DoseStatus.SKIPPED
 
-    LaunchedEffect(dose.doseNotes) {
-        notes = dose.doseNotes
-    }
-
     BaseBottomSheet(state = state, onDismiss = onDismiss) { sheetState ->
 
         SingleDoseSheetHeader(
-            dose = dose,
+            dose = dose.copy(quantity = doseQuantity),
             onQuantityTap = { showQuantityDialog = true },
             onEditTap = { showNotesDialog = true }
         )
@@ -170,12 +169,13 @@ fun ResolvedDoseBottomSheet(
 
     if (showQuantityDialog) {
         QuantityDialog(
-            initialQuantity = dose.quantity,
+            initialQuantity = doseQuantity,
             title = "Edit quantity",
             min = 0.25,
             max = 20.0,
             onDismiss = { showQuantityDialog = false },
             onConfirm = { newQty ->
+                doseQuantity = newQty
                 onQuantityChange(newQty)
                 showQuantityDialog = false
             }

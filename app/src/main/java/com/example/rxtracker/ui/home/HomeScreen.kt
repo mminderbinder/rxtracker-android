@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,22 +22,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.SquareCheck
 import com.example.rxtracker.R
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.home.components.CalendarDay
 import com.example.rxtracker.ui.home.components.DoseCard
 import com.example.rxtracker.ui.home.components.DoseTimeHeader
+import com.example.rxtracker.ui.home.components.ResolvedAccordionHeader
+import com.example.rxtracker.ui.home.components.ResolvedDoseBatchBottomSheet
 import com.example.rxtracker.ui.home.components.ResolvedDoseBottomSheet
-import com.example.rxtracker.ui.home.components.ResolvedDosesAccordion
+import com.example.rxtracker.ui.home.components.ResolvedDoseRow
+import com.example.rxtracker.ui.home.components.UnresolvedDoseBatchBottomSheet
 import com.example.rxtracker.ui.home.components.UnresolvedDoseBottomSheet
 import com.example.rxtracker.utils.getFormattedTime
 import com.example.rxtracker.utils.getWeekPageTitle
@@ -120,7 +121,8 @@ fun HomeScreen(
                         }
                     }
                 )
-            }
+            },
+            modifier = Modifier.padding(bottom = 12.dp)
         )
 
         AnimatedVisibility(visible = showTodayButton) {
@@ -158,6 +160,14 @@ fun HomeScreen(
                 }
             }
         } else {
+            val resolvedExpanded = remember { mutableStateOf(false) }
+
+            val resolvedGrouped = remember(resolvedDoses) {
+                resolvedDoses
+                    .sortedBy { it.resolvedAt }
+                    .groupBy { it.resolvedAt?.time ?: it.scheduledTime }
+            }
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -166,9 +176,9 @@ fun HomeScreen(
                     item {
                         DoseTimeHeader(
                             title = getFormattedTime(time),
-                            onSelectAll = if (dosesAtTime.size > 1) {{
-
-                            }} else null
+                            onSelectAll = if (dosesAtTime.size > 1) {
+                                { viewModel.selectBatchDoses(dosesAtTime) }
+                            } else null
                         )
                     }
                     items(dosesAtTime) { dose ->
@@ -179,14 +189,33 @@ fun HomeScreen(
                         )
                     }
                 }
+
                 if (resolvedDoses.isNotEmpty()) {
                     item {
-                        ResolvedDosesAccordion(
-                            doses = resolvedDoses,
-                            selectedDate = uiState.selectedDate.toKotlinLocalDate(),
-                            onTap = { viewModel.selectDose(it) },
-                            modifier = Modifier.padding(top = 8.dp)
+                        ResolvedAccordionHeader(
+                            count = resolvedDoses.size,
+                            expanded = resolvedExpanded.value,
+                            onToggle = { resolvedExpanded.value = !resolvedExpanded.value }
                         )
+                    }
+
+                    if (resolvedExpanded.value) {
+                        resolvedGrouped.forEach { (resolvedTime, dosesAtTime) ->
+                            item {
+                                DoseTimeHeader(
+                                    title = getFormattedTime(resolvedTime),
+                                    onSelectAll = if (dosesAtTime.size > 1) {
+                                        { viewModel.selectBatchDoses(dosesAtTime) }
+                                    } else null
+                                )
+                            }
+                            items(dosesAtTime) { dose ->
+                                ResolvedDoseRow(
+                                    dose = dose,
+                                    onTap = { viewModel.selectDose(dose) }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -201,15 +230,10 @@ fun HomeScreen(
                     selectedDate = uiState.selectedDate.toKotlinLocalDate(),
                     onDismiss = { viewModel.selectDose(null) },
                     onTakeAtTime = { takenAt -> viewModel.takeAtTime(dose, takenAt) },
-                    onUndoTake = { viewModel.unmarkAsTaken(dose) },
+                    onUndoTake = { viewModel.undoDoseTaken(dose) },
                     onSkip = { viewModel.skipDose(dose) },
                     onUndoSkip = { viewModel.unskipDose(dose) },
-                    onReschedule = { newDateTime ->
-                        viewModel.rescheduleDose(
-                            dose,
-                            newDateTime
-                        )
-                    },
+                    onReschedule = { newDateTime -> viewModel.rescheduleDose(dose, newDateTime) },
                     onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },
                     onNotesChange = { notes -> viewModel.updateDoseNotes(dose, notes) }
                 )
@@ -233,14 +257,49 @@ fun HomeScreen(
                     onTakeNow = { viewModel.takeNow(dose) },
                     onTakeAtTime = { takenAt -> viewModel.takeAtTime(dose, takenAt) },
                     onSkip = { viewModel.skipDose(dose) },
-                    onReschedule = { newDateTime ->
-                        viewModel.rescheduleDose(
-                            dose,
-                            newDateTime
-                        )
-                    },
+                    onReschedule = { newTime -> viewModel.rescheduleDose(dose, newTime) },
                     onQuantityChange = { qty -> viewModel.updateQuantity(dose, qty) },
                     onNotesChange = { notes -> viewModel.updateDoseNotes(dose, notes) }
+                )
+            }
+        }
+    }
+
+    uiState.selectedBatchDoses?.let { doses ->
+        when {
+            doses.first().status in listOf(DoseStatus.TAKEN, DoseStatus.SKIPPED) -> {
+                ResolvedDoseBatchBottomSheet(
+                    doses = doses,
+                    selectedDate = uiState.selectedDate.toKotlinLocalDate(),
+                    onDismiss = { viewModel.selectBatchDoses(null) },
+                    onTakeAllAtTime = { takenAt -> viewModel.takeAllAtTime(doses, takenAt) },
+                    onUndoTakeAll = { viewModel.undoAllDosesTaken(doses) },
+                    onSkipAll = { viewModel.skipAllDoses(doses) },
+                    onUndoSkipAll = { viewModel.unskipAllDoses(doses) },
+                    onRescheduleAll = { newTime -> viewModel.rescheduleAllDoses(doses, newTime) }
+                )
+            }
+
+            else -> {
+                UnresolvedDoseBatchBottomSheet(
+                    doses = doses,
+                    selectedDate = uiState.selectedDate.toKotlinLocalDate(),
+                    onDismiss = { viewModel.selectBatchDoses(null) },
+                    onTakeAllOnTime = {
+                        viewModel.takeAllAtTime(
+                            doses,
+                            doses.first().scheduledTime.atDate(uiState.selectedDate.toKotlinLocalDate())
+                        )
+                    },
+                    onTakeAllNow = { viewModel.takeAllNow(doses) },
+                    onTakeAllAtTime = { takenAt -> viewModel.takeAllAtTime(doses, takenAt) },
+                    onSkipAll = { viewModel.skipAllDoses(doses) },
+                    onRescheduleAll = { newDateTime ->
+                        viewModel.rescheduleAllDoses(
+                            doses = doses,
+                            newTime = newDateTime
+                        )
+                    }
                 )
             }
         }

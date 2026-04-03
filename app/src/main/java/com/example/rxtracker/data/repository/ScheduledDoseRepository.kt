@@ -30,8 +30,8 @@ class ScheduledDoseRepository @Inject constructor(
     suspend fun updateDoseNotes(id: Long, doseNotes: String?) =
         scheduledDoseDao.updateDoseNotes(id, doseNotes)
 
-    suspend fun updateStatusBatch(ids: List<Long>, status: DoseStatus, takenAt: LocalDateTime?) =
-        scheduledDoseDao.updateStatusBatch(ids, status, takenAt)
+    suspend fun updateStatusBatch(ids: List<Long>, status: DoseStatus, resolvedAt: LocalDateTime?) =
+        scheduledDoseDao.updateStatusBatch(ids, status, resolvedAt)
 
     suspend fun updateScheduledTimeBatch(ids: List<Long>, newTime: LocalTime) =
         scheduledDoseDao.updateScheduledTimeBatch(ids, newTime)

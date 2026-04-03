@@ -1,5 +1,6 @@
 package com.example.rxtracker.ui.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rxtracker.data.models.DoseStatus
@@ -31,6 +32,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState
+    val isToday = _uiState.value.selectedDate == LocalDateJava.now()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val dosesForDate = _uiState
@@ -63,7 +65,8 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(selectedDose = dose) }
     }
 
-    fun selectBatchDoses(doses: List<ScheduledDoseWithMedication>) {
+    fun selectBatchDoses(doses: List<ScheduledDoseWithMedication>?) {
+        Log.d("HomeViewModel", "selectBatchDoses: ${doses?.size}")
         _uiState.update { it.copy(selectedBatchDoses = doses) }
     }
 
@@ -77,7 +80,17 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun unmarkAsTaken(dose: ScheduledDoseWithMedication) {
+    fun takeAtTime(dose: ScheduledDoseWithMedication, takenAt: LocalDateTime) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatus(
+                id = dose.id,
+                status = DoseStatus.TAKEN,
+                resolvedAt = takenAt
+            )
+        }
+    }
+
+    fun undoDoseTaken(dose: ScheduledDoseWithMedication) {
         val isToday = _uiState.value.selectedDate == LocalDateJava.now()
         viewModelScope.launch {
             scheduledDoseRepository.updateStatus(
@@ -99,22 +112,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun unskipDose(dose: ScheduledDoseWithMedication) {
-        val isToday = _uiState.value.selectedDate == LocalDateJava.now()
         viewModelScope.launch {
             scheduledDoseRepository.updateStatus(
                 id = dose.id,
                 status = if (isToday) DoseStatus.PENDING else DoseStatus.NOT_LOGGED,
                 resolvedAt = null
-            )
-        }
-    }
-
-    fun takeAtTime(dose: ScheduledDoseWithMedication, takenAt: LocalDateTime) {
-        viewModelScope.launch {
-            scheduledDoseRepository.updateStatus(
-                id = dose.id,
-                status = DoseStatus.TAKEN,
-                resolvedAt = takenAt
             )
         }
     }
@@ -137,6 +139,66 @@ class HomeViewModel @Inject constructor(
     fun updateDoseNotes(dose: ScheduledDoseWithMedication, doseNotes: String?) {
         viewModelScope.launch {
             scheduledDoseRepository.updateDoseNotes(dose.id, doseNotes)
+        }
+    }
+
+    fun takeAllNow(doses: List<ScheduledDoseWithMedication>) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatusBatch(
+                ids = doses.map { it.id },
+                status = DoseStatus.TAKEN,
+                resolvedAt = now()
+            )
+        }
+    }
+
+    fun takeAllAtTime(doses: List<ScheduledDoseWithMedication>, takenAt: LocalDateTime) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatusBatch(
+                ids = doses.map { it.id },
+                status = DoseStatus.TAKEN,
+                resolvedAt = takenAt
+            )
+        }
+    }
+
+    fun undoAllDosesTaken(doses: List<ScheduledDoseWithMedication>) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatusBatch(
+                ids = doses.map { it.id },
+                status = if (isToday) DoseStatus.PENDING else DoseStatus.NOT_LOGGED,
+                resolvedAt = null
+            )
+        }
+    }
+
+
+    fun skipAllDoses(doses: List<ScheduledDoseWithMedication>) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatusBatch(
+                ids = doses.map { it.id },
+                status = DoseStatus.SKIPPED,
+                resolvedAt = now()
+            )
+        }
+    }
+
+    fun unskipAllDoses(doses: List<ScheduledDoseWithMedication>) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateStatusBatch(
+                ids = doses.map { it.id },
+                status = if (isToday) DoseStatus.PENDING else DoseStatus.NOT_LOGGED,
+                resolvedAt = null
+            )
+        }
+    }
+
+    fun rescheduleAllDoses(doses: List<ScheduledDoseWithMedication>, newTime: LocalTime) {
+        viewModelScope.launch {
+            scheduledDoseRepository.updateScheduledTimeBatch(
+                ids = doses.map { it.id },
+                newTime = newTime
+            )
         }
     }
 

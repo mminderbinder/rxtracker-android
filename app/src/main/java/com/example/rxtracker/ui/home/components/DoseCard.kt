@@ -57,11 +57,10 @@ fun DoseCard(
     val containerColor = when {
         isTaken || isSkipped -> MaterialTheme.colorScheme.surfaceVariant
         else -> if (darkTheme) MaterialTheme.colorScheme.surfaceContainerHigh
-        else MaterialTheme.colorScheme.surface
+        else MaterialTheme.colorScheme.surfaceContainerLowest
     }
 
     val border = when {
-        isLate -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.error)
         isNotLogged -> BorderStroke(
             1.dp,
             MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
@@ -120,8 +119,7 @@ fun DoseCard(
         ) {
             Icon(
                 painter = painterResource(id = resolveFormIcon(dose.form)),
-                contentDescription = dose.form,
-                tint = contentColor
+                contentDescription = dose.form
             )
 
             Column(

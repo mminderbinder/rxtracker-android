@@ -1,11 +1,9 @@
 package com.example.rxtracker.ui.home.components
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,8 +31,7 @@ fun DoseTimeHeader(
 
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 12.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -44,9 +41,10 @@ fun DoseTimeHeader(
             modifier = Modifier.weight(1f)
         )
         if (onSelectAll != null) {
-            TextButton(onClick = onSelectAll) { Text("Select all") }
-        } else {
-            Spacer(modifier = Modifier.height(48.dp))
+            TextButton(
+                onClick = onSelectAll,
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+            ) { Text("Select all") }
         }
         if (expanded != null) {
             Icon(

@@ -85,11 +85,11 @@ interface ScheduledDoseDao {
 
     @Query(
         "UPDATE scheduled_doses " +
-                "SET status = :status, resolvedAt = :takenAt " +
+                "SET status = :status, resolvedAt = :resolvedAt " +
                 "WHERE id " +
                 "IN (:ids)"
     )
-    suspend fun updateStatusBatch(ids: List<Long>, status: DoseStatus, takenAt: LocalDateTime?)
+    suspend fun updateStatusBatch(ids: List<Long>, status: DoseStatus, resolvedAt: LocalDateTime?)
 
     @Query(
         "UPDATE scheduled_doses " +

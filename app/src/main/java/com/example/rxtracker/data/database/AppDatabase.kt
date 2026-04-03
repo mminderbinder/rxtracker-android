@@ -14,7 +14,7 @@ import com.example.rxtracker.data.models.UserMedication
         ScheduledDose::class,
         DoseTaken::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = true
 )
 

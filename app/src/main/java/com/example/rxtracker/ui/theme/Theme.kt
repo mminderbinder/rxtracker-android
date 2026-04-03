@@ -248,13 +248,6 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
-val LocalExtendedColorScheme = staticCompositionLocalOf {
-    ExtendedColorScheme(
-        success = unspecified_scheme,
-        warning = unspecified_scheme
-    )
-}
-
 val extendedLight = ExtendedColorScheme(
     success = ColorFamily(
         successLight,
@@ -345,6 +338,13 @@ val extendedDarkHighContrast = ExtendedColorScheme(
     ),
 )
 
+val LocalExtendedColorScheme = staticCompositionLocalOf {
+    ExtendedColorScheme(
+        success = unspecified_scheme,
+        warning = unspecified_scheme
+    )
+}
+
 @Immutable
 data class ColorFamily(
     val color: Color,
@@ -373,7 +373,6 @@ fun RXTrackerTheme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
-
     val extendedColorScheme = if (darkTheme) extendedDark else extendedLight
 
     CompositionLocalProvider(LocalExtendedColorScheme provides extendedColorScheme) {

@@ -13,23 +13,23 @@ kotlinxDatetime = "0.7.1"
 kotlinxSerializationJson = "1.10.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
-composeBom = "2026.03.00"
+composeBom = "2026.03.01"
 hiltAndroid = "2.59.2"
 hiltNavigationCompose = "1.3.0"
 lottieCompose = "6.7.1"
 navigationCompose = "2.9.7"
 leakcanaryAndroid = "2.14"
-compose = "2.10.0"
+compose = "2.10.1"
 kotlinxCoroutinesAndroid = "1.10.2"
 roomCompiler = "2.8.4"
 ksp = "2.3.4"
-uiTextGoogleFonts = "1.10.5"
+uiTextGoogleFonts = "1.10.6"
 kmpWheelPicker = "0.3.0"
-runtime = "1.10.5"
-foundationLayout = "1.10.5"
-foundation = "1.10.5"
+runtime = "1.10.6"
+foundationLayout = "1.10.6"
+foundation = "1.10.6"
 materialKolor = "4.1.1"
-workRuntimeKtx = "2.11.1"
+workRuntimeKtx = "2.11.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -77,8 +77,6 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
-
-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

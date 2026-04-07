@@ -15,19 +15,19 @@ import javax.inject.Singleton
 class PrescribableRepository @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) {
-    private var prescribables: List<Prescribable>? = null
+    private var prescribableList: List<Prescribable>? = null
     private val mutex = Mutex()
 
     suspend fun ensureLoaded() {
         mutex.withLock {
-            if (prescribables != null) return
+            if (prescribableList != null) return
 
             withContext(Dispatchers.IO) {
                 val jsonString = context.assets.open("medications_flat.json")
                     .bufferedReader()
                     .use { it.readText() }
 
-                prescribables = Json.Default.decodeFromString(jsonString)
+                prescribableList = Json.Default.decodeFromString(jsonString)
             }
         }
     }
@@ -38,7 +38,7 @@ class PrescribableRepository @Inject constructor(
         return withContext(Dispatchers.Default) {
             val searchQuery = query.lowercase().trim()
 
-            prescribables?.filter {
+            prescribableList?.filter {
                 it.name.lowercase().contains(searchQuery) ||
                         it.brand.lowercase().contains(searchQuery)
             }?.take(20) ?: emptyList()

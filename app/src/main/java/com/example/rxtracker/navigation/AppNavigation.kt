@@ -36,7 +36,7 @@ import com.example.rxtracker.ui.addmedication.screens.AddTimesScreen
 import com.example.rxtracker.ui.history.HistoryScreen
 import com.example.rxtracker.ui.home.HomeScreen
 import com.example.rxtracker.ui.home.HomeViewModel
-import com.example.rxtracker.ui.medications.MedicationsScreen
+import com.example.rxtracker.ui.editmedication.MedicationsScreen
 import com.example.rxtracker.ui.menu.about.AboutScreen
 import com.example.rxtracker.ui.menu.privacy.PrivacyPolicyScreen
 import com.example.rxtracker.ui.menu.settings.SettingsScreen

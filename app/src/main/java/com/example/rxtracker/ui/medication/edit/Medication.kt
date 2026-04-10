@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.editmedication
+package com.example.rxtracker.ui.medication.edit
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +12,14 @@ import com.composeunstyled.Text
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
-fun MedicationsScreen() {
+fun MedicationScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Text(
-            text = "Medications",
+            text = "Medication",
             style = MaterialTheme.typography.headlineMedium
         )
     }
@@ -30,6 +30,6 @@ fun MedicationsScreen() {
 @Composable
 fun MedicationsScreenPreview() {
     RXTrackerTheme {
-        MedicationsScreen()
+        MedicationScreen()
     }
 }

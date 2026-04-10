@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.addmedication.screens
+package com.example.rxtracker.ui.medication.add.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -36,10 +36,10 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.IntakeTime
-import com.example.rxtracker.ui.addmedication.AddMedicationsUiState
-import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
-import com.example.rxtracker.ui.addmedication.components.DetailRow
-import com.example.rxtracker.ui.addmedication.components.ToggleRow
+import com.example.rxtracker.ui.medication.add.AddMedicationsUiState
+import com.example.rxtracker.ui.medication.add.AddMedicationsViewModel
+import com.example.rxtracker.ui.medication.add.components.DetailRow
+import com.example.rxtracker.ui.medication.add.components.ToggleRow
 import com.example.rxtracker.ui.shared.QuantityDialog
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formLabel

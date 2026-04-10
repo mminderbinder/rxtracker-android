@@ -33,7 +33,7 @@ import com.example.rxtracker.R
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
 import com.example.rxtracker.ui.home.components.CalendarDay
-import com.example.rxtracker.ui.home.components.DoseCard
+import com.example.rxtracker.ui.shared.DoseCard
 import com.example.rxtracker.ui.home.components.DoseTimeHeader
 import com.example.rxtracker.ui.home.components.ResolvedAccordionHeader
 import com.example.rxtracker.ui.home.components.ResolvedDoseBatchBottomSheet

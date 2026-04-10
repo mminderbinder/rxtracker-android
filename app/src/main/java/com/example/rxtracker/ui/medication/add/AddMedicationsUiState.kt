@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.addmedication
+package com.example.rxtracker.ui.medication.add
 
 import com.example.rxtracker.data.models.DoseTime
 import com.example.rxtracker.data.models.Frequency

@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.home.components
+package com.example.rxtracker.ui.shared
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -20,10 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtracker.data.models.DoseStatus
 import com.example.rxtracker.data.models.ScheduledDoseWithMedication
+import com.example.rxtracker.ui.theme.LocalExtendedColorScheme
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.example.rxtracker.utils.formatQuantity
 import com.example.rxtracker.utils.getFormattedTime
@@ -40,6 +42,8 @@ fun DoseCard(
     onTap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val extendedColorScheme = LocalExtendedColorScheme.current
+
     val today = today()
     val isFutureDate = selectedDate > today
     val isTaken = dose.status == DoseStatus.TAKEN
@@ -119,7 +123,7 @@ fun DoseCard(
         ) {
             Icon(
                 painter = painterResource(id = resolveFormIcon(dose.form)),
-                contentDescription = dose.form
+                contentDescription = dose.form,
             )
 
             Column(
@@ -159,7 +163,7 @@ fun DoseCard(
                         style = MaterialTheme.typography.bodySmall,
                         color = secondaryContentColor,
                         maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

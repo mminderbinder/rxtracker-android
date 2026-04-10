@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.addmedication.components.dialogs
+package com.example.rxtracker.ui.medication.add.components.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.addmedication.screens
+package com.example.rxtracker.ui.medication.add.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
-import com.example.rxtracker.ui.addmedication.MedicationSearchViewModel
-import com.example.rxtracker.ui.addmedication.components.MedicationSearchBar
+import com.example.rxtracker.ui.medication.add.AddMedicationsViewModel
+import com.example.rxtracker.ui.medication.add.MedicationSearchViewModel
+import com.example.rxtracker.ui.medication.add.components.MedicationSearchBar
 
 @Composable
 fun AddMedicationScreen(

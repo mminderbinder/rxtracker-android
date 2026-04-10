@@ -1,4 +1,4 @@
-package com.example.rxtracker.ui.addmedication.components.dialogs
+package com.example.rxtracker.ui.medication.add.components.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.rxtracker.ui.addmedication.components.DialogWheelPicker
+import com.example.rxtracker.ui.medication.add.components.DialogWheelPicker
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 import com.swmansion.kmpwheelpicker.rememberWheelPickerState
 
@@ -75,8 +75,8 @@ fun SingleDialog(
                             .height(36.dp)
                             .background(
                                 color = MaterialTheme.colorScheme.primaryContainer
-                                    .copy(alpha = 0.35f),
-                                shape = RoundedCornerShape(8.dp)
+                                    .copy(alpha = 0.15f),
+                                shape = RoundedCornerShape(12.dp)
                             )
                     )
 

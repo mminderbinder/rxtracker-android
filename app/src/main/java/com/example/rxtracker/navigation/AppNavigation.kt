@@ -26,17 +26,17 @@ import com.composables.icons.lucide.Plus
 import com.example.rxtracker.data.models.Frequency
 import com.example.rxtracker.navigation.topbar.MainTopBar
 import com.example.rxtracker.navigation.topbar.SecondaryTopBar
-import com.example.rxtracker.ui.addmedication.AddMedicationsViewModel
-import com.example.rxtracker.ui.addmedication.MedicationSearchViewModel
-import com.example.rxtracker.ui.addmedication.screens.AddDoseDetailsScreen
-import com.example.rxtracker.ui.addmedication.screens.AddFrequencyScreen
-import com.example.rxtracker.ui.addmedication.screens.AddMedicationScreen
-import com.example.rxtracker.ui.addmedication.screens.AddOptionalDetailsScreen
-import com.example.rxtracker.ui.addmedication.screens.AddTimesScreen
+import com.example.rxtracker.ui.medication.add.AddMedicationsViewModel
+import com.example.rxtracker.ui.medication.add.MedicationSearchViewModel
+import com.example.rxtracker.ui.medication.add.screens.AddDoseDetailsScreen
+import com.example.rxtracker.ui.medication.add.screens.AddFrequencyScreen
+import com.example.rxtracker.ui.medication.add.screens.AddMedicationScreen
+import com.example.rxtracker.ui.medication.add.screens.AddOptionalDetailsScreen
+import com.example.rxtracker.ui.medication.add.screens.AddTimesScreen
 import com.example.rxtracker.ui.history.HistoryScreen
 import com.example.rxtracker.ui.home.HomeScreen
 import com.example.rxtracker.ui.home.HomeViewModel
-import com.example.rxtracker.ui.editmedication.MedicationsScreen
+import com.example.rxtracker.ui.medication.edit.MedicationScreen
 import com.example.rxtracker.ui.menu.about.AboutScreen
 import com.example.rxtracker.ui.menu.privacy.PrivacyPolicyScreen
 import com.example.rxtracker.ui.menu.settings.SettingsScreen
@@ -132,7 +132,7 @@ fun AppNavigation() {
                 HomeScreen(viewModel)
             }
             composable(AppDestination.Medications.route) {
-                MedicationsScreen()
+                MedicationScreen()
             }
             composable(AppDestination.History.route) {
                 HistoryScreen()

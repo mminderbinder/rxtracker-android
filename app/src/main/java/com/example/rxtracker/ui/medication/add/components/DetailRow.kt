@@ -1,57 +1,56 @@
-package com.example.rxtracker.ui.addmedication.components
+package com.example.rxtracker.ui.medication.add.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.composables.icons.lucide.Check
-import com.composables.icons.lucide.Lucide
 import com.example.rxtracker.ui.theme.RXTrackerTheme
 
 @Composable
-fun FrequencyOption(
+fun DetailRow(
     label: String,
-    selected: Boolean,
+    value: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 12.dp),
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
         )
-        if (selected) {
-            Icon(
-                imageVector = Lucide.Check,
-                contentDescription = "Selected",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.Medium,
+                textDecoration = TextDecoration.Underline
+            ),
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun FrequencyOptionPreview() {
+fun DetailRowPreview() {
     RXTrackerTheme {
-        FrequencyOption(
-            label = "Once a day",
-            selected = true,
+        DetailRow(
+            label = "Label",
+            value = "Value",
             onClick = {}
         )
     }

@@ -344,7 +344,6 @@ val LocalExtendedColorScheme = staticCompositionLocalOf {
     )
 }
 
-
 @Immutable
 data class ColorFamily(
     val color: Color,
@@ -383,3 +382,4 @@ fun RXTrackerTheme(
         )
     }
 }
+

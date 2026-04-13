@@ -82,7 +82,7 @@ fun CyclicDialog(
                                     .height(36.dp)
                                     .background(
                                         color = MaterialTheme.colorScheme.primaryContainer
-                                            .copy(alpha = 0.15f),
+                                            .copy(alpha = 0.35f),
                                         shape = RoundedCornerShape(12.dp)
                                     )
                             )
@@ -118,7 +118,7 @@ fun CyclicDialog(
                                     .height(36.dp)
                                     .background(
                                         color = MaterialTheme.colorScheme.primaryContainer
-                                            .copy(alpha = 0.15f),
+                                            .copy(alpha = 0.35f),
                                         shape = RoundedCornerShape(12.dp)
                                     )
                             )

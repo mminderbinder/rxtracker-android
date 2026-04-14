@@ -42,6 +42,7 @@ fun CyclicDialog(
         initialIndex = 2
     )
 
+
     Dialog(onDismissRequest = onDismiss) {
         OutlinedCard(
             modifier = Modifier.fillMaxWidth(),
@@ -58,6 +59,7 @@ fun CyclicDialog(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
+
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
